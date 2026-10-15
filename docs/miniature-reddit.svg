@@ -1,0 +1,93 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="Georgia, serif">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0%" stop-color="#1b2a45"/>
+      <stop offset="55%" stop-color="#101528"/>
+      <stop offset="100%" stop-color="#0d0c14"/>
+    </radialGradient>
+    <radialGradient id="gold" cx="35%" cy="35%" r="80%">
+      <stop offset="0%" stop-color="#e8c877"/>
+      <stop offset="50%" stop-color="#d2a24c"/>
+      <stop offset="100%" stop-color="#9c6f2e"/>
+    </radialGradient>
+    <radialGradient id="ring" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="rgba(210,162,76,0)"/>
+      <stop offset="88%" stop-color="rgba(210,162,76,.55)"/>
+      <stop offset="100%" stop-color="rgba(210,162,76,0)"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <g fill="#ecebe6">
+    <circle cx="90" cy="80" r="1.3" opacity=".7"/><circle cx="210" cy="40" r="1" opacity=".5"/>
+    <circle cx="340" cy="95" r="1.4" opacity=".6"/><circle cx="520" cy="55" r="1" opacity=".45"/>
+    <circle cx="760" cy="70" r="1.2" opacity=".65"/><circle cx="930" cy="35" r="1.5" opacity=".55"/>
+    <circle cx="1070" cy="110" r="1" opacity=".5"/><circle cx="1150" cy="60" r="1.2" opacity=".6"/>
+    <circle cx="60" cy="220" r="1" opacity=".4"/><circle cx="1130" cy="260" r="1.3" opacity=".5"/>
+    <circle cx="860" cy="150" r="1" opacity=".4"/><circle cx="150" cy="140" r="1.1" opacity=".5"/>
+  </g>
+
+  <g transform="translate(955,175)">
+    <ellipse cx="0" cy="0" rx="118" ry="70" fill="none" stroke="url(#gold)" stroke-width="2.5" opacity=".85" filter="url(#glow)"/>
+    <ellipse cx="0" cy="0" rx="86" ry="50" fill="#101528" stroke="#d2a24c" stroke-width="1.4" opacity=".9"/>
+    <circle cx="0" cy="0" r="34" fill="url(#gold)" opacity=".92"/>
+    <circle cx="0" cy="0" r="15" fill="#14121b"/>
+    <circle cx="-10" cy="-9" r="4.5" fill="#f4e7c5"/>
+    <g stroke="#d2a24c" stroke-width="1.6" opacity=".55">
+      <line x1="0" y1="-78" x2="0" y2="-96"/><line x1="52" y1="-52" x2="64" y2="-64"/>
+      <line x1="78" y1="0" x2="96" y2="0"/><line x1="52" y1="52" x2="64" y2="64"/>
+      <line x1="0" y1="78" x2="0" y2="96"/><line x1="-52" y1="52" x2="-64" y2="64"/>
+      <line x1="-78" y1="0" x2="-96" y2="0"/><line x1="-52" y1="-52" x2="-64" y2="-64"/>
+    </g>
+  </g>
+
+  <g opacity=".95">
+    <path d="M120 430 C 170 340, 260 320, 330 350 C 400 380, 420 460, 380 520 C 340 575, 240 585, 180 550 C 130 520, 95 495, 120 430 Z"
+          fill="#2a2236" stroke="#d2a24c" stroke-width="1.2" opacity=".9"/>
+    <path d="M330 350 C 400 330, 480 345, 530 395 C 575 440, 560 500, 500 520 C 450 537, 400 520, 380 520 C 420 460, 400 380, 330 350 Z"
+          fill="#322a42" stroke="#d2a24c" stroke-width="1" opacity=".75"/>
+  </g>
+
+  <g fill="#f4e7c5" stroke="#14121b" stroke-width="1.4">
+    <g transform="translate(215,470)"><path d="M-11 8 L-11 -8 L-4 -14 L-4 -8 L4 -8 L4 -16 L11 -8 L11 8 Z"/><rect x="-14" y="-20" width="5" height="10"/><rect x="9" y="-20" width="5" height="10"/></g>
+    <g transform="translate(465,455)"><path d="M-11 8 L-11 -8 L-4 -14 L-4 -8 L4 -8 L4 -16 L11 -8 L11 8 Z"/><rect x="-14" y="-20" width="5" height="10"/><rect x="9" y="-20" width="5" height="10"/></g>
+  </g>
+
+  <g filter="url(#glow)">
+    <circle cx="215" cy="470" r="42" fill="none" stroke="url(#gold)" stroke-width="4"/>
+    <circle cx="215" cy="470" r="54" fill="none" stroke="#d2a24c" stroke-width="1.4" opacity=".55"/>
+    <circle cx="215" cy="470" r="66" fill="url(#ring)"/>
+  </g>
+  <g filter="url(#glow)" opacity=".9">
+    <circle cx="465" cy="455" r="30" fill="none" stroke="#c05248" stroke-width="3"/>
+    <circle cx="465" cy="455" r="40" fill="none" stroke="#c05248" stroke-width="1.2" opacity=".5"/>
+  </g>
+
+  <path d="M255 462 C 320 420, 390 420, 425 448" fill="none" stroke="#d2a24c" stroke-width="2.2" stroke-dasharray="7 6" opacity=".85"/>
+
+  <g transform="translate(560,505) rotate(-6)" opacity=".95">
+    <rect x="-60" y="-40" width="120" height="80" rx="3" fill="#f4e7c5" opacity=".93"/>
+    <g stroke="#6b5a3e" stroke-width="1.6" opacity=".5">
+      <line x1="-44" y1="-22" x2="44" y2="-22"/><line x1="-44" y1="-9" x2="28" y2="-9"/>
+      <line x1="-44" y1="4" x2="40" y2="4"/><line x1="-44" y1="17" x2="18" y2="17"/>
+    </g>
+  </g>
+
+  <g>
+    <text x="70" y="150" fill="url(#gold)" font-size="86" font-weight="bold" letter-spacing="6">FORGEMONDE</text>
+    <rect x="74" y="172" width="290" height="3" fill="#d2a24c" opacity=".7"/>
+    <text x="74" y="230" fill="#ecebe6" font-size="27" font-style="italic" opacity=".95">Un monde qui se souvient de vos choix.</text>
+    <text x="74" y="272" fill="#b9b3cc" font-size="19">Dirigez une faction. Le monde réagit — et n'oublie jamais.</text>
+    <g transform="translate(74,320)">
+      <rect x="0" y="0" width="250" height="46" rx="23" fill="url(#gold)"/>
+      <text x="125" y="30" fill="#14121b" font-size="19" font-weight="bold" text-anchor="middle" letter-spacing="1">▶ JOUER EN 30 SECONDES</text>
+    </g>
+    <text x="74" y="398" fill="#8d87a0" font-size="16">Gratuit · Sans inscription · IA optionnelle ou moteur intégré</text>
+  </g>
+</svg>
