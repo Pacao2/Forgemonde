@@ -1,55 +1,77 @@
 # 🌍 Forgemonde — un monde qui se souvient de vos choix
 
-> Projet personnel développé sur mon temps libre, inspiré de [Pax Historia](https://www.paxhistoria.co/).
+<p align="center">
+  <img src="docs/miniature-reddit.svg" alt="Forgemonde — miniature du jeu" width="640">
+</p>
 
-**▶ Jouer : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/)**
+<p align="center">
+  <a href="https://forge-des-mondes.netlify.app/"><strong>▶ JOUER MAINTENANT — en 30 secondes</strong></a>
+  &nbsp;·&nbsp;
+  <a href="#-comment-jouer">Comment jouer</a>
+  &nbsp;·&nbsp;
+  <a href="#-journal-des-versions">Versions</a>
+</p>
 
-Forgemonde est un jeu narratif de stratégie dans le navigateur. Vous dirigez une faction dans un monde généré, vous écrivez librement vos actions — alliances, trahisons, conquêtes — et le monde réagit. Sa particularité : **le monde tient une bible vivante**. Chaque trahison, chaque alliance, chaque famine laisse une trace durable qui revient vous hanter des dizaines de tours plus tard.
+<p align="center">
+  <img alt="Version" src="https://img.shields.io/badge/version-v14oct-d2a24c">
+  <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
+  <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
+  <img alt="Langues" src="https://img.shields.io/badge/langues-6-8d6fb3">
+  <img alt="Licence" src="https://img.shields.io/badge/licence-MIT-c05248">
+</p>
 
-## 🎮 Concept
+> Projet solo développé sur mon temps libre, inspiré de [Pax Historia](https://www.paxhistoria.co/).
 
-- Vous choisissez (ou créez) un monde : fantasy, uchronie, SF… 15 scénarios préréglés ou création complète
-- Vous écrivez ce que fait votre faction, en langage naturel
-- Les autres factions réagissent selon leur tempérament ; la carte, la diplomatie et la chronique évoluent
-- Le monde vit aussi **pendant votre absence** (mode monde autonome)
+**Forgemonde** est un jeu narratif de stratégie qui tourne dans votre navigateur — un seul fichier HTML, aucune installation. Vous dirigez une faction, vous écrivez vos actions en langage naturel, et le monde réagit. Sa particularité : **le monde tient une bible vivante**. Chaque trahison, alliance ou famine laisse une trace durable qui revient vous hanter des dizaines de tours plus tard.
+
+## 🎮 Comment jouer
+
+1. Ouvrez [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/)
+2. Cliquez **« Découvrir en 30 secondes → »** — une partie prête à explorer démarre
+3. Écrivez ce que fait votre faction — des exemples cliquables vous guident
+
+Aucune inscription. Rien n'est envoyé. Votre partie reste dans votre navigateur.
 
 ## ⚙️ Deux moteurs, zéro obligation
 
 | Mode | IA requise | Coût |
 |---|---|---|
 | **Moteur de règles** | ❌ Aucune | Gratuit, 100 % local |
-| **IA générative** | ✅ Votre clé (Claude, Mistral, Gemini, OpenAI, OpenRouter, Ollama local) | Selon votre fournisseur |
-| **Hybride** | Optionnel | — |
+| **IA générative** | ✅ Votre clé (Claude, Mistral, Gemini, OpenAI, OpenRouter, Ollama) | Selon votre fournisseur |
+| **Hybride** | Optionnel | Combine les deux |
 
-La clé IA (si vous en branchez une) est stockée **uniquement dans votre navigateur**. Rien n'est envoyé, aucune inscription, aucune donnée collectée. Le jeu est un fichier HTML autonome.
+La clé IA (si vous en branchez une) est stockée **uniquement dans votre navigateur**. Le jeu fonctionne intégralement sans IA ni compte.
 
 ## ✨ Fonctionnalités
 
-- **Bible du monde** : canon des faits établis, arcs narratifs, pistes de Chekhov
-- **Carte gravure procédurale** : continents, capitales, routes, brouillard, calques — avec anneaux d'événements animés et zooms cinématiques
-- **Diplomatie vivante** : alliances, guerres, dettes, espionnage, commerce
-- **Personnages** : humeurs, objectifs, secrets découvrables
-- **Multijoueur local** jusqu'à 5 factions + mode spectateur
-- **Exports** : livre de campagne HTML, replay animé, image de carte, post prêt pour Reddit/Discord
-- **6 langues** (fr, en, es, de, it, pt), mode sombre/clair, accessibilité (contraste, taille de texte, animations réduites)
+- 📖 **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
+- 🗺️ **Carte gravure procédurale** — continents, capitales, routes, brouillard, anneaux d'événements animés, zooms cinématiques
+- 🤝 **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
+- 👤 **Personnages** — humeurs, objectifs, secrets découvrables
+- 🌙 **Monde autonome** — le monde continue d'évoluer pendant votre absence
+- 👥 **Multijoueur local** — jusqu'à 5 factions + mode spectateur
+- 📤 **Exports** — livre de campagne HTML, replay animé, image de carte, post prêt pour Reddit/Discord
+- 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair, accessibilité
 
-## 🚀 Jouer / déployer
+## 🚀 Auto-héberger
 
-**Jouer directement** : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/)
-
-**Auto-héberger** : le jeu est `index.html` — un seul fichier. Déposez-le sur n'importe quel hébergement statique (Netlify, GitHub Pages, Vercel…).
+Le jeu est `index.html` — un seul fichier. Déposez-le sur n'importe quel hébergement statique (Netlify, GitHub Pages, Vercel…) ou ouvrez-le directement en local.
 
 ## 📜 Journal des versions
 
-- **v14oct** — carte vivante (anneaux animés, onde de choc), zooms cinématiques, refonte mobile, partage intégré, journal des versions
-- **v13oct** — monde autonome, accompagnement testeur, guide IA élargi
-- **v12oct** — bible du monde, canon, arcs narratifs, PNJ, exports
+- **v14oct** — carte vivante (anneaux animés, onde de choc), zooms cinématiques, refonte mobile, partage intégré, journal des versions dans le jeu
+- **v13oct** — monde autonome, accompagnement testeur, guide IA élargi (Mistral, Gemini, Ollama)
+- **v12oct** — bible du monde, canon, arcs narratifs, PNJ approfondis, exports
 - **v11oct** — fondation : moteur, carte procédurale, multijoueur, i18n
 
-## 🤝 Contribuer / retours
+## 🤝 Contribuer
 
-Projet solo, en test public. Bug, idée, retour : l'onglet **Retours** du jeu génère un rapport structuré, ou ouvrez une issue GitHub.
+Projet en **test public** — chaque retour compte :
+
+- 🐛 Bug ou idée : ouvrez une [issue](https://github.com/Pacao2/Forgemonde/issues) (des templates sont fournis)
+- 💬 Ou utilisez l'onglet **Retours** du jeu : il génère un rapport structuré prêt à coller
+- 📝 Voir [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📄 Licence
 
-Code fourni tel quel pour l'usage personnel et les retours de test. © Pacôme A., 2026.
+Distribué sous licence [MIT](LICENSE). © Pacôme A., 2026.
