@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v16oct.1-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v16oct.2-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -58,6 +58,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - 📤 **Partage** — livre de campagne, replay, image de carte, post Reddit/Discord, **semence FM-XXXXXX** importable
 - ⬇️ **Téléchargeable** — l'onglet Télécharger emporte le jeu complet en un fichier HTML jouable hors ligne
 - 📲 **PWA** — le site s'installe sur l'écran d'accueil et joue hors ligne
+- 📰 **Journal relié au dépôt** — l'onglet Journal affiche l'activité GitHub du projet en plus du journal local
 - 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair, accessibilité
 
 ## 🔐 Sécurité
@@ -70,6 +71,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## 📜 Journal des versions
 
+- **v16oct.2** — journal des versions du jeu relié au dépôt : activité GitHub (6 derniers commits) affichée dans l'onglet Journal, lien vers le code source, résilient hors ligne
 - **v16oct.1** — durcissement sécurité : délai d'attente sur les appels IA (60 s / 120 s), CSP renforcée (workers, manifest)
 - **v16oct** — mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, saisons, routes commerciales, lieux explorables, semences importables, fichiers .monde, test 20 tours, PWA
 - **v15oct** — objectifs de partie, dilemmes mémorisés, front de guerre animé, semences partageables, onglet Télécharger
