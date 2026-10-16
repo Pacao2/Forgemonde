@@ -909,7 +909,7 @@ const CHANGELOG=[
 "Thème : bouton lune/soleil directement dans la barre de navigation.",
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
-"Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit.",
+"Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperçu social (Open Graph) pointent vers le site principal — l'ancienne image renvoyait une erreur 404.",
@@ -974,7 +974,7 @@ function techInfo(){
     message:cut(err,120),erreurs:errlog.slice(-5)};
 }
 function fbText(f){
-  return"["+f.t+(f.t==="Bug"?" / "+f.s:"")+"] "+f.title+"\nÉcran : "+f.w+"\nNote : "+f.n+"/5\nPaierais-tu : "+f.p+" ; prix par mois : "+f.pr+" ; pour : "+f.pf+"\n\n"+f.d+(f.steps?"\n\nÉtapes pour reproduire :\n"+f.steps:"")+(f.tech?"\n\nInfos techniques : "+JSON.stringify(techInfo()):"")+"\nVersion : "+BUILD;
+  return"["+f.t+(f.t==="Bug"?" / "+f.s:"")+"] "+f.title+"\nÉcran : "+f.w+"\nNote : "+f.n+"/5\n\n"+f.d+(f.steps?"\n\nÉtapes pour reproduire :\n"+f.steps:"")+(f.tech?"\n\nInfos techniques : "+JSON.stringify(techInfo()):"")+"\nVersion : "+BUILD;
 }
 function readFb(){
   const g=id=>(document.getElementById(id)||{value:""}).value.trim();
@@ -1047,11 +1047,6 @@ function feedbackView(){
     el("label",{for:"fbd",text:isB?"Que s'est-il passé ?":"Ton idée ou ta remarque"}),el("textarea",{id:"fbd",placeholder:isB?"Décris le problème et ce que tu attendais.":"Explique ce que tu voudrais."}),
     isB?[el("label",{for:"fbs",text:"Comment le reproduire ? (facultatif)"}),el("textarea",{id:"fbs",placeholder:"1. J'ouvre... 2. Je clique sur..."})]:null,
     el("label",{for:"fbn",text:"Ta satisfaction globale (1 à 5)"}),sel("fbn",FBN,f.n,"n"),
-    el("h2",{text:"Question rapide sur le prix (facultatif)"}),
-    el("p",{class:"mute",text:"Le jeu est gratuit pendant le test. Ces réponses nous aident à décider d'une éventuelle offre payante."}),
-    el("label",{for:"fbp",text:"Serais-tu prêt à payer pour continuer à jouer ?"}),sel("fbp",FBP,f.p,"p"),
-    el("label",{for:"fbpr",text:"Quel prix par mois te semblerait juste ?"}),sel("fbpr",FBPR,f.pr,"pr"),
-    el("label",{for:"fbpf",text:"Pour quoi paierais-tu en priorité ?"}),sel("fbpf",FBPF,f.pf,"pf"),
     el("label",{style:"display:flex;gap:8px;align-items:center"},el("input",{type:"checkbox",style:"width:auto",...(f.tech?{checked:""}:{}),on:{change:e=>{fbF.tech=e.target.checked}}}),"Joindre les infos techniques (version, écran, appareil, erreurs récentes)"),
     el("div",{class:"err",role:"status",text:fbMsg}),
     el("div",{class:"row"},el("button",{on:{click:fbSend},text:"Envoyer le retour"})),
