@@ -29,7 +29,7 @@
 :root[data-theme="light"]{--bg:#f3eee1;--panel:#fbf7ec;--ink:#241f2e;--mute:#6b6577;--gold:#8a6420;--line:#d6c9ab;--btn:#3b2a55;--btnt:#f4ecd8;--bad:#9a3b36;--sea:#cfd8d4;--land:#e4d9bd}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 "IM Fell English",Georgia,serif}
-main{max-width:1240px;margin:0 auto;padding:22px 16px 60px}
+main{max-width:1000px;margin:0 auto;padding:22px 16px 60px}
 h1{font-size:2rem;line-height:1.15;margin:0 0 4px;font-weight:500;background:linear-gradient(135deg,#e8c877 0%,#d2a24c 45%,#b5873a 80%,#e0b565 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--gold)}
 h2{font-size:1.25rem;margin:26px 0 8px;font-weight:400;color:var(--gold)}
 p{margin:0 0 10px}.mute{color:var(--mute);font-size:.95rem}
@@ -75,7 +75,7 @@ details{background:var(--panel);border:1px solid var(--line);border-radius:6px;p
 .book img{max-width:100%;height:auto}
 .mapwrap{overflow:auto;max-height:75vh;border:1px solid var(--line);border-radius:8px;margin-top:8px}
 @media print{:root{--bg:#fff;--ink:#000;--mute:#444;--panel:#fff;--line:#bbb}.nav,.noprint,.who{display:none!important}main{padding:0}}
-.colw{max-width:1500px;margin:0 auto}
+.colw{max-width:1180px;margin:0 auto}
 .pax{display:grid;gap:12px;margin-top:4px}
 .mapwrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .mapwrap canvas{border:0!important;border-radius:0!important}
@@ -94,7 +94,7 @@ details{background:var(--panel);border:1px solid var(--line);border-radius:6px;p
 .tabp[hidden]{display:none}
 .side details{margin:10px 0}
 @media(min-width:960px){
- .pax{grid-template-columns:minmax(0,1.6fr) minmax(420px,1fr);grid-template-areas:"banner banner" "map side" "composer side";align-items:start}
+ .pax{grid-template-columns:minmax(0,1.7fr) minmax(340px,1fr);grid-template-areas:"banner banner" "map side" "composer side";align-items:start}
  .pbanner{grid-area:banner}.pmap{grid-area:map}.composer{grid-area:composer;position:static;border-top:0;padding:0}
  .side{grid-area:side;position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;padding-right:4px}
 }
@@ -213,7 +213,7 @@ details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
 .hc img{width:100%;height:100%;object-fit:cover;display:block}
 .hc0{right:150px;bottom:44px;transform:rotate(-7deg)}.hc1{right:0;bottom:84px;transform:rotate(5deg)}.hc2{right:72px;bottom:0;transform:rotate(-1deg);z-index:2}
 .hero{min-height:290px}
-@media(min-width:960px){.pax{grid-template-columns:minmax(0,1.6fr) minmax(420px,1fr)}}
+@media(min-width:960px){.pax{grid-template-columns:minmax(0,1.7fr) minmax(340px,1fr)}}
 @media(max-width:860px){.heroart{display:none}.hero{min-height:0}}
 @media(max-width:700px){.hud span:nth-child(3){display:none}.hud b,.hud span{padding:3px 9px;font-size:.7rem}.composer{padding:10px 0 8px}.composer select{min-height:36px;padding:6px 10px;font-size:.85rem;margin-bottom:4px}.composer textarea{min-height:52px;padding:9px 12px}.composer .row button{width:100%}.who{margin-left:0}}
 @media(max-width:700px){
@@ -924,7 +924,6 @@ const CHANGELOG=[
 "Ambiance Â« livre ancien Â» : option grain + vignette dans AccessibilitÃ© (dÃ©sactivÃ©e par dÃ©faut).",
 "Nations du scÃ©nario : dans Â« Ma propre entitÃ© Â», le type Nation ne s'invente plus â il se choisit parmi les nations qui existent dÃ©jÃ  dans le monde, avec leur but repris du scÃ©nario.",
 "Cartes lisibles : couleurs de faction franches sur les territoires contrÃ´lÃ©s, frontiÃ¨res nettes au trait blanc cassÃ© faÃ§on atlas, noms en hiÃ©rarchie claire (factions en capitales espacÃ©es, capitales moyennes, lieux petits) et routes commerciales visibles en permanence entre alliÃ©s.",
-"Interface Ã©largie : l'Ã©cran de jeu passe Ã  1500 px de large (panneau latÃ©ral confortable de 420 px) et les autres pages de 1000 Ã  1240 px â le contenu respire sans Ãªtre Ã©tirÃ© Ã  l'excÃ¨s.",
 "Interface soignÃ©e : accueil avec grande carte du Â« monde du jour Â» en fond de hÃ©ros, fine barre de progression dorÃ©e pendant que le monde rÃ©agit, toasts discrets pour les messages, Ã©poque (Â« Hiver â an 3 Â») dans le bandeau de la carte, cartes de l'accueil en cascade, zoom Ã  la molette sur la carte, pastille d'Ã©poque Ã  la couleur or.",
 "Retours reliÃ©s au dÃ©pÃ´t : l'onglet Retours envoie maintenant le retour en issue GitHub prÃ©remplie (titre, description, label bug ou amÃ©lioration) via un bouton unique Â« Envoyer le retour Â» â plus besoin de passer par Discord ou Reddit ; le formulaire est allÃ©gÃ© (les questions sur le prix ont Ã©tÃ© retirÃ©es).",
 "Correctif Ã©cran de choix : les emblÃ¨mes de faction Ã©taient invisibles (le style des images de fond les Ã©crasait Ã  taille nulle) et les cartes n'avaient aucune illustration â chaque carte affiche maintenant un aperÃ§u de la carte du monde sous l'emblÃ¨me.",
