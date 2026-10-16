@@ -13,10 +13,10 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v15oct-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v16oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
-  <img alt="Langues" src="https://img.shields.io/badge/langues-6-8d6fb3">
+  <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
   <img alt="Licence" src="https://img.shields.io/badge/licence-MIT-c05248">
 </p>
 
@@ -27,7 +27,7 @@
 ## 🎮 Comment jouer
 
 1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/) (miroir : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/))
-2. Cliquez **« Découvrir en 30 secondes → »** — une partie prête à explorer démarre
+2. Choisissez un **monde vedette** en un clic, ou « Découvrir en 30 secondes »
 3. Écrivez ce que fait votre faction — des exemples cliquables vous guident
 
 Aucune inscription. Rien n'est envoyé. Votre partie reste dans votre navigateur.
@@ -45,27 +45,28 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 ## ✨ Fonctionnalités
 
 - 📖 **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
-- 🎯 **Objectifs de partie** — 2 à 3 objectifs par partie (alliance, bataille, secrets, exploration), suivis dans l'interface
-- ⚖️ **Dilemmes mémorisés** — des décisions à 3 choix dont chaque issue est gravée au canon du monde, avec sa date
-- 🗺️ **Carte gravure procédurale** — continents, capitales, routes, brouillard, anneaux d'événements animés, front de guerre animé, zooms cinématiques
+- 🎭 **Rebonds de Chekhov** — les promesses posées il y a plus de 6 tours explosent enfin, même sans IA
+- 🧠 **Chronique interactive** — gravez n'importe quel tour au canon d'un clic (« le monde s'en souvient »)
+- 🏁 **Épilogue** — clôturez la partie avec le bilan mémorable de vos trahisons et alliances
+- 🎯 **Objectifs de partie** — 2 à 3 objectifs suivis dans l'interface
+- ⚖️ **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
+- 🗺️ **Carte vivante** — saisons, front de guerre animé, routes commerciales, anneaux d'événements, zooms cinématiques
+- 📍 **Lieux explorables** — chaque lieu du monde propose une expédition
 - 🤝 **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
-- 👤 **Personnages** — humeurs, objectifs, secrets découvrables
 - 🌙 **Monde autonome** — le monde continue d'évoluer pendant votre absence
 - 👥 **Multijoueur local** — jusqu'à 5 factions + mode spectateur
-- 📤 **Exports & partage** — livre de campagne HTML, replay animé, image de carte, post prêt pour Reddit/Discord, **semence de monde partageable** (code FM-XXXXXX pour rejouer le même monde)
-- ⬇️ **Téléchargeable** — l'onglet Télécharger emporte le jeu complet (partie incluse) en un fichier HTML jouable hors ligne
+- 📤 **Partage** — livre de campagne, replay, image de carte, post Reddit/Discord, **semence FM-XXXXXX** importable
+- ⬇️ **Téléchargeable** — l'onglet Télécharger emporte le jeu complet en un fichier HTML jouable hors ligne
+- 📲 **PWA** — le site s'installe sur l'écran d'accueil et joue hors ligne
 - 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair, accessibilité
-
-## 🚀 Auto-héberger
-
-Le jeu est `index.html` — un seul fichier. Déposez-le sur n'importe quel hébergement statique (Netlify, GitHub Pages, Vercel…) ou ouvrez-le directement en local. L'onglet **Télécharger** du jeu exporte aussi une copie jouable hors ligne.
 
 ## 📜 Journal des versions
 
-- **v15oct** — objectifs de partie, dilemmes mémorisés (gravés au canon), front de guerre animé sur la carte, semences de monde partageables, onglet Télécharger (copie hors ligne)
-- **v14oct** — carte vivante (anneaux animés, onde de choc), zooms cinématiques, refonte mobile, partage intégré, journal des versions dans le jeu
-- **v13oct** — monde autonome, accompagnement testeur, guide IA élargi (Mistral, Gemini, Ollama)
-- **v12oct** — bible du monde, canon, arcs narratifs, PNJ approfondis, exports
+- **v16oct** — mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, saisons, routes commerciales, lieux explorables, semences importables, fichiers .monde, test 20 tours, PWA
+- **v15oct** — objectifs de partie, dilemmes mémorisés, front de guerre animé, semences partageables, onglet Télécharger
+- **v14oct** — carte vivante, zooms cinématiques, refonte mobile, partage intégré
+- **v13oct** — monde autonome, accompagnement testeur, guide IA élargi
+- **v12oct** — bible du monde, canon, arcs narratifs, PNJ, exports
 - **v11oct** — fondation : moteur, carte procédurale, multijoueur, i18n
 
 ## 🤝 Contribuer
@@ -74,7 +75,7 @@ Projet en **test public** — chaque retour compte :
 
 - 🐛 Bug ou idée : ouvrez une [issue](https://github.com/Pacao2/Forgemonde/issues) (des templates sont fournis)
 - 💬 Ou utilisez l'onglet **Retours** du jeu : il génère un rapport structuré prêt à coller
-- 📝 Voir [CONTRIBUTING.md](CONTRIBUTING.md)
+- 🧪 Le mode fantôme (Outils) teste automatiquement le moteur sur 20 tours
 
 ## 📄 Licence
 
