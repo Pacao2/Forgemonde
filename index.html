@@ -331,65 +331,6 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .pickcard .th .em canvas{width:56px;height:56px;display:block;opacity:1}
 .pickcard .em{position:relative;z-index:2;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
 .pickcard .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
-/* ===== v17oct : carte plein écran, chronique et composer superposés ===== */
-main:has(.colw.fullmap){max-width:none;padding-left:0;padding-right:0}
-.colw.fullmap{max-width:none}
-.colw.fullmap .pax{display:block;margin-top:0}
-.colw.fullmap .pbanner{margin-bottom:8px}
-.colw.fullmap .pmap{position:relative;min-width:0}
-.colw.fullmap .mapstage{height:calc(100vh - 120px);min-height:430px}
-.colw.fullmap .mapwrap{height:100%;max-height:none}
-.colw.fullmap .hud{left:auto;right:12px;top:12px;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(560px,70%)}
-.colw.fullmap .hud .timebar{pointer-events:auto;margin:0;padding:6px 8px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;gap:6px}
-.colw.fullmap .hud .pill,.colw.fullmap .hud button{pointer-events:auto}
-.colw.fullmap .hud .timebar .mute{flex:0 0 auto;font-size:.72rem;margin:0;align-self:center}
-.colw.fullmap .hud .timebar button{min-height:30px;padding:4px 12px;font-size:.8rem;border-radius:999px}
-.colw.fullmap .legwrap{position:absolute;left:12px;top:12px;z-index:8;max-width:min(320px,80%)}
-.colw.fullmap .legwrap>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font:600 .8rem/1.2 var(--ff-ui);color:var(--ink);box-shadow:var(--sh)}
-.colw.fullmap .legwrap>summary::after{content:"▾";color:var(--gold);font-size:.7rem}
-.colw.fullmap .legwrap[open]>summary::after{content:"▴"}
-.colw.fullmap .legwrap>.leg{display:block;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:6px;box-shadow:var(--sh)}
-.colw.fullmap .sidepill{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:600 .82rem/1.2 var(--ff-ui);letter-spacing:.03em;color:var(--ink);padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--sh);white-space:nowrap}
-.colw.fullmap .sidepill::after{content:"▾";color:var(--gold);font-size:.7rem}
-.colw.fullmap details[open]>.sidepill::after{content:"▴"}
-.colw.fullmap .side{position:fixed;right:12px;top:74px;z-index:22;width:min(440px,42vw);max-height:calc(100vh - 96px);overflow:auto}
-.colw.fullmap details.side:not([open]){background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none;padding:0;max-height:none;overflow:visible}
-.colw.fullmap details.side[open]{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--sh)}
-.colw.fullmap details.side[open]>summary{margin-bottom:8px}
-.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;max-height:60vh;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"fac fac" "act send" "insp regen" "err err" "live live";gap:8px;align-items:center}
-.colw.fullmap details.composer[open]{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:10px 14px 8px;box-shadow:var(--sh)}
-.colw.fullmap details.composer:not([open]){left:auto;right:12px;bottom:12px;width:auto;display:block;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none;padding:0;max-height:none;overflow:visible}
-.colw.fullmap details.composer:not([open])>*{display:none}
-.colw.fullmap details.composer:not([open])>summary{display:inline-flex}
-.colw.fullmap .composer>#fac{grid-area:fac;margin:0;width:auto;justify-self:start;max-width:75%;min-height:32px;padding:4px 30px 4px 12px;font-size:.8rem}
-.colw.fullmap .composer>#act{grid-area:act;min-height:48px;max-height:120px}
-.colw.fullmap .composer>.row{grid-area:send;margin:0}
-.colw.fullmap .composer>.row button{min-height:48px}
-.colw.fullmap .composer>.err{grid-area:err;margin:0}
-.colw.fullmap .composer>.err:empty{display:none}
-.colw.fullmap .composer .inspwrap{grid-area:insp}
-.colw.fullmap .composer .regenwrap{grid-area:regen;justify-self:end}
-.colw.fullmap .composer #live{grid-area:live}
-.colw.fullmap .composer #live:empty{display:none}
-.colw.fullmap .composer .strip{margin:0}
-.colw.fullmap .composer details.inspwrap,.colw.fullmap .composer details.regenwrap{border:0;padding:0;margin:0;background:none}
-.colw.fullmap .composer details.inspwrap>summary,.colw.fullmap .composer details.regenwrap>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:600 .8rem/1.2 var(--ff-ui);color:var(--mute);padding:3px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
-.colw.fullmap .composer details.inspwrap>summary::after,.colw.fullmap .composer details.regenwrap>summary::after{content:"▾";font-size:.7rem}
-.colw.fullmap .composer details[open]>summary{color:var(--gold);border-color:rgba(210,162,76,.4)}
-.colw.fullmap .composer details[open]>summary::after{content:"▴"}
-.colw.fullmap .composer details.inspwrap>div,.colw.fullmap .composer details.regenwrap>div{margin-top:6px}
-.colw.fullmap .composer .chips{padding-bottom:6px}
-@media(max-width:1100px){
- .colw.fullmap .side{position:static;width:auto;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:0 4px 0 0;box-shadow:none;max-height:none}
- .colw.fullmap .composer{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:14px 0 10px;max-height:none;box-shadow:none}
- .colw.fullmap details.side>summary,.colw.fullmap details.composer>summary{display:none}
- .colw.fullmap .composer>.err:empty,.colw.fullmap .composer #live:empty{display:none}
- .colw.fullmap .mapstage{height:auto}
- .colw.fullmap .mapwrap{height:auto;max-height:62vh}
- .colw.fullmap .legwrap{position:static;max-width:none}
- .colw.fullmap .legwrap>.leg{background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
- .colw.fullmap .hud .timebar{position:static;background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
-}
 .pickcard h3{margin:0;font-family:var(--ff-title);font-weight:600;letter-spacing:.04em;font-size:1.05rem;color:var(--ink)}
 .pickcard .goal{margin:0;font-size:.88rem;line-height:1.5;color:var(--mute);background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px}
 .pickcard .kicker{position:absolute;left:12px;top:12px;z-index:2;background:var(--glass);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 11px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
@@ -724,8 +665,8 @@ function paintMap(c,N,det,o){o=o||{};const WW=o.W||MW,HH=o.H||MH,k=WW/MW,nmz=o.n
   MP.places.forEach(pl=>{const p=P.find(x=>x.n===pl.f)||P[0],r2=rng(hash(pl.name));let x=p.x+(r2()-.5)*110,y=p.y+(r2()-.5)*80-26;
     if(elev(x,y)<SEA+.04){x=p.x;y=p.y-30}
     g.beginPath();g.moveTo(x,y-8);g.lineTo(x+6,y);g.lineTo(x,y+8);g.lineTo(x-6,y);g.closePath();g.fillStyle="#a8423f";g.fill();g.lineWidth=2;g.strokeStyle="#2a2233";g.stroke();tx(pl.name,x,y-14,17,false)});
-  {const vg=g.createRadialGradient(WW/2,HH/2,Math.min(WW,HH)*.35,WW/2,HH/2,Math.max(WW,HH)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.14)");g.fillStyle=vg;g.fillRect(0,0,WW,HH)}
-  {const gr=rng(sd+7);g.globalAlpha=.035;for(let i=0;i<5200;i++){g.fillStyle=gr()<.5?"#000":"#fff";g.fillRect(gr()*WW,gr()*HH,1.2,1.2)}g.globalAlpha=1}
+  {const vg=g.createRadialGradient(WW/2,HH/2,Math.min(WW,HH)*.35,WW/2,HH/2,Math.max(WW,HH)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.34)");g.fillStyle=vg;g.fillRect(0,0,WW,HH)}
+  {const gr=rng(sd+7);g.globalAlpha=.07;for(let i=0;i<5200;i++){g.fillStyle=gr()<.5?"#000":"#fff";g.fillRect(gr()*WW,gr()*HH,1.2,1.2)}g.globalAlpha=1}
   g.strokeStyle="rgba(210,162,76,.6)";g.lineWidth=1.5;g.strokeRect(11,11,WW-22,HH-22);
   g.strokeStyle="#2a2233";g.lineWidth=3;g.strokeRect(4,4,WW-8,HH-8);
   g.beginPath();g.moveTo(WW-50,HH-78);g.lineTo(WW-42,HH-48);g.lineTo(WW-58,HH-48);g.closePath();g.fillStyle="#f4e7c5";g.fill();g.lineWidth=2;g.stroke();
@@ -972,7 +913,6 @@ const CHANGELOG=[
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
-"Écran de jeu épuré façon Pax Historia : la carte remplit tout l'écran et toutes les commandes se cachent derrière de petites pastilles discrètes — « ⚔ Agir » en bas à droite (champ d'action, suggestions « Pas d'inspiration » et « Réécrire le récit » en sous-pastilles), « 📖 Chronique » en haut à droite (chronique et onglets), « Factions » en haut à gauche, date et barre du temps en haut — la vue de la carte reste dégagée ; sur petit écran, tout reste empilé et ouvert.",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
@@ -3082,13 +3022,11 @@ function play(){
   const time=el("div",{class:"timebar"},el("span",{class:"mute",text:"Avancer le temps"}),
     [["+1 mois",1],["+1 saison",3],["+1 an",12]].map(([t,n])=>el("button",{class:"alt",on:{click:()=>simulate(n)},...dis,text:t})),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
-  const wide=window.matchMedia&&window.matchMedia("(min-width:1100px)").matches;
   return el("div",{class:"pax"},
     banners.length?el("div",{class:"pbanner"},banners):null,
-    el("div",{class:"pmap"},stageNode(el("div",{class:"hud"},hud,time),mapNode),
-      legend?el("details",{class:"legwrap"},el("summary",{text:"Factions"}),legend):null),
-    el("details",{class:"composer",...(wide?{}:{open:""})},el("summary",{class:"sidepill",text:"⚔ Agir"}),paywall?paywallCard():null,freeChip(),action,el("details",{class:"regenwrap"},el("summary",{text:"✍️ Réécrire le dernier récit"}),el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
-    el("details",{class:"side",...(wide?{}:{open:""})},el("summary",{class:"sidepill",text:"📖 Chronique"}),tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
+    el("div",{class:"pmap"},stageNode(hud,mapNode),legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
+    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action),
+    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
 function playClassic(){
   const w=S.world,F=facs(),ents=entities(),who=chatWho&&ents.some(x=>x.nom===chatWho)?chatWho:(ents[0]&&ents[0].nom)||"",dis=busy?{disabled:""}:{};
@@ -3117,9 +3055,8 @@ function playClassic(){
     dl?el("div",{class:"row"},el("button",{class:"alt",on:{click:exportMap},text:"Exporter la carte (image)"})):null,
     el("label",{for:"fac",text:"Tu joues"}),el("select",{id:"fac"},F.map((f,i)=>el("option",{value:f,...((S.playerFac&&like(f.split(":")[0].trim(),S.playerFac))||(!S.playerFac&&S.hero&&like(f.split(":")[0].trim(),S.hero.faction)))?{selected:""}:{},text:f}))),
     el("label",{for:"act",text:"Ton action"}),el("textarea",{id:"act",placeholder:(window.innerWidth<560?"Ex. J'envoie un émissaire proposer une trêve.":"Ex. J'envoie un émissaire proposer une trêve, mais je fais fortifier la frontière en secret.")}),
-    S.log.length<3?el("details",{class:"inspwrap"},el("summary",{text:"💡 Pas d'inspiration ? Essaie :)"}),
-      el("div",{class:"chips",style:"flex-wrap:wrap;gap:6px;margin-top:6px"},
-      ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x})))):null,
+    S.log.length<3?el("div",{class:"strip",style:"flex-direction:column;align-items:stretch;gap:4px"},el("p",{class:"mute",style:"margin:0;font-size:.85rem",text:"Pas d'inspiration ? Essaie :"}),
+      ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x}))):null,
     el("div",{class:"err",role:"status",text:err||sim}),
     el("div",{class:"row"},
       el("button",{on:{click:()=>{const a=$("act").value.trim();if(!a){err="Écris une action.";return draw()}run(a,$("fac").value)}},...dis,text:busy&&!sim?"Le monde réagit…":"Agir"}),
@@ -3190,7 +3127,7 @@ function draw(){
   const keep={};document.querySelectorAll("#app input[id],#app textarea[id]").forEach(n=>{keep[n.id]=n.value});
   const ks={};document.querySelectorAll("#app select[id^=jf-],#app select#goaltype,#app select#goalyears").forEach(n=>{ks[n.id]=n.value});
   const msv=$("mapstyle")&&$("mapstyle").value,tone=$("tone")&&$("tone").value,fac=$("fac")&&$("fac").value,dur=$("dur")&&$("dur").value,sy=window.scrollY;
-  {const body=(view==="play"&&S.world)?play():(view==="pick"||view==="picknew")&&S.world?(view==="pick"?pickView():pickNewView()):view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw fullmap":view==="mp"?"colw":"col"},body))}
+  {const body=(view==="play"&&S.world)?play():(view==="pick"||view==="picknew")&&S.world?(view==="pick"?pickView():pickNewView()):view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"||view==="mp"?"colw":"col"},body))}
   if(!S.fresh){for(const k in keep){const n=$(k);if(n&&keep[k])n.value=keep[k]}if(tone&&$("tone"))$("tone").value=tone;if(msv&&$("mapstyle"))$("mapstyle").value=msv}
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
