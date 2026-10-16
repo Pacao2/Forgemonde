@@ -706,8 +706,8 @@ function adopt(w){
   S.world={...wExtra(w),y0:cut(w.y0,6),src:cut(w.src||w.key||"",120),ms:cut(w.ms,20)||"continent",name:cut(w.name,60),tone:cut(w.tone,40),concept:cut(w.concept,600),magic:cut(w.magic,600),factions:cut(w.factions,900)};S.hist=[];S.gaz=[];S.incoh=[];loadX(null);
   const pw={};if(w.power&&typeof w.power==="object")for(const k in w.power){const v=Number(w.power[k]);if(isFinite(v))pw[k]=Math.max(.55,Math.min(1.6,v))}
   S.map={power:pw,places:(Array.isArray(w.places)?w.places:[]).slice(0,8).map(p=>({name:cut(p&&p.name,28),f:cut(p&&p.f,60)}))};
-  S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.hero=null;S.recap=null;S.rel={};S.gm=[];S.draft=null;S.goals={};S.goalDone=[];S.dilemmaDone=false;save();view="play";seedGoals();
-  run("Décris la situation du monde pour quelqu'un qui y arrive.",facs()[0]||"Le monde",0,false);
+  S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.hero=null;S.playerFac=null;S.recap=null;S.rel={};S.gm=[];S.draft=null;S.goals={};S.goalDone=[];S.dilemmaDone=false;save();seedGoals();
+  introAct="Décris la situation du monde pour quelqu'un qui y arrive.";view="pick";draw();
 }
 const myDoc=c=>ext[c].find(x=>x.id===me)||{};
 const favCount=k=>ext.votes.filter(v=>(v.keys||[]).includes(k)).length;
@@ -851,7 +851,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct — l'atlas s'illumine";
+const BUILD="v17oct.1 — choisis qui tu diriges";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -882,6 +882,11 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v17oct.1 — 17 octobre 2026 : choisis qui tu diriges",[
+"Comme dans Pax Historia : au lancement d'une partie, un écran présente chaque faction avec son emblème et son but — clique sur celle que tu incarnes.",
+"Option « Le monde entier » : diriger aucun camp en particulier et influencer qui tu veux, tour après tour.",
+"Le choix est mémorisé : le sélecteur « Tu joues », le brouillard d'exploration, le partage et le monde autonome suivent ta faction.",
+"Changer de camp reste possible à tout moment via le sélecteur « Tu joues »."]],
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine (polish visuel)",[
 "Récompenses : éclat doré animé sur les tours aux événements marquants, pulsation sur les rebonds de Chekhov tenus.",
 "Narration : lettrine enluminée en tête du dernier tour, bordure du tour à la couleur de la faction concernée, transition « page tournée » à chaque nouveau tour.",
@@ -1081,7 +1086,7 @@ function emblem(n,col,sz){
   return el("img",{src:u,alt:"Emblème de "+n,width:sz,height:sz,style:"vertical-align:middle;margin-right:4px"});
 }
 function known(){
-  const hf=(S.hero&&S.hero.faction)||names()[0],set=new Set([hf,...(S.disc||[])]);
+  const hf=(S.hero&&S.hero.faction)||playerFac(),set=new Set([hf,...(S.disc||[])]);
   Object.entries(S.rel||{}).forEach(([k,v])=>{const[a,b]=k.split("|");if(a===hf)set.add(b);if(b===hf)set.add(a)});return set;
 }
 function drawFog(g,P){
@@ -1096,7 +1101,7 @@ function sharePost(){
   "Factions : "+names().slice(0,6).join(", ")+(names().length>6?" et d'autres…":"")+"\n"+
   (ev.length?"Derniers événements marquants :\n"+ev.map(x=>"- "+x).join("\n")+"\n":"")+
   (last&&last.n?"Dernier rebondissement : \""+cut(last.n,200)+"…\"\n":"")+
-  "\nJe dirige "+((S.hero&&S.hero.faction)||names()[0])+" dans Forgemonde, un jeu narratif où le monde se souvient de tes choix. Viens tester : https://pacao2.github.io/Forgemonde/";
+  "\nJe dirige "+((S.hero&&S.hero.faction)||playerFac())+" dans Forgemonde, un jeu narratif où le monde se souvient de tes choix. Viens tester : https://pacao2.github.io/Forgemonde/";
 }
 function shareCopy(){(navigator.clipboard?navigator.clipboard.writeText(sharePost()):Promise.reject()).then(()=>{err="Post copié : colle-le sur Discord ou Reddit avec l'image de la carte !";draw()}).catch(()=>{err="Copie impossible sur cet appareil.";draw()})}
 function sharePanel(){
@@ -1627,8 +1632,8 @@ async function cloudDelete(){try{await db.doc(cpath()).delete();cloud=null;err="
 function playPreset(p){
   S.world={ms:p.ms||"continent",name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions};initState();S.draft=null;
   S.seed="FM-"+hHash(S.world.name+"|"+S.world.tone+"|"+S.world.factions).toString(36).toUpperCase().slice(0,8);
-  S.goals={};S.goalDone=[];S.dilemmaDone=false;seedGoals();save();view="play";
-  run("Décris la situation initiale du monde et les tensions entre les factions.",facs()[0]||"Le monde",0,false);
+  S.goals={};S.goalDone=[];S.dilemmaDone=false;seedGoals();save();
+  introAct="Décris la situation initiale du monde et les tensions entre les factions.";view="pick";draw();
 }
 function presetCard(w){
   return el("article",{class:"card"},
@@ -1738,7 +1743,7 @@ function nav(){
   const al=navAlert();
   return el("nav",{class:"nav"},brand(),
     b("hub","Accueil"),
-    S.world?(()=>{const n=el("button",{class:view==="play"?"":"alt",on:{click:()=>{view="play";err="";draw()}},text:"Ma partie",...(al?{title:al}:{})});if(al)n.appendChild(el("span",{class:"nbadge","aria-label":al}));return n})():null,
+    S.world?(()=>{const goP=(!S.log.length&&!S.playerFac)?"pick":"play";const n=el("button",{class:view==="play"||view==="pick"?"":"alt",on:{click:()=>{view=goP;err="";draw()}},text:"Ma partie",...(navAlert()&&!goP.startsWith("pick")?{title:navAlert()}:{})});if(goP==="play"){const a=navAlert();if(a)n.appendChild(el("span",{class:"nbadge","aria-label":a}))}return n})():null,
     b("forge","Créer"),
     S.world&&S.log.length>1?b("replay","Replay"):null,
     S.world?b("book","Livre"):null,
@@ -1891,7 +1896,28 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.nudgeHide=false}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.nudgeHide=false}
+const playerFac=()=>S.playerFac||names()[0]||"";
+let introAct="";
+function pickFac(f){
+  S.playerFac=(f==="Le monde")?null:f;save();
+  view="play";draw();
+  const a=introAct;introAct="";
+  if(a)run(a,f||facs()[0]||"Le monde",0,false);
+}
+function pickView(){
+  const F=facs().map(s=>{const i=s.indexOf(":");return i<0?{n:s.trim(),g:""}:{n:s.slice(0,i).trim(),g:s.slice(i+1).trim()}});
+  return el("div",{class:"col"},
+    el("h1",{text:"Qui dirigeras-tu ?"}),
+    el("p",{class:"mute",text:"Comme dans Pax Historia : choisis l'entité que tu incarnes dans "+(S.world?S.world.name:"ce monde")+". Les autres factions vivront leur propre vie — et se souviendront de tes choix."}),
+    el("div",{class:"grid",style:"margin-top:14px"},
+      F.map((f,i)=>el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Diriger "+f.n,on:{click:()=>pickFac(f.n),keydown:e=>{if(e.key==="Enter"||e.key===" ")pickFac(f.n)}}},
+        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center;gap:8px"},emblem(f.n,facColor(f.n,i),34)),
+        el("div",{class:"bd"},el("h3",{text:f.n}),f.g?el("p",{text:"But : "+f.g}):null))),
+      el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Observer le monde entier",on:{click:()=>pickFac("Le monde"),keydown:e=>{if(e.key==="Enter"||e.key===" ")pickFac("Le monde")}}},
+        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center"},el("span",{style:"font-size:2rem",text:"🌍"})),
+        el("div",{class:"bd"},el("h3",{text:"Le monde entier"}),el("p",{text:"Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour."})))));
+}
 /* ===== Mode hybride : moteur de règles + récit par l'IA (facultative) ===== */
 const HY=()=>S.opts.hybrid==="activé";
 function hRng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
@@ -2434,7 +2460,7 @@ function autoTick(delay){
     const o=S.opts,onEvt=o.autoStop==="à chaque événement majeur";
     busy=true;sim="Tour autonome "+(autoCount+1);err="";draw();
     try{
-      const res=await turn("Le monde évolue de lui-même : chaque faction poursuit ses propres buts sans intervention du joueur.",(S.hero&&S.hero.faction)||facs()[0]||"Le monde",STEP[o.autoStep]||3,true,onEvt);
+      const res=await turn("Le monde évolue de lui-même : chaque faction poursuit ses propres buts sans intervention du joueur.",(S.hero&&S.hero.faction)||playerFac()||"Le monde",STEP[o.autoStep]||3,true,onEvt);
       autoCount++;busy=false;sim="";if(S.goal&&S.goal.done)return autoStop("Autonomie arrêtée : la partie est terminée.");
       if(onEvt&&res.maj.length)return autoStop("Autonomie arrêtée : événement majeur ("+res.maj[0].titre+").");
       if(autoCount>=(MAXT[o.autoMax]||10))return autoStop("Autonomie arrêtée : limite de "+autoCount+" tours atteinte.");
@@ -2857,8 +2883,8 @@ const det=(k,title,...kids)=>{const d=el("details",{},el("summary",{text:title})
 async function start(){
   const f=readForm();
   if(!f.name||!f.concept||!f.factions){err="Renseigne au moins le nom, le concept et les factions.";return draw()}
-  const gt=($("goaltype")||{}).value,gy=($("goalyears")||{}).value;if(f.diverge)f.concept=f.concept+" Point de divergence : "+f.diverge+".";selP="";S.world=f;initState();S.goal=newGoal(gt,gy);S.hero=S.heroDraft||null;S.heroDraft=null;S.draft=null;save();view="play";
-  run("Décris la situation initiale du monde et les tensions entre les factions.",facs()[0]||"Le monde",0,false);
+  const gt=($("goaltype")||{}).value,gy=($("goalyears")||{}).value;if(f.diverge)f.concept=f.concept+" Point de divergence : "+f.diverge+".";selP="";S.world=f;initState();S.goal=newGoal(gt,gy);S.hero=S.heroDraft||null;S.heroDraft=null;S.draft=null;save();
+  introAct="Décris la situation initiale du monde et les tensions entre les factions.";view="pick";draw();
 }
 function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
 function copyLog(){
@@ -2959,7 +2985,7 @@ function playClassic(){
       el("div",{class:"row"},autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Arrêter l'autonomie"}):el("button",{on:{click:autoStart},...dis,text:"Lancer l'autonomie"}))),
     el("h2",{text:"Carte"}),mapWidget(),legend(),focusPanel(),mapEditor(),
     dl?el("div",{class:"row"},el("button",{class:"alt",on:{click:exportMap},text:"Exporter la carte (image)"})):null,
-    el("label",{for:"fac",text:"Tu joues"}),el("select",{id:"fac"},F.map(f=>el("option",{value:f,...(S.hero&&like(f.split(":")[0].trim(),S.hero.faction)?{selected:""}:{}),text:f}))),
+    el("label",{for:"fac",text:"Tu joues"}),el("select",{id:"fac"},F.map((f,i)=>el("option",{value:f,...((S.playerFac&&like(f.split(":")[0].trim(),S.playerFac))||(!S.playerFac&&S.hero&&like(f.split(":")[0].trim(),S.hero.faction)))?{selected:""}:{},text:f}))),
     el("label",{for:"act",text:"Ton action"}),el("textarea",{id:"act",placeholder:(window.innerWidth<560?"Ex. J'envoie un émissaire proposer une trêve.":"Ex. J'envoie un émissaire proposer une trêve, mais je fais fortifier la frontière en secret.")}),
     S.log.length<3?el("div",{class:"strip",style:"flex-direction:column;align-items:stretch;gap:4px"},el("p",{class:"mute",style:"margin:0;font-size:.85rem",text:"Pas d'inspiration ? Essaie :"}),
       ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x}))):null,
@@ -3029,11 +3055,11 @@ function playClassic(){
 }
 function draw(){
   if(view!=="replay")rpStop();applyA11y();
-  if(!S.world&&(view==="play"||view==="replay"||view==="book"))view="hub";
+  if(!S.world&&(view==="play"||view==="replay"||view==="book"||view==="pick"))view="hub";
   const keep={};document.querySelectorAll("#app input[id],#app textarea[id]").forEach(n=>{keep[n.id]=n.value});
   const ks={};document.querySelectorAll("#app select[id^=jf-],#app select#goaltype,#app select#goalyears").forEach(n=>{ks[n.id]=n.value});
   const msv=$("mapstyle")&&$("mapstyle").value,tone=$("tone")&&$("tone").value,fac=$("fac")&&$("fac").value,dur=$("dur")&&$("dur").value,sy=window.scrollY;
-  {const body=(view==="play"&&S.world)?play():view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
+  {const body=(view==="play"&&S.world)?play():view==="pick"&&S.world?pickView():view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
   if(!S.fresh){for(const k in keep){const n=$(k);if(n&&keep[k])n.value=keep[k]}if(tone&&$("tone"))$("tone").value=tone;if(msv&&$("mapstyle"))$("mapstyle").value=msv}
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
