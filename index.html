@@ -895,7 +895,7 @@ function chekhovFire(auto){
 }
 const CHANGELOG=[
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine, et tu choisis qui tu diriges",[
-"Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction, nation ou personnage) que le monde intègre comme une puissance à part entière.",
+"Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
 "Cartes de sélection soignées : pastilles de type, nom en grand sur l'image, but en encart lisible, liseré doré au survol et au clavier, emblèmes agrandis.",
 "Le choix est mémorisé partout : compositeur « Tu joues », brouillard d'exploration, partage, monde autonome — et modifiable à tout moment.",
 "Récompenses : éclat doré sur les tours aux événements marquants, pulsation sur les rebonds de Chekhov tenus.",
@@ -908,6 +908,7 @@ const CHANGELOG=[
 "Accueil : parallaxe discrète de la lune et du titre sous le doigt ou la souris.",
 "Thème : bouton lune/soleil directement dans la barre de navigation.",
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
+"Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperçu social (Open Graph) pointent vers le site principal — l'ancienne image renvoyait une erreur 404.",
@@ -1924,32 +1925,41 @@ function pickView(){
     el("div",{class:"pickgrid"},
       F.map((f,i)=>card("Faction",null,el("span",{class:"em"},emblem(f.n,facColor(f.n,i),56)),f.n,
         f.g?"But : "+f.g:null,()=>pickFac(f.n),"Diriger "+f.n)),
-      card("Toi","✨",null,"Ma propre entité","Crée une faction, une nation ou un personnage : le monde l'intégrera comme une puissance à part entière.",()=>{view="picknew";draw()},"Créer ma propre entité"),
+      card("Toi","✨",null,"Ma propre entité","Crée une faction ou un personnage, ou incarne une nation déjà présente dans le scénario.",()=>{view="picknew";draw()},"Créer ma propre entité"),
       card("Libre","🌍",null,"Le monde entier","Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour.",()=>pickFac("Le monde"),"Observer le monde entier")),
     el("p",{class:"pickhint",text:"Tu pourras changer de camp à tout moment dans « Ma partie »."}));
 }
 function pickNewView(){
+  const NA=facs().map(s=>{const i=s.indexOf(":");return i<0?{n:s.trim(),g:""}:{n:s.slice(0,i).trim(),g:s.slice(i+1).trim()}});
+  const isNat=()=>(($("pntype")||{value:"Faction"}).value==="Nation");
+  const sync=()=>{const n=isNat();$("pnnameL").style.display=n?"none":"";$("pnname").style.display=n?"none":"";$("pnnationL").style.display=n?"":"none";$("pnnation").style.display=n?"":"none";$("pnnhint").style.display=n?"":"none"};
   return el("div",{class:"col"},
     el("h1",{text:"Ton entité"}),
     el("p",{class:"mute",text:"Crée ce que tu diriges dans "+(S.world?S.world.name:"ce monde")+". Le monde la traitera comme n'importe quelle autre puissance — et se souviendra de ses actes."}),
     el("label",{for:"pntype",text:"Type d'entité"}),
-    el("select",{id:"pntype"},["Faction","Nation","Personnage"].map(t=>el("option",{value:t,text:t}))),
-    el("label",{for:"pnname",text:"Nom"}),
-    el("input",{id:"pnname",placeholder:"Ex. La Congrégation du Verre, la République libre d'Avaris, Elena la Cartographe…","aria-label":"Nom de ton entité"}),
+    el("select",{id:"pntype",on:{change:sync}},["Faction","Nation","Personnage"].map(t=>el("option",{value:t,text:t}))),
+    el("label",{id:"pnnationL",for:"pnnation",text:"Nation du scénario",style:"display:none"}),
+    el("select",{id:"pnnation",style:"display:none","aria-label":"Nation à incarner",on:{change:()=>{const f=NA.find(x=>x.n===$("pnnation").value);if(f&&f.g&&$("pngoal")&&!$("pngoal").value.trim())$("pngoal").value=f.g}}},NA.map(x=>el("option",{value:x.n,text:x.n}))),
+    el("p",{id:"pnnhint",class:"mute",style:"display:none;margin-top:-6px",text:"Une nation doit exister dans le scénario : choisis parmi les puissances du monde."}),
+    el("label",{id:"pnnameL",for:"pnname",text:"Nom"}),
+    el("input",{id:"pnname",placeholder:"Ex. La Congrégation du Verre, Elena la Cartographe…","aria-label":"Nom de ton entité"}),
     el("label",{for:"pngoal",text:"But (ce qu'elle cherche)"}),
     el("textarea",{id:"pngoal",placeholder:"Ex. Trouver la cité engloutie et en garder le secret.",text:""}),
     el("div",{class:"err",role:"status",text:err}),
     el("div",{class:"row"},
       el("button",{on:{click:()=>{
-        const ty=$("pntype").value,nm=$("pnname").value.trim(),gl=$("pngoal").value.trim();
-        if(!nm){err="Donne un nom à ton entité.";return draw()}
-        S.world.factions=cut((S.world.factions||"")+"\n"+nm+" : "+(gl||"imposer sa marque sur ce monde"),1000);
+        const ty=$("pntype").value,nat=isNat(),nm=nat?($("pnnation")||{value:""}).value:$("pnname").value.trim(),gl=$("pngoal").value.trim()||(nat?(NA.find(x=>x.n===nm)||{g:""}).g:"");
+        if(nat&&!NA.length){err="Ce scénario n'a pas encore de nation à incarner : crée une faction ou un personnage, ou choisis une faction de l'écran précédent.";return draw()}
+        if(!nm){err=nat?"Choisis une nation du scénario.":"Donne un nom à ton entité.";return draw()}
+        if(!nat)S.world.factions=cut((S.world.factions||"")+"\n"+nm+" : "+(gl||"imposer sa marque sur ce monde"),1000);
         S.playerFac=nm;
         if(ty==="Personnage")S.hero=Object.assign(S.hero||{},{nom:nm,faction:nm,role:"personnage libre",desir:cut(gl,300)});
         save();
         view="play";draw();
         const a=introAct;introAct="";
-        run(a||"Décris la situation initiale du monde et les tensions entre les factions. Intègre la nouvelle entité « "+nm+" » ("+ty.toLowerCase()+") au monde.",nm,0,false);
+        run(a||(nat
+          ?"Décris la situation initiale du monde et les tensions entre les factions. Le joueur dirige la nation « "+nm+" », déjà présente dans le scénario : présente la situation de son point de vue."
+          :"Décris la situation initiale du monde et les tensions entre les factions. Intègre la nouvelle entité « "+nm+" » ("+ty.toLowerCase()+") au monde."),nm,0,false);
       }},...(busy?{disabled:""}:{}),text:"Entrer dans le monde"}),
       el("button",{class:"alt",on:{click:()=>{view="pick";draw()}},text:"← Revenir aux factions"})));
 }

@@ -28,7 +28,7 @@
 
 1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/) (miroir : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/))
 2. Choisissez un **monde vedette** en un clic, ou « Découvrir en 30 secondes »
-3. **Choisissez qui vous incarnerez** : une faction du scénario, **votre propre entité** (faction, nation ou personnage), ou « le monde entier »
+3. **Choisissez qui vous incarnerez** : une faction du scénario, **votre propre entité** (faction ou personnage), une nation déjà présente dans le scénario, ou « le monde entier »
 4. Écrivez ce que fait votre camp — des exemples cliquables vous guident
 
 Aucune inscription. Rien n'est envoyé. Votre partie reste dans votre navigateur.
@@ -45,7 +45,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## ✨ Fonctionnalités
 
-- 🎭 **Choisissez qui vous diriges** — les factions du scénario, ou créez votre propre entité (faction, nation ou personnage) intégrée au monde comme une puissance à part entière, ou mode « monde entier »
+- 🎭 **Choisissez qui vous diriges** — les factions du scénario, ou créez votre propre entité (faction ou personnage) intégrée au monde comme une puissance à part entière, ou incarnez une nation déjà présente dans le scénario, ou mode « monde entier »
 - 📖 **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
 - 🎭 **Rebonds de Chekhov** — les promesses posées il y a plus de 6 tours explosent enfin, même sans IA
 - 🧠 **Chronique interactive** — gravez n'importe quel tour au canon d'un clic (« le monde s'en souvient »)
@@ -53,7 +53,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - 🎯 **Objectifs de partie** — 2 à 3 objectifs suivis dans l'interface
 - ⚖️ **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
 - 🗺️ **Carte vivante** — saisons, front de guerre animé, routes commerciales, anneaux d'événements, zooms cinématiques, lueurs de relief et infobulle au survol
-- 🎨 **Interface vivante** — palette qui suit les saisons, éclat doré sur les événements marquants, lettrine enluminée, transition « page tournée », jauges circulaires, pastille d'alerte, parallaxe d'accueil, ambiance « livre ancien » optionnelle
+- 🎨 **Interface vivante** — palette qui suit les saisons, éclat doré sur les événements marquants, lettrine enluminée, transition « page tournée », jauges circulaires, pastille d'alerte, parallaxe de l'accueil, ambiance « livre ancien » optionnelle
 - 📍 **Lieux explorables** — chaque lieu du monde propose une expédition
 - 🤝 **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
 - 🌙 **Monde autonome** — le monde continue d'évoluer pendant votre absence
@@ -77,7 +77,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 Une version par jour, du plus récent au plus ancien.
 
 ### Vendredi 17 octobre 2026
-- **v17oct — l'atlas s'illumine, et tu choisis qui tu diriges** : écran « Qui dirigeras-tu ? » (factions du scénario en cartes avec emblème et but, « Ma propre entité » — faction, nation ou personnage intégrée au monde — ou « Le monde entier »), choix mémorisé partout et modifiable à tout moment ; polish visuel : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte, squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
+- **v17oct — l'atlas s'illumine, et tu choisis qui tu diriges** : écran « Qui dirigeras-tu ? » (factions du scénario en cartes avec emblème et but, « Ma propre entité » — faction ou personnage intégrée au monde, ou incarnation d'une nation déjà présente dans le scénario — ou « Le monde entier »), choix mémorisé partout et modifiable à tout moment ; les nations ne s'inventent plus : elles se choisissent parmi celles du scénario ; polish visuel : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte, squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
 
 ### Jeudi 16 octobre 2026
 - **v16oct — la mémoire qui paie** : mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, négociation à deux voix pendant les dilemmes, saisons et routes commerciales sur la carte, lieux explorables, semences FM-XXXXXX importables, fichiers .monde, test fantôme 20 tours, PWA ; journal relié au dépôt GitHub ; sécurité : délais d'attente sur les appels IA (60 s / 120 s), CSP renforcée ; correctifs de partage (lien et aperçu social vers le site principal, cache service worker renommé à chaque version)
