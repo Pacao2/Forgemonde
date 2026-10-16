@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,8 +12,8 @@
 <meta property="og:title" content="Forgemonde — un monde qui se souvient de vos choix">
 <meta property="og:description" content="Dirigez une faction : guerre, alliance ou trahison, le monde réagit et n'oublie jamais. Jouable en 30 secondes, gratuit, sans inscription.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://forge-des-mondes.netlify.app">
-<meta property="og:image" content="https://forge-des-mondes.netlify.app/og-image.png">
+<meta property="og:url" content="https://pacao2.github.io/Forgemonde/">
+<meta property="og:image" content="https://pacao2.github.io/Forgemonde/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Forgemonde — un monde qui se souvient de vos choix">
 <meta name="twitter:description" content="Dirigez une faction. Le monde réagit — et n'oublie jamais. Gratuit, sans inscription.">
@@ -824,7 +823,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v16oct.2 — journal relié au dépôt GitHub";
+const BUILD="v16oct.3 — correctifs de partage et PWA";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -854,6 +853,10 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v16oct.3 — 16 octobre 2026 : correctifs de partage et PWA",[
+"Partage : le lien du post copiable est désormais le site principal (pacao2.github.io/Forgemonde), plus le miroir.",
+"Partage social : l'aperçu (Open Graph) pointe vers le site principal avec une image hébergée sur le dépôt — l'ancienne image renvoyait une erreur 404.",
+"PWA : le cache du service worker est renommé à chaque version pour que les mises à jour arrivent immédiatement chez les joueurs installés."]],
 ["v16oct.2 — 16 octobre 2026 : journal relié au dépôt",[
 "L'onglet Journal affiche désormais l'activité récente du dépôt GitHub (6 derniers commits) en plus du journal local — avec lien direct vers le code source.",
 "Résilient : hors ligne, le journal local reste complet ; la section dépôt affiche un message discret.",
@@ -1052,7 +1055,7 @@ function sharePost(){
   "Factions : "+names().slice(0,6).join(", ")+(names().length>6?" et d'autres…":"")+"\n"+
   (ev.length?"Derniers événements marquants :\n"+ev.map(x=>"- "+x).join("\n")+"\n":"")+
   (last&&last.n?"Dernier rebondissement : \""+cut(last.n,200)+"…\"\n":"")+
-  "\nJe dirige "+((S.hero&&S.hero.faction)||names()[0])+" dans Forgemonde, un jeu narratif où le monde se souvient de tes choix. Viens tester : https://forge-des-mondes.netlify.app";
+  "\nJe dirige "+((S.hero&&S.hero.faction)||names()[0])+" dans Forgemonde, un jeu narratif où le monde se souvient de tes choix. Viens tester : https://pacao2.github.io/Forgemonde/";
 }
 function shareCopy(){(navigator.clipboard?navigator.clipboard.writeText(sharePost()):Promise.reject()).then(()=>{err="Post copié : colle-le sur Discord ou Reddit avec l'image de la carte !";draw()}).catch(()=>{err="Copie impossible sur cet appareil.";draw()})}
 function sharePanel(){
