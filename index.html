@@ -331,6 +331,29 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .pickcard .th .em canvas{width:56px;height:56px;display:block;opacity:1}
 .pickcard .em{position:relative;z-index:2;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
 .pickcard .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+/* ===== v17oct : carte plein écran, chronique et composer superposés ===== */
+.colw.fullmap{max-width:none}
+.colw.fullmap .pax{display:block;margin-top:0}
+.colw.fullmap .pbanner{margin-bottom:8px}
+.colw.fullmap .pmap{position:relative;min-width:0}
+.colw.fullmap .mapstage{height:calc(100vh - 120px);min-height:430px}
+.colw.fullmap .mapwrap{height:100%;max-height:none}
+.colw.fullmap .maptools{position:absolute;left:12px;top:12px;z-index:8;display:flex;flex-direction:column;gap:8px;max-width:min(400px,55%)}
+.colw.fullmap .maptools:empty{display:none}
+.colw.fullmap .maptools .leg,.colw.fullmap .maptools .timebar{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:0;box-shadow:var(--sh)}
+.colw.fullmap .maptools .timebar{flex-wrap:wrap}
+.colw.fullmap .regen{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.colw.fullmap .side{position:fixed;right:12px;top:74px;bottom:170px;width:min(440px,42vw);z-index:22;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow:auto;box-shadow:var(--sh)}
+.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px 6px;box-shadow:var(--sh);max-height:46vh;overflow:auto}
+.colw.fullmap .composer .chips{padding-bottom:6px}
+@media(max-width:1100px){
+ .colw.fullmap .side{position:static;width:auto;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:0 4px 0 0;box-shadow:none;max-height:none}
+ .colw.fullmap .composer{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:14px 0 10px;max-height:none;box-shadow:none}
+ .colw.fullmap .mapstage{height:auto}
+ .colw.fullmap .mapwrap{height:auto;max-height:62vh}
+ .colw.fullmap .maptools{position:static;max-width:none;background:none}
+ .colw.fullmap .maptools .leg,.colw.fullmap .maptools .timebar,.colw.fullmap .regen{background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
 .pickcard h3{margin:0;font-family:var(--ff-title);font-weight:600;letter-spacing:.04em;font-size:1.05rem;color:var(--ink)}
 .pickcard .goal{margin:0;font-size:.88rem;line-height:1.5;color:var(--mute);background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px}
 .pickcard .kicker{position:absolute;left:12px;top:12px;z-index:2;background:var(--glass);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 11px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
@@ -913,6 +936,7 @@ const CHANGELOG=[
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
+"Carte plein écran : dans « Ma partie », la carte occupe maintenant toute la hauteur de l'écran — la chronique, les onglets (conseillers, monde, outils) et le champ d'action flottent par-dessus en panneaux translucides ; sur petit écran, tout redevient empilé comme avant.",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
@@ -1075,7 +1099,6 @@ function pushHist(){
 }
 function autoBackup(){try{localStorage.setItem(KEY+"-bak",JSON.stringify(S))}catch(e){}}
 function regenWith(note){const e=undo();if(e)run(e.a+" [Consigne de réécriture du récit : "+note+"]",e.f,e.N,e.auto)}
-const embCache={};
 const embDrawCache={};
 function emblemDraw(n,col){
   const k=n+col;let c=embDrawCache[k];
@@ -3025,7 +3048,7 @@ function play(){
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
   return el("div",{class:"pax"},
     banners.length?el("div",{class:"pbanner"},banners):null,
-    el("div",{class:"pmap"},stageNode(hud,mapNode),legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
+    el("div",{class:"pmap"},stageNode(hud,mapNode),el("div",{class:"maptools"},legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null))),
     el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action),
     el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
@@ -3128,7 +3151,7 @@ function draw(){
   const keep={};document.querySelectorAll("#app input[id],#app textarea[id]").forEach(n=>{keep[n.id]=n.value});
   const ks={};document.querySelectorAll("#app select[id^=jf-],#app select#goaltype,#app select#goalyears").forEach(n=>{ks[n.id]=n.value});
   const msv=$("mapstyle")&&$("mapstyle").value,tone=$("tone")&&$("tone").value,fac=$("fac")&&$("fac").value,dur=$("dur")&&$("dur").value,sy=window.scrollY;
-  {const body=(view==="play"&&S.world)?play():(view==="pick"||view==="picknew")&&S.world?(view==="pick"?pickView():pickNewView()):view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
+  {const body=(view==="play"&&S.world)?play():(view==="pick"||view==="picknew")&&S.world?(view==="pick"?pickView():pickNewView()):view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw fullmap":view==="mp"?"colw":"col"},body))}
   if(!S.fresh){for(const k in keep){const n=$(k);if(n&&keep[k])n.value=keep[k]}if(tone&&$("tone"))$("tone").value=tone;if(msv&&$("mapstyle"))$("mapstyle").value=msv}
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
