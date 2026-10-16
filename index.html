@@ -349,8 +349,18 @@ main:has(.colw.fullmap){max-width:none;padding-left:0;padding-right:0}
 .colw.fullmap .legwrap>summary::after{content:"▾";color:var(--gold);font-size:.7rem}
 .colw.fullmap .legwrap[open]>summary::after{content:"▴"}
 .colw.fullmap .legwrap>.leg{display:block;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:6px;box-shadow:var(--sh)}
-.colw.fullmap .side{position:fixed;right:12px;top:74px;bottom:170px;width:min(440px,42vw);z-index:22;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow:auto;box-shadow:var(--sh)}
-.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:10px 14px 8px;box-shadow:var(--sh);max-height:60vh;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"fac fac" "act send" "insp regen" "err err" "live live";gap:8px;align-items:center}
+.colw.fullmap .sidepill{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:600 .82rem/1.2 var(--ff-ui);letter-spacing:.03em;color:var(--ink);padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--sh);white-space:nowrap}
+.colw.fullmap .sidepill::after{content:"▾";color:var(--gold);font-size:.7rem}
+.colw.fullmap details[open]>.sidepill::after{content:"▴"}
+.colw.fullmap .side{position:fixed;right:12px;top:74px;z-index:22;width:min(440px,42vw);max-height:calc(100vh - 96px);overflow:auto}
+.colw.fullmap details.side:not([open]){background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none;padding:0;max-height:none;overflow:visible}
+.colw.fullmap details.side[open]{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--sh)}
+.colw.fullmap details.side[open]>summary{margin-bottom:8px}
+.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;max-height:60vh;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"fac fac" "act send" "insp regen" "err err" "live live";gap:8px;align-items:center}
+.colw.fullmap details.composer[open]{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:10px 14px 8px;box-shadow:var(--sh)}
+.colw.fullmap details.composer:not([open]){left:auto;right:12px;bottom:12px;width:auto;display:block;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;box-shadow:none;padding:0;max-height:none;overflow:visible}
+.colw.fullmap details.composer:not([open])>*{display:none}
+.colw.fullmap details.composer:not([open])>summary{display:inline-flex}
 .colw.fullmap .composer>#fac{grid-area:fac;margin:0;width:auto;justify-self:start;max-width:75%;min-height:32px;padding:4px 30px 4px 12px;font-size:.8rem}
 .colw.fullmap .composer>#act{grid-area:act;min-height:48px;max-height:120px}
 .colw.fullmap .composer>.row{grid-area:send;margin:0}
@@ -372,6 +382,7 @@ main:has(.colw.fullmap){max-width:none;padding-left:0;padding-right:0}
 @media(max-width:1100px){
  .colw.fullmap .side{position:static;width:auto;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:0 4px 0 0;box-shadow:none;max-height:none}
  .colw.fullmap .composer{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:14px 0 10px;max-height:none;box-shadow:none}
+ .colw.fullmap details.side>summary,.colw.fullmap details.composer>summary{display:none}
  .colw.fullmap .composer>.err:empty,.colw.fullmap .composer #live:empty{display:none}
  .colw.fullmap .mapstage{height:auto}
  .colw.fullmap .mapwrap{height:auto;max-height:62vh}
@@ -961,7 +972,7 @@ const CHANGELOG=[
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
-"Écran de jeu épuré : la carte s'étend sur toute la largeur de l'écran, la date et les commandes du temps forment une barre compacte en haut à droite, la légende des factions se replie derrière une pastille en haut à gauche, la barre du bas se réduit à l'essentiel (faction, action, Agir) avec les suggestions « Pas d'inspiration » et « Réécrire le dernier récit » regroupées en pastilles cliquables qui se déroulent au besoin.",
+"Écran de jeu épuré façon Pax Historia : la carte remplit tout l'écran et toutes les commandes se cachent derrière de petites pastilles discrètes — « ⚔ Agir » en bas à droite (champ d'action, suggestions « Pas d'inspiration » et « Réécrire le récit » en sous-pastilles), « 📖 Chronique » en haut à droite (chronique et onglets), « Factions » en haut à gauche, date et barre du temps en haut — la vue de la carte reste dégagée ; sur petit écran, tout reste empilé et ouvert.",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
@@ -3006,7 +3017,7 @@ async function start(){
 function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
 function copyLog(){
   const w=S.world,t=`${w.name}\n\n`+S.log.slice().reverse().map(e=>`${e.f} : ${e.a}\n${e.n}\n`+e.r.map(x=>`- ${x.faction} : ${x.reaction}`).join("\n")+`\nRumeur : ${e.u}\nChangement : ${e.c}\n`).join("\n");
-  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copi��e.";draw()}).catch(()=>{})
+  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copiée.";draw()}).catch(()=>{})
 }
 
 function forge(){
@@ -3071,12 +3082,13 @@ function play(){
   const time=el("div",{class:"timebar"},el("span",{class:"mute",text:"Avancer le temps"}),
     [["+1 mois",1],["+1 saison",3],["+1 an",12]].map(([t,n])=>el("button",{class:"alt",on:{click:()=>simulate(n)},...dis,text:t})),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
+  const wide=window.matchMedia&&window.matchMedia("(min-width:1100px)").matches;
   return el("div",{class:"pax"},
     banners.length?el("div",{class:"pbanner"},banners):null,
     el("div",{class:"pmap"},stageNode(el("div",{class:"hud"},hud,time),mapNode),
       legend?el("details",{class:"legwrap"},el("summary",{text:"Factions"}),legend):null),
-    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action,el("details",{class:"regenwrap"},el("summary",{text:"✍️ Réécrire le dernier récit"}),el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
-    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
+    el("details",{class:"composer",...(wide?{}:{open:""})},el("summary",{class:"sidepill",text:"⚔ Agir"}),paywall?paywallCard():null,freeChip(),action,el("details",{class:"regenwrap"},el("summary",{text:"✍️ Réécrire le dernier récit"}),el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
+    el("details",{class:"side",...(wide?{}:{open:""})},el("summary",{class:"sidepill",text:"📖 Chronique"}),tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
 function playClassic(){
   const w=S.world,F=facs(),ents=entities(),who=chatWho&&ents.some(x=>x.nom===chatWho)?chatWho:(ents[0]&&ents[0].nom)||"",dis=busy?{disabled:""}:{};
