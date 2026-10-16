@@ -672,7 +672,7 @@ function adopt(w){
   S.world={...wExtra(w),y0:cut(w.y0,6),src:cut(w.src||w.key||"",120),ms:cut(w.ms,20)||"continent",name:cut(w.name,60),tone:cut(w.tone,40),concept:cut(w.concept,600),magic:cut(w.magic,600),factions:cut(w.factions,900)};S.hist=[];S.gaz=[];S.incoh=[];loadX(null);
   const pw={};if(w.power&&typeof w.power==="object")for(const k in w.power){const v=Number(w.power[k]);if(isFinite(v))pw[k]=Math.max(.55,Math.min(1.6,v))}
   S.map={power:pw,places:(Array.isArray(w.places)?w.places:[]).slice(0,8).map(p=>({name:cut(p&&p.name,28),f:cut(p&&p.f,60)}))};
-  S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.hero=null;S.recap=null;S.rel={};S.gm=[];S.draft=null;save();view="play";
+  S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.hero=null;S.recap=null;S.rel={};S.gm=[];S.draft=null;S.goals={};S.goalDone=[];S.dilemmaDone=false;save();view="play";seedGoals();
   run("Décris la situation du monde pour quelqu'un qui y arrive.",facs()[0]||"Le monde",0,false);
 }
 const myDoc=c=>ext[c].find(x=>x.id===me)||{};
@@ -817,8 +817,29 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v14oct — carte animée, partage, rappel, mobile";
+const BUILD="v15oct — objectifs, dilemmes, front de guerre, semences";
+const SEEDJOB=[
+["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
+["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
+["secrets","Découvrir un secret",s=>Object.values(s.chats||{}).some(c=>Array.isArray(c)&&c.some(m=>m&&m.secret))||((s.spy||0)>0),1],
+["explore","Explorer : 3 lieux découverts",s=>((s.gaz||[]).length>=3)||(s.log||[]).filter(l=>l&&/explor|découvre|rumeur/.test(String(l.txt||"")+String(l.titre||""))).length>=3,1]
+];
+function seedGoals(){
+  S.goals=S.goals||{};
+  SEEDJOB.filter(x=>!x[2](S)).slice(0,2).forEach(x=>{if(!S.goals[x[0]])S.goals[x[0]]={t:x[1],n:x[3],ok:false}});
+}
+function goalCheck(){
+  if(!S.goals)return;
+  for(const k in S.goals){const g=S.goals[k],j=SEEDJOB.find(x=>x[0]===k);
+    if(j&&!g.ok&&j[2](S)){g.ok=true;S.goalDone=S.goalDone||[];S.goalDone.push({t:g.t,when:dateStr(S.m)});}}
+}
 const CHANGELOG=[
+["v15oct — 15 octobre 2026 : objectifs, dilemmes et semences",[
+"Objectifs de partie : 2 à 3 objectifs par partie (alliance, bataille gagnée, secret découvert, exploration), suivis dans le HUD (🎯 1/2) et archivés à l'accomplissement.",
+"Dilemmes mémorisés : à partir du 2e tour, un dilemme à 3 choix (refugié, mine disputée, prophète, famine voisine) — la décision est gravée au canon du monde, avec sa date.",
+"Front de guerre animé : ligne dorée pulsante entre les capitales des factions en guerre, tires animés et éclat de bataille au milieu.",
+"Semence de monde partageable : code court FM-XXXXXX affiché dans le panneau Partager pour rejouer le même monde.",
+"Correctif : écran vide lié à la pastille IA du HUD ; navigation mobile en rangées visibles."]],
 ["v14oct — 14 octobre 2026 : la grande refonte visuelle",[
 "Carte vivante : anneaux d'événements animés (pulsations dorées pour ta faction, rouges décalés pour celles qui réagissent), onde de choc sur les événements majeurs, lueur au sol — désactivable via Réglages → Animations.",
 "Zoom cinématique : après chaque action, la caméra zoome sur la zone concernée ; bouton « 🎯 Zoomer sur la zone » dans chaque entrée de la chronique.",
@@ -994,7 +1015,8 @@ function shareCopy(){(navigator.clipboard?navigator.clipboard.writeText(sharePos
 function sharePanel(){
   return det("share","📣 Partager ma partie",
     el("p",{class:"mute",text:"Génère un post prêt pour Discord ou Reddit : récit du monde, événements marquants, lien du jeu. Ajoute l'image de la carte en pièce jointe pour plus d'impact."}),
-    el("div",{class:"row"},el("button",{on:{click:shareCopy},text:"Copier mon post"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Image de la carte"}):null));
+    el("div",{class:"row"},el("button",{on:{click:shareCopy},text:"Copier mon post"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Image de la carte"}):null),
+    S.seed?el("p",{class:"mute",style:"margin-top:10px",text:"🌱 Semence de ce monde : "+S.seed+" — partage-la pour que d'autres rejouent le même monde et comparent leurs parties."}):null);
 }
 function explorePanel(){
   if(S.opts.fog!=="activé")return det("expl","Exploration",el("p",{class:"mute",text:"Active le brouillard d'exploration dans les réglages pour cacher les factions inconnues."}));
@@ -1469,7 +1491,9 @@ function resumeCloud(){
 }
 async function cloudDelete(){try{await db.doc(cpath()).delete();cloud=null;err="Sauvegarde en ligne supprimée."}catch(e){err="Suppression impossible."}draw()}
 function playPreset(p){
-  S.world={ms:p.ms||"continent",name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions};initState();S.draft=null;save();view="play";
+  S.world={ms:p.ms||"continent",name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions};initState();S.draft=null;
+  S.seed="FM-"+hHash(S.world.name+"|"+S.world.tone+"|"+S.world.factions).toString(36).toUpperCase().slice(0,8);
+  S.goals={};S.goalDone=[];S.dilemmaDone=false;seedGoals();save();view="play";
   run("Décris la situation initiale du monde et les tensions entre les factions.",facs()[0]||"Le monde",0,false);
 }
 function presetCard(w){
@@ -1977,6 +2001,29 @@ function fallbackNarration(){
   return cut(intro+(parts.slice(0,6).join(" ")||"La période reste calme.")+" "+(r.c||""),1200);
 }
 /* --- événements à choix, ligne de temps, mode fantôme --- */
+const DILEMMAS=[
+{t:"Un réfugié de haut rang demande asile",o:[
+  {l:"Accueillir",a:"J'accueille le réfugié et le protège.",c:"asile accordé au réfugié de haut rang"},
+  {l:"Le livrer",a:"Je livre le réfugié à ceux qui le pourchassent.",c:"réfugié livré — trahison gravée dans la mémoire du monde"},
+  {l:"Négocier",a:"Je négocie sa protection contre des avantages.",c:"protection du réfugié monnayée"}]},
+{t:"Une mine d'or est découverte sur un territoire disputé",o:[
+  {l:"Exploiter",a:"J'exploite la mine sans partager.",c:"mine d'or disputée exploitée seul"},
+  {l:"Partager",a:"Je propose un partage équitable de la mine.",c:"mine d'or partagée par accord"},
+  {l:"La sceller",a:"Je condamne la mine pour éviter la convoitise.",c:"mine d'or scellée et abandonnée"}]},
+{t:"Un prophète prédit la chute de votre plus grand rival",o:[
+  {l:"Financer le prophète",a:"Je finance secrètement le prophète.",c:"prophète soutenu — propagande dans la mémoire du monde"},
+  {l:"L'ignorer",a:"J'ignore le prophète.",c:"prophète ignoré"},
+  {l:"Le dénoncer",a:"Je dénonce le prophète auprès de mon rival.",c:"prophète dénoncé — geste de bonne foi envers le rival"}]},
+{t:"Vos greniers débordent, mais une province voisine meurt de faim",o:[
+  {l:"Vendre cher",a:"Je vends mes surplus au prix fort.",c:"famine voisine exploitée commercialement"},
+  {l:"Donner",a:"J'envoie une aide alimentaire désintéressée.",c:"aide alimentaire généreuse — gratitude durable"},
+  {l:"Attendre",a:"J'attends et renforce mes réserves.",c:"famine voisine ignorée"}]}
+];
+function mkDilemma(){
+  if(!S.world)return null;
+  const d=DILEMMAS[Math.floor(Math.random()*DILEMMAS.length)];
+  return {titre:"⚖ Dilemne : "+d.t,dilemma:true,options:d.o.map(x=>({label:x.l,action:x.a,canon:x.c}))};
+}
 function mkChoice(maj){
   const m=(maj||[])[0];if(!m||!m.titre)return null;
   const t=String(m.titre).toLowerCase();
@@ -1994,7 +2041,11 @@ async function enrichChoice(){
 function choicePanel(){
   const c=S.choice;if(!c||busy)return null;
   return el("div",{class:"strip"},el("p",{},el("b",{text:"Le monde attend ta décision — "}),cut(c.titre,90)),
-    (c.options||[]).map(o=>el("button",{on:{click:()=>{S.choice=null;save();run(o.action,facs()[0])}},text:cut(o.label,40)})),
+    (c.options||[]).map(o=>el("button",{on:{click:()=>{
+      if(o.canon){S.canon=(S.canon||[]).slice(-11).concat("["+dateStr(S.m)+"] "+o.canon);S.choice=null}
+      else S.choice=null;
+      save();run(o.action,facs()[0])
+    }},text:cut(o.label,40)})),
     el("button",{class:"alt",on:{click:()=>{S.choice=null;save();draw()}},text:"Ignorer"}));
 }
 function surveyPanel(){
@@ -2142,6 +2193,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
   if(sample&&!auto&&S.log.length-(S.lastCanon||0)>=5){S.lastCanon=S.log.length;setTimeout(canonAuto,1200)}
+  if(!S.dilemmaDone&&S.log.length>=2&&!auto){const d=mkDilemma();if(d){S.dilemmaDone=true;S.choice=d;save();if(sample)enrichChoice()}return{N:N2,maj}}
   if(!auto&&maj.length){S.choice=mkChoice(maj);save();if(sample)enrichChoice()}
   return{N:N2,maj};
 }
@@ -2150,7 +2202,7 @@ async function run(action,faction,months,auto){
   if(!sample&&!HY()){S.opts.hybrid="activé";save()}
   S.choice=null;
   retry=()=>run(action,faction,months,auto);busy=true;err="";draw();
-  try{await turn(action,faction,months,auto);retry=null;busy=false;draw();
+  try{await turn(action,faction,months,auto);retry=null;busy=false;goalCheck();draw();
     if((S.opts.cine||"activée")!=="désactivée"&&faction)setTimeout(()=>zoomToFac(faction,true),150)}catch(e){fail(e)}
 }
 async function simulate(total){
@@ -2266,6 +2318,36 @@ function drawEvents(g,P,t){
   const at=n=>P.find(p=>like(p.n,n));
   const ph=(t||0)/1000;
   const pulse=.5+.5*Math.sin(ph*2.4);
+  // Front de guerre : ligne dorée pulsante entre capitales des factions en guerre
+  const warPairs=[];let seenPair={};
+  Object.entries(S.rel||{}).forEach(([k,v])=>{
+    if(!v||v.t!=="guerre")return;
+    const [a,b]=k.split("|");const key=[a,b].sort().join("|");
+    if(seenPair[key])return;seenPair[key]=1;
+    const pa=at(a),pb=at(b);if(pa&&pb)warPairs.push([pa,pb]);
+  });
+  warPairs.forEach(([pa,pb],i)=>{
+    const wp=.5+.5*Math.sin(ph*1.8+i*.9);
+    const dx=pb.x-pa.x,dy=pb.y-pa.y,len=Math.hypot(dx,dy)||1;
+    const mx=(pa.x+pb.x)/2,my=(pa.y+pb.y)/2;
+    g.save();
+    // halo du front
+    const wl=g.createLinearGradient(pa.x,pa.y,pb.x,pb.y);
+    wl.addColorStop(0,"rgba(210,162,76,0)");wl.addColorStop(.5,"rgba(210,162,76,"+(.25*wp+.10)+")");wl.addColorStop(1,"rgba(210,162,76,0)");
+    g.strokeStyle=wl;g.lineWidth=7+wp*3;g.lineCap="round";
+    g.beginPath();g.moveTo(pa.x,pa.y);g.lineTo(pb.x,pb.y);g.stroke();
+    // ligne pointillée centrale animée (tires de guerre)
+    g.setLineDash([7,6]);g.lineDashOffset=-(ph*24)%13;
+    g.strokeStyle="rgba(232,200,119,"+(.6+.35*wp)+")";g.lineWidth=2.2;
+    g.beginPath();g.moveTo(pa.x,pa.y);g.lineTo(pb.x,pb.y);g.stroke();
+    // éclat de bataille au milieu (petit losange doré pulsant)
+    g.setLineDash([]);
+    const r=3+wp*2.5;
+    g.fillStyle="rgba(232,200,119,"+(.55+.35*wp)+")";
+    g.beginPath();
+    g.moveTo(mx,my-r);g.lineTo(mx+r,my);g.lineTo(mx,my+r);g.lineTo(mx-r,my);g.closePath();g.fill();
+    g.restore();
+  });
   const act=at(e.f||"");
   if(act){
     const {x,y}=act;
@@ -2618,7 +2700,8 @@ function play(){
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
   const rawMdl=cfgAI&&cfgAI.d?String(cfgAI.d):"",mdl=rawMdl.length>18?rawMdl.slice(0,17)+"…":rawMdl;
-  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{text:"Tour "+S.log.length}),el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"🤖 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
+  const goals=(S.goals&&Object.keys(S.goals).length)?el("span",{class:"pill goals",title:"Objectifs de cette partie — accomplies : "+((S.goalDone||[]).length),text:"🎯 "+Object.values(S.goals).filter(g=>g.ok).length+"/"+Object.keys(S.goals).length}):null;
+  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{text:"Tour "+S.log.length}),goals,el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"🤖 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
   const time=el("div",{class:"timebar"},el("span",{class:"mute",text:"Avancer le temps"}),
     [["+1 mois",1],["+1 saison",3],["+1 an",12]].map(([t,n])=>el("button",{class:"alt",on:{click:()=>simulate(n)},...dis,text:t})),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
