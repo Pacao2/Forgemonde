@@ -74,18 +74,31 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## 📜 Journal des versions
 
+### Vendredi 17 octobre 2026
 - **v17oct.3** — cartes de sélection soignées : écran « Qui dirigeras-tu ? » redessiné (cartes aérées, liseré doré au survol et au clavier, pastilles de type, nom en grand, but en encart lisible, emblèmes agrandis avec ombre)
 - **v17oct.2** — joue une faction du scénario ou crée la tienne : carte « ✨ Ma propre entité » sur l'écran de sélection (faction, nation ou personnage avec nom et but), intégrée au monde, à la carte et à la diplomatie comme les autres puissances ; un personnage créé devient aussi votre héros
 - **v17oct.1** — choisis qui tu diriges : écran de sélection de faction au lancement (emblème + but de chaque camp), option « Le monde entier » pour observer sans incarner, choix mémorisé partout (compositeur, brouillard, partage, monde autonome)
 - **v17oct** — l'atlas s'illumine (polish visuel) : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », bordure du tour aux couleurs de la faction, lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte sur « Ma partie », squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil dans la barre, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
+
+### Jeudi 16 octobre 2026
 - **v16oct.3** — correctifs de partage et PWA : lien du post copiable et aperçu social (Open Graph) pointés vers le site principal, image d'aperçu hébergée sur le dépôt, cache du service worker renommé à chaque version
 - **v16oct.2** — journal des versions du jeu relié au dépôt : activité GitHub (6 derniers commits) affichée dans l'onglet Journal, lien vers le code source, résilient hors ligne
 - **v16oct.1** — durcissement sécurité : délai d'attente sur les appels IA (60 s / 120 s), CSP renforcée (workers, manifest)
 - **v16oct** — mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, saisons, routes commerciales, lieux explorables, semences importables, fichiers .monde, test 20 tours, PWA
+
+### Mercredi 15 octobre 2026
 - **v15oct** — objectifs de partie, dilemmes mémorisés, front de guerre animé, semences partageables, onglet Télécharger
+
+### Mardi 14 octobre 2026
 - **v14oct** — carte vivante, zooms cinématiques, refonte mobile, partage intégré
+
+### Lundi 13 octobre 2026
 - **v13oct** — monde autonome, accompagnement testeur, guide IA élargi
+
+### Dimanche 12 octobre 2026
 - **v12oct** — bible du monde, canon, arcs narratifs, PNJ, exports
+
+### Samedi 11 octobre 2026
 - **v11oct** — fondation : moteur, carte procédurale, multijoueur, i18n
 
 ## 🤝 Contribuer
