@@ -1,0 +1,12 @@
+Trailer suggestions and instructions
+
+- Length: 30-45 seconds
+- Structure:
+  0-5s: Logo + tagline (Forgemonde — un monde qui se souvient de vos choix)
+  5-20s: Gameplay highlights (creation of a world, map, factions, choices)
+  20-35s: Multijoueur / AI mode short demo + CTA
+  35-45s: Call to action — Play now: https://forge-des-mondes.netlify.app
+
+Export recommendation: MP4 H.264, 1920x1080, ~8-12 Mbps for web.
+
+If you want, I can provide a draft voiceover/script for the trailer.
