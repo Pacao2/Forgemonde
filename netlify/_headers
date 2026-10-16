@@ -1,0 +1,35 @@
+/*
+  Netlify hardening headers.
+  These headers should be reviewed alongside the browser-side security model.
+  Because the project uses inline JavaScript and CSS in a single HTML file,
+  a perfectly strict CSP is not yet possible without a refactor.
+*/
+/*
+  HSTS + browser hardening + anti-clickjacking + anti-sniffing
+*/
+/*
+  This file is loaded by Netlify as a site-wide header file when placed in /netlify/_headers
+  Reference: https://docs.netlify.com/routing/headers/
+*/
+
+/*
+  Default security policy for all routes
+*/
+/*
+  Note: a stricter CSP can be introduced after moving inline JS/CSS to separate files.
+*/
+/*
+  Current build keeps inline script/style for the browser game, so the policy below is intentionally conservative.
+*/
+/*
+  Replace with a stricter version once inline JS/CSS are externalized.
+*/
+/
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.netlify.app https://*.githubusercontent.com https://images.unsplash.com https://*.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
