@@ -909,6 +909,7 @@ const CHANGELOG=[
 "Thème : bouton lune/soleil directement dans la barre de navigation.",
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
+"Retours reliés au dépôt : l'onglet Retours ouvre maintenant une issue GitHub préremplie (titre, description, label bug ou amélioration) — plus besoin de passer par Discord ou Reddit ; le rapport reste copiable et les issues consultables en un clic.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperçu social (Open Graph) pointent vers le site principal — l'ancienne image renvoyait une erreur 404.",
@@ -984,12 +985,18 @@ function readFb(){
 }
 function fbCopy(){
   const f=readFb();if(!f)return draw();
-  (navigator.clipboard?navigator.clipboard.writeText(fbText(f)):Promise.reject()).then(()=>{fbMsg="Rapport copié : colle-le dans le post Discord ou Reddit de l'auteur.";draw()}).catch(()=>{fbMsg="Copie impossible sur cet appareil.";draw()});
+  (navigator.clipboard?navigator.clipboard.writeText(fbText(f)):Promise.reject()).then(()=>{fbMsg="Rapport copié : colle-le où tu veux (issue GitHub, Discord, Reddit…).";draw()}).catch(()=>{fbMsg="Copie impossible sur cet appareil.";draw()});
 }
+const GH_ISSUES="https://github.com/Pacao2/Forgemonde/issues";
 function fbCopyAndOpen(){
   const f=readFb();if(!f)return draw();
-  (navigator.clipboard?navigator.clipboard.writeText(fbText(f)):Promise.reject()).then(()=>{fbMsg="Rapport copié ! Colle-le dans ton message sur Discord ou Reddit. La fenêtre de discussion va s'ouvrir.";draw()}).catch(()=>{});
-  setTimeout(()=>{try{window.open("https://discord.com/channels/@me","_blank")}catch(e){}},400);
+  (navigator.clipboard?navigator.clipboard.writeText(fbText(f)):Promise.reject()).catch(()=>{});
+  try{
+    const q="?title="+encodeURIComponent("["+(f.t==="Bug"?"bug":"idée")+"] "+f.title)+"&body="+encodeURIComponent(fbText(f).replace(/^\[[^\]]*\] /,""))+"&labels="+(f.t==="Bug"?"bug":"enhancement");
+    window.open(GH_ISSUES+"/new"+q,"_blank","noopener");
+    S.fbSent=(S.fbSent||[]).concat([{t:f.t,title:f.title,at:f.at}]);S.fbSent=S.fbSent.slice(-20);save();
+    fbMsg="Issue GitHub ouverte : le titre, la description et le label sont déjà remplis — il ne reste qu'à cliquer sur « Submit new issue ».";draw();
+  }catch(e){fbMsg="Ouverture impossible : le rapport est copié, colle-le sur "+GH_ISSUES;draw()}
 }
 function subFeedback(){
   if(fbSub||!db||!usr||!isOwn)return;fbSub=true;
@@ -1035,7 +1042,7 @@ function fbBanner(){
 function feedbackView(){
   const f=fbF,isB=f.t==="Bug",sel=(id,vals,cur,key)=>el("select",{id,on:{change:e=>{fbF[key]=e.target.value;if(key==="t")draw()}}},vals.map(v=>el("option",{value:v,...(v===cur?{selected:""}:{}),text:v})));
   return el("div",{},el("h1",{text:"Retours et bugs"}),
-    el("p",{class:"mute",text:"Tu testes une version en développement ("+BUILD+"). Remplis ce formulaire, puis colle ton rapport dans le post Discord ou Reddit de l'auteur. Merci !"}),
+    el("p",{class:"mute"},el("span",{text:"Tu testes une version en développement ("+BUILD+"). Remplis ce formulaire, puis envoie-le en "}),el("a",{href:GH_ISSUES,target:"_blank",rel:"noopener",text:"issue GitHub du dépôt"}),el("span",{text:" — le bouton ci-dessous préremplit tout (titre, description, label). Merci !"})),
     el("label",{for:"fbt",text:"Type de retour"}),sel("fbt",FBT,f.t,"t"),
     isB?[el("label",{for:"fbg",text:"Gravité"}),sel("fbg",FBS,f.s,"s")]:null,
     el("label",{for:"fbw",text:"Où ça se passe ?"}),sel("fbw",FBW,f.w,"w"),
@@ -1050,7 +1057,7 @@ function feedbackView(){
     el("label",{for:"fbpf",text:"Pour quoi paierais-tu en priorité ?"}),sel("fbpf",FBPF,f.pf,"pf"),
     el("label",{style:"display:flex;gap:8px;align-items:center"},el("input",{type:"checkbox",style:"width:auto",...(f.tech?{checked:""}:{}),on:{change:e=>{fbF.tech=e.target.checked}}}),"Joindre les infos techniques (version, écran, appareil, erreurs récentes)"),
     el("div",{class:"err",role:"status",text:fbMsg}),
-    el("div",{class:"row"},el("button",{on:{click:fbCopy},text:"Copier mon retour"}),el("button",{class:"alt",on:{click:fbCopyAndOpen},text:"Copier puis ouvrir Discord/Reddit"})),
+    el("div",{class:"row"},el("button",{on:{click:fbCopy},text:"Copier mon retour"}),el("button",{class:"alt",on:{click:fbCopyAndOpen},text:"Créer l'issue sur GitHub"}),el("a",{href:GH_ISSUES,target:"_blank",rel:"noopener",class:"alt",style:"text-decoration:none",text:"Voir les issues"})),
     (S.fbSent||[]).length?el("div",{},el("h2",{text:"Mes retours envoyés ("+S.fbSent.length+")"}),S.fbSent.slice().reverse().slice(0,8).map(i=>el("p",{class:"mute",text:new Date(i.at).toLocaleDateString("fr-FR")+" : ["+i.t+"] "+i.title}))):null,
     isOwn?fbOwner():null);
 }
