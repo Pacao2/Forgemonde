@@ -173,6 +173,19 @@ details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
 .hud{left:12px;top:12px;z-index:4}
 .hud b,.hud span{background:var(--glass);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);padding:5px 13px;font-size:.78rem;letter-spacing:.05em}
 .hud .ep{color:var(--gold);font-family:var(--ff-title);letter-spacing:.1em}
+.facles{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px;align-items:center}
+.facles .facpill{display:inline-flex;align-items:center;gap:7px;padding:5px 13px;min-height:34px;border-radius:999px;font-size:.85rem}
+.facles .facpill.chosen{background:rgba(210,162,76,.16);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(210,162,76,.5)}
+.facles .facpill canvas{width:20px;height:20px}
+details.inspwrap,details.regenwrap{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:2px 14px;margin:10px 0}
+details.inspwrap>summary,details.regenwrap>summary{list-style:none;cursor:pointer;padding:9px 0;font:600 .88rem/1.2 var(--ff-ui);color:var(--ink);display:flex;align-items:center;gap:10px}
+details.inspwrap>summary::before,details.regenwrap>summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg);transition:transform .18s;flex:0 0 auto}
+details.inspwrap[open]>summary::before,details.regenwrap[open]>summary::before{transform:rotate(45deg)}
+details.inspwrap>summary::-webkit-details-marker,details.regenwrap>summary::-webkit-details-marker{display:none}
+details.inspwrap>div,details.inspwrap>button{display:none}
+details.inspwrap[open]>button{display:block;margin:6px 0}
+details.regenwrap>summary{margin-bottom:4px}
+details.regenwrap>div:last-child{padding-bottom:8px}
 .hud b{font-family:var(--ff-title);font-weight:600;letter-spacing:.09em}
 .timebar{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
 .timebar button{min-height:36px;padding:6px 14px;font-size:.82rem}
@@ -925,6 +938,7 @@ const CHANGELOG=[
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Cartes lisibles : couleurs de faction franches sur les territoires contrôlés, frontières nettes au trait blanc cassé façon atlas, noms en hiérarchie claire (factions en capitales espacées, capitales moyennes, lieux petits) et routes commerciales visibles en permanence entre alliés.",
 "Interface élargie : l'écran de jeu passe à 1500 px de large (panneau latéral confortable de 420 px) et les autres pages de 1000 à 1240 px — le contenu respire sans être étiré à l'excès.",
+"Composer rangé : les factions deviennent des pastilles horizontales avec emblème (la tienne est dorée), « Pas d'inspiration » et « Réécrire le dernier récit » se replient en onglets — plus de longues listes qui encombrent.",
 "Interface soignée : accueil avec grande carte du « monde du jour » en fond de héros, fine barre de progression dorée pendant que le monde réagit, toasts discrets pour les messages, époque (« Hiver — an 3 ») dans le bandeau de la carte, cartes de l'accueil en cascade, zoom à la molette sur la carte, pastille d'époque à la couleur or.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
@@ -3060,7 +3074,7 @@ function play(){
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
   return el("div",{class:"pax"},
     banners.length?el("div",{class:"pbanner"},banners):null,
-    el("div",{class:"pmap"},stageNode(hud,mapNode),legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
+    el("div",{class:"pmap"},stageNode(hud,mapNode),legend,time,el("details",{class:"regenwrap"},el("summary",{text:"✍️ Réécrire le dernier récit"}),el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
     el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action),
     el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
@@ -3089,9 +3103,9 @@ function playClassic(){
       el("div",{class:"row"},autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Arrêter l'autonomie"}):el("button",{on:{click:autoStart},...dis,text:"Lancer l'autonomie"}))),
     el("h2",{text:"Carte"}),mapWidget(),legend(),focusPanel(),mapEditor(),
     dl?el("div",{class:"row"},el("button",{class:"alt",on:{click:exportMap},text:"Exporter la carte (image)"})):null,
-    el("label",{for:"fac",text:"Tu joues"}),el("select",{id:"fac"},F.map((f,i)=>el("option",{value:f,...((S.playerFac&&like(f.split(":")[0].trim(),S.playerFac))||(!S.playerFac&&S.hero&&like(f.split(":")[0].trim(),S.hero.faction)))?{selected:""}:{},text:f}))),
+    el("div",{class:"facles"},F.map((f,i)=>{const n=f.split(":")[0].trim();return el("button",{class:"alt facpill"+(((S.playerFac&&like(n,S.playerFac))||(!S.playerFac&&S.hero&&like(n,S.hero.faction)))?" chosen":""),title:f.includes(":")?"But : "+f.split(":").slice(1).join(":").trim():"",on:{click:()=>{const s=$("fac");if(s){s.value=f;draw()}}}},emblemEl(n,facColor(n,i),20),n)}),el("select",{id:"fac",style:"position:absolute;left:-9999px;width:1px;height:1px;opacity:0","aria-label":"Faction jouée"},F.map((f,i)=>el("option",{value:f,...((S.playerFac&&like(f.split(":")[0].trim(),S.playerFac))||(!S.playerFac&&S.hero&&like(f.split(":")[0].trim(),S.hero.faction))?{selected:""}:{}),text:f})))),
     el("label",{for:"act",text:"Ton action"}),el("textarea",{id:"act",placeholder:(window.innerWidth<560?"Ex. J'envoie un émissaire proposer une trêve.":"Ex. J'envoie un émissaire proposer une trêve, mais je fais fortifier la frontière en secret.")}),
-    S.log.length<3?el("div",{class:"strip",style:"flex-direction:column;align-items:stretch;gap:4px"},el("p",{class:"mute",style:"margin:0;font-size:.85rem",text:"Pas d'inspiration ? Essaie :"}),
+    S.log.length<3?el("details",{class:"inspwrap"},el("summary",{text:"💡 Pas d'inspiration ? Essaie :)"}),
       ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x}))):null,
     el("div",{class:"err",role:"status",text:err||sim}),
     el("div",{class:"row"},
