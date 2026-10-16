@@ -20,7 +20,7 @@
 <meta name="twitter:description" content="Dirigez une faction. Le monde réagit — et n'oublie jamais. Gratuit, sans inscription.">
 <meta name="theme-color" content="#0d0c14">
 <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Forgemonde%22%2C%22short_name%22%3A%22Forgemonde%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230d0c14%22%2C%22theme_color%22%3A%22%230d0c14%22%2C%22icons%22%3A%5B%5D%7D">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src https: http://localhost:* http://127.0.0.1:*; base-uri 'none'; form-action 'none'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src https: http://localhost:* http://127.0.0.1:*; base-uri 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -326,8 +326,11 @@ async function call(cfg,prompt,tier,stream,onText){
     body={model,max_tokens:6000,messages:[{role:"user",content:prompt}],stream}}
   else{if(cfg.key)headers.authorization="Bearer "+cfg.key;body={model,messages:[{role:"user",content:prompt}],stream}}
   let res;
-  try{res=await fetch(anth?base+"/v1/messages":base+"/chat/completions",{method:"POST",headers,body:JSON.stringify(body)})}
-  catch(e){throw{message:"Connexion impossible au fournisseur d'IA : vérifie l'adresse, ta connexion, et que ce fournisseur autorise les appels depuis un navigateur."}}
+  const ac=("AbortController" in window)?new AbortController():null;
+  const tId=ac?setTimeout(()=>{try{ac.abort()}catch(e){}},stream?120000:60000):null;
+  try{res=await fetch(anth?base+"/v1/messages":base+"/chat/completions",{method:"POST",headers,body:JSON.stringify(body),...(ac?{signal:ac.signal}:{})})}
+  catch(e){if(ac&&e&&e.name==="AbortError")throw{message:"Le fournisseur d'IA met trop de temps à répondre (délai dépassé). Réessaie, ou choisis un modèle plus rapide."};throw{message:"Connexion impossible au fournisseur d'IA : vérifie l'adresse, ta connexion, et que ce fournisseur autorise les appels depuis un navigateur."}}
+  finally{if(tId)clearTimeout(tId)}
   if(!res.ok){let t="";try{t=(await res.text()).slice(0,200)}catch(e){}
     if(res.status===429)throw{code:"rate_limited",message:"Trop de demandes."};
     if(res.status===401||res.status===403)throw{message:"Clé d'API refusée par le fournisseur (erreur "+res.status+"). Vérifie-la dans ⚙ IA."};
@@ -821,7 +824,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v16oct — mondes vedettes, rebonds de Chekhov, épilogue, PWA";
+const BUILD="v16oct.1 — durcissement sécurité";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -851,6 +854,9 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v16oct.1 — durcissement sécurité",[
+"Appels IA protégés par délai d'attente : 60 s en réponse directe, 120 s en streaming — plus de tour bloqué à l'infini si un fournisseur ne répond pas, avec message explicite.",
+"Content-Security-Policy renforcée : workers et manifest verrouillés, sources de connexion inchangées (fournisseurs IA et Ollama local toujours autorisés)."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Mondes vedettes : trois aventures dramatiques jouables en un clic dès l'accueil, pour démarrer sans réfléchir.",
 "Rebonds de Chekhov : les promesses posées il y a plus de 6 tours explosent enfin — le passé resurgit dans les événements majeurs et se grave au canon (moteur de règles inclus, plus besoin d'IA).",
