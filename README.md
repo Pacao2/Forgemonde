@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v17oct.1-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v17oct.2-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -28,8 +28,8 @@
 
 1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/) (miroir : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/))
 2. Choisissez un **monde vedette** en un clic, ou « Découvrir en 30 secondes »
-3. **Choisissez qui vous incarnerez** : chaque faction s'affiche avec son emblème et son but — ou jouez « le monde entier »
-4. Écrivez ce que fait votre faction — des exemples cliquables vous guident
+3. **Choisissez qui vous incarnerez** : une faction du scénario, **votre propre entité** (faction, nation ou personnage), ou « le monde entier »
+4. Écrivez ce que fait votre camp — des exemples cliquables vous guident
 
 Aucune inscription. Rien n'est envoyé. Votre partie reste dans votre navigateur.
 
@@ -45,7 +45,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## ✨ Fonctionnalités
 
-- 🎭 **Choisis qui vous diriges** — comme dans Pax Historia : écran de sélection des factions au lancement, ou mode « monde entier »
+- 🎭 **Choisissez qui vous diriges** — les factions du scénario, ou créez votre propre entité (faction, nation ou personnage) intégrée au monde comme une puissance à part entière, ou mode « monde entier »
 - 📖 **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
 - 🎭 **Rebonds de Chekhov** — les promesses posées il y a plus de 6 tours explosent enfin, même sans IA
 - 🧠 **Chronique interactive** — gravez n'importe quel tour au canon d'un clic (« le monde s'en souvient »)
@@ -74,6 +74,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## 📜 Journal des versions
 
+- **v17oct.2** — joue une faction du scénario ou crée la tienne : carte « ✨ Ma propre entité » sur l'écran de sélection (faction, nation ou personnage avec nom et but), intégrée au monde, à la carte et à la diplomatie comme les autres puissances ; un personnage créé devient aussi votre héros
 - **v17oct.1** — choisis qui tu diriges : écran de sélection de faction au lancement (emblème + but de chaque camp), option « Le monde entier » pour observer sans incarner, choix mémorisé partout (compositeur, brouillard, partage, monde autonome)
 - **v17oct** — l'atlas s'illumine (polish visuel) : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », bordure du tour aux couleurs de la faction, lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte sur « Ma partie », squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil dans la barre, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
 - **v16oct.3** — correctifs de partage et PWA : lien du post copiable et aperçu social (Open Graph) pointés vers le site principal, image d'aperçu hébergée sur le dépôt, cache du service worker renommé à chaque version

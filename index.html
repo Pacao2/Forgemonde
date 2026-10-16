@@ -851,7 +851,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct.1 — choisis qui tu diriges";
+const BUILD="v17oct.2 — joue une faction du scénario ou crée la tienne";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -882,6 +882,11 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v17oct.2 — 17 octobre 2026 : joue une faction du scénario ou crée la tienne",[
+"Sur l'écran « Qui dirigeras-tu ? », une nouvelle carte « ✨ Ma propre entité » : crée une faction, une nation ou un personnage que le monde intégrera comme une puissance à part entière.",
+"Ton entité reçoit un nom et un but ; elle rejoint la liste des factions du monde, la carte, la diplomatie et la mémoire du monde comme les autres.",
+"Si tu choisis un personnage, il devient aussi ton héros : ses désirs nourrissent la narration.",
+"L'IA est priée d'intégrer la nouvelle entité dès la situation initiale, pour une entrée en scène naturelle."]],
 ["v17oct.1 — 17 octobre 2026 : choisis qui tu diriges",[
 "Comme dans Pax Historia : au lancement d'une partie, un écran présente chaque faction avec son emblème et son but — clique sur celle que tu incarnes.",
 "Option « Le monde entier » : diriger aucun camp en particulier et influencer qui tu veux, tour après tour.",
@@ -1916,7 +1921,35 @@ function pickView(){
         el("div",{class:"bd"},el("h3",{text:f.n}),f.g?el("p",{text:"But : "+f.g}):null))),
       el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Observer le monde entier",on:{click:()=>pickFac("Le monde"),keydown:e=>{if(e.key==="Enter"||e.key===" ")pickFac("Le monde")}}},
         el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center"},el("span",{style:"font-size:2rem",text:"🌍"})),
-        el("div",{class:"bd"},el("h3",{text:"Le monde entier"}),el("p",{text:"Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour."})))));
+        el("div",{class:"bd"},el("h3",{text:"Le monde entier"}),el("p",{text:"Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour."}))),
+      el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Créer ma propre entité",on:{click:()=>{view="picknew";draw()},keydown:e=>{if(e.key==="Enter"||e.key===" "){view="picknew";draw()}}}},
+        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center"},el("span",{style:"font-size:2rem",text:"✨"})),
+        el("div",{class:"bd"},el("h3",{text:"Ma propre entité"}),el("p",{text:"Faction, nation ou personnage : crée ce que tu diriges — le monde l'intégrera comme une puissance à part entière."})))));
+}
+function pickNewView(){
+  return el("div",{class:"col"},
+    el("h1",{text:"Ton entité"}),
+    el("p",{class:"mute",text:"Crée ce que tu diriges dans "+(S.world?S.world.name:"ce monde")+". Le monde la traitera comme n'importe quelle autre puissance — et se souviendra de ses actes."}),
+    el("label",{for:"pntype",text:"Type d'entité"}),
+    el("select",{id:"pntype"},["Faction","Nation","Personnage"].map(t=>el("option",{value:t,text:t}))),
+    el("label",{for:"pnname",text:"Nom"}),
+    el("input",{id:"pnname",placeholder:"Ex. La Congrégation du Verre, la République libre d'Avaris, Elena la Cartographe…","aria-label":"Nom de ton entité"}),
+    el("label",{for:"pngoal",text:"But (ce qu'elle cherche)"}),
+    el("textarea",{id:"pngoal",placeholder:"Ex. Trouver la cité engloutie et en garder le secret.",text:""}),
+    el("div",{class:"err",role:"status",text:err}),
+    el("div",{class:"row"},
+      el("button",{on:{click:()=>{
+        const ty=$("pntype").value,nm=$("pnname").value.trim(),gl=$("pngoal").value.trim();
+        if(!nm){err="Donne un nom à ton entité.";return draw()}
+        S.world.factions=cut((S.world.factions||"")+"\n"+nm+" : "+(gl||"imposer sa marque sur ce monde"),1000);
+        S.playerFac=nm;
+        if(ty==="Personnage")S.hero=Object.assign(S.hero||{},{nom:nm,faction:nm,role:"personnage libre",desir:cut(gl,300)});
+        save();
+        view="play";draw();
+        const a=introAct;introAct="";
+        run(a||"Décris la situation initiale du monde et les tensions entre les factions. Intègre la nouvelle entité « "+nm+" » ("+ty.toLowerCase()+") au monde.",nm,0,false);
+      }},...(busy?{disabled:""}:{}),text:"Entrer dans le monde"}),
+      el("button",{class:"alt",on:{click:()=>{view="pick";draw()}},text:"← Revenir aux factions"})));
 }
 /* ===== Mode hybride : moteur de règles + récit par l'IA (facultative) ===== */
 const HY=()=>S.opts.hybrid==="activé";
@@ -3055,11 +3088,11 @@ function playClassic(){
 }
 function draw(){
   if(view!=="replay")rpStop();applyA11y();
-  if(!S.world&&(view==="play"||view==="replay"||view==="book"||view==="pick"))view="hub";
+  if(!S.world&&(view==="play"||view==="replay"||view==="book"||view==="pick"||view==="picknew"))view="hub";
   const keep={};document.querySelectorAll("#app input[id],#app textarea[id]").forEach(n=>{keep[n.id]=n.value});
   const ks={};document.querySelectorAll("#app select[id^=jf-],#app select#goaltype,#app select#goalyears").forEach(n=>{ks[n.id]=n.value});
   const msv=$("mapstyle")&&$("mapstyle").value,tone=$("tone")&&$("tone").value,fac=$("fac")&&$("fac").value,dur=$("dur")&&$("dur").value,sy=window.scrollY;
-  {const body=(view==="play"&&S.world)?play():view==="pick"&&S.world?pickView():view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
+  {const body=(view==="play"&&S.world)?play():(view==="pick"||view==="picknew")&&S.world?(view==="pick"?pickView():pickNewView()):view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
   if(!S.fresh){for(const k in keep){const n=$(k);if(n&&keep[k])n.value=keep[k]}if(tone&&$("tone"))$("tone").value=tone;if(msv&&$("mapstyle"))$("mapstyle").value=msv}
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
