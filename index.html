@@ -138,6 +138,10 @@ button:disabled{opacity:.45;filter:saturate(.6)}
 .pills button{border-radius:999px;padding:7px 16px;min-height:36px;font-size:.84rem}
 .pills button:not(.alt){background:rgba(210,162,76,.18);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(210,162,76,.5)}
 .grid{gap:18px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.grid>*{animation:casc .5s ease both}
+@keyframes casc{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.grid>*{animation:none}}
+.grid>*:nth-child(2){animation-delay:.06s}.grid>*:nth-child(3){animation-delay:.12s}.grid>*:nth-child(4){animation-delay:.18s}.grid>*:nth-child(5){animation-delay:.24s}.grid>*:nth-child(6){animation-delay:.3s}
 .card{border-radius:18px;border:1px solid var(--line);background:var(--panel);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 24px rgba(0,0,0,.28);transition:transform .2s,box-shadow .2s,border-color .2s}
 @media(hover:hover){.card:hover{transform:translateY(-4px);border-color:rgba(210,162,76,.55);box-shadow:0 18px 40px rgba(0,0,0,.45)}}
 .th{overflow:hidden}
@@ -161,10 +165,14 @@ summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--gol
 details[open]>summary::before{transform:rotate(45deg)}
 details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
 .err:not(:empty){background:rgba(210,162,76,.09);border:1px solid rgba(210,162,76,.32);color:var(--ink);border-radius:10px;padding:8px 12px;margin:8px 0}
+#turnbar{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,#e8c877,#d2a24c,#b5873a);z-index:99;transition:width .4s ease;box-shadow:0 0 8px rgba(210,162,76,.5);border-radius:0 2px 2px 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(210,162,76,.4);color:var(--ink);border-radius:12px;padding:10px 18px;font:500 .88rem/1.3 var(--ff-ui);box-shadow:var(--sh);z-index:98;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:min(90vw,420px);text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .mapwrap{border-radius:var(--r-lg);border:1px solid rgba(210,162,76,.38);box-shadow:var(--sh),0 0 0 4px rgba(210,162,76,.06)}
 .mapwrap::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 70px rgba(0,0,0,.5)}
 .hud{left:12px;top:12px;z-index:4}
 .hud b,.hud span{background:var(--glass);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);padding:5px 13px;font-size:.78rem;letter-spacing:.05em}
+.hud .ep{color:var(--gold);font-family:var(--ff-title);letter-spacing:.1em}
 .hud b{font-family:var(--ff-title);font-weight:600;letter-spacing:.09em}
 .timebar{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
 .timebar button{min-height:36px;padding:6px 14px;font-size:.82rem}
@@ -200,6 +208,7 @@ details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
 .nav button,.nav .who,.brand{flex:0 0 auto}
 .regen{margin-top:10px}.regen button{min-height:32px;padding:4px 12px;font-size:.78rem}
 .heroart{position:absolute;right:28px;bottom:-14px;width:min(46%,440px);height:230px;pointer-events:none}
+.heromap{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16;filter:saturate(1.1);pointer-events:none;mask-image:radial-gradient(120% 130% at 30% 40%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(120% 130% at 30% 40%,#000 30%,transparent 75%)}
 .hc{position:absolute;width:210px;aspect-ratio:8/5;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.2);box-shadow:0 14px 34px rgba(0,0,0,.5)}
 .hc img{width:100%;height:100%;object-fit:cover;display:block}
 .hc0{right:150px;bottom:44px;transform:rotate(-7deg)}.hc1{right:0;bottom:84px;transform:rotate(5deg)}.hc2{right:72px;bottom:0;transform:rotate(-1deg);z-index:2}
@@ -641,8 +650,10 @@ function paintMap(c,N,det,o){o=o||{};const WW=o.W||MW,HH=o.H||MH,k=WW/MW,nmz=o.n
     else if(H[i-2]<SEA||H[i+2]<SEA||H[i-2*WW]<SEA||H[i+2*WW]<SEA){const v=ms==="volcanique",fl=ms==="flottantes",ic=ms==="glace",de=ms==="desert";r=v?96:fl?120:ic?205:de?232:222;gc=v?86:fl?96:ic?225:208;b=v?80:fl?74:ic?238:de?150:160}
     else{const t=Math.min(1,(h-SEA)/.45);r=112+t*38;gc=138-t*20;b=82+t*40;if(ms!=="continent"){const z=landCol(ms,x,y,t,nz,k,WW,HH,cx,cy);r=z[0];gc=z[1];b=z[2]}
       const sh=Math.max(.78,Math.min(1.22,1+(H[i+1]-H[i-1]+H[i+WW]-H[i-WW])*5));r*=sh;gc*=sh;b*=sh;
-      const o=OW[i];if(o<255){const k=pc[o%pc.length];r=r*.55+k[0]*.45;gc=gc*.55+k[1]*.45;b=b*.55+k[2]*.45}
-      if((H[i+1]>=SEA&&OW[i+1]!==o)||(H[i-1]>=SEA&&OW[i-1]!==o)||(H[i+WW]>=SEA&&OW[i+WW]!==o)||(H[i-WW]>=SEA&&OW[i-WW]!==o)){r*=.4;gc*=.4;b*=.4}}
+      const o=OW[i];let isBorder=false;
+      if(o<255){const k=pc[o%pc.length];r=r*.28+k[0]*.72;gc=gc*.28+k[1]*.72;b=b*.28+k[2]*.72}
+      if((H[i+1]>=SEA&&OW[i+1]!==o)||(H[i-1]>=SEA&&OW[i-1]!==o)||(H[i+WW]>=SEA&&OW[i+WW]!==o)||(H[i-WW]>=SEA&&OW[i-WW]!==o))isBorder=true;
+      if(isBorder){const bo=i*4+3;D[bo-1]=Math.min(255,Math.round(r*.45+232*.55));D[bo-2]=Math.min(255,Math.round(gc*.45+227*.55));D[bo]=Math.min(255,Math.round(b*.45+198*.55))}}
     const gn=(((i*2654435761)>>>24)/255-.5)*9;D[q]=r+gn;D[q+1]=gc+gn;D[q+2]=b+gn;D[q+3]=255}
   g.putImageData(img,0,0);styleOverlay(g,ms,WW,HH,cx,cy,k);
   if(o.thumb){P.forEach(p=>{g.beginPath();g.arc(p.x,p.y,3.2,0,6.2832);g.fillStyle="#f4e7c5";g.fill();g.strokeStyle="#2a2233";g.lineWidth=1.5;g.stroke()});return}
@@ -660,7 +671,7 @@ function paintMap(c,N,det,o){o=o||{};const WW=o.W||MW,HH=o.H||MH,k=WW/MW,nmz=o.n
   const pre=P.map(p=>{const cs=[];
     if(det)for(let k=0;k<2;k++){const a=R()*6.28,d=40+R()*60,x=p.x+Math.cos(a)*d,y=p.y+Math.sin(a)*d,nm=cityName(R);if(elev(x,y)>SEA+.06)cs.push({x,y,nm})}
     return{p,cs,cap:cityName(R)}});
-  pre.forEach(({p,cap})=>{castle(p.x,p.y);tx(cap,p.x,p.y+34,18,false,true);tx(p.n,p.x,p.y-26,30,true,true)});
+  pre.forEach(({p,cap})=>{castle(p.x,p.y);tx(cap.toUpperCase(),p.x,p.y+34,17,false,true);tx(p.n.toUpperCase().split("").join(" "),p.x,p.y-26,27,true,true)});
   pre.forEach(({cs})=>cs.forEach(c=>{dot(c.x,c.y,3.5);tx(c.nm,c.x,c.y+18,16,false)}));
   MP.places.forEach(pl=>{const p=P.find(x=>x.n===pl.f)||P[0],r2=rng(hash(pl.name));let x=p.x+(r2()-.5)*110,y=p.y+(r2()-.5)*80-26;
     if(elev(x,y)<SEA+.04){x=p.x;y=p.y-30}
@@ -912,6 +923,8 @@ const CHANGELOG=[
 "Thème : bouton lune/soleil directement dans la barre de navigation.",
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
+"Cartes lisibles : couleurs de faction franches sur les territoires contrôlés, frontières nettes au trait blanc cassé façon atlas, noms en hiérarchie claire (factions en capitales espacées, capitales moyennes, lieux petits) et routes commerciales visibles en permanence entre alliés.",
+"Interface soignée : accueil avec grande carte du « monde du jour » en fond de héros, fine barre de progression dorée pendant que le monde réagit, toasts discrets pour les messages, époque (« Hiver — an 3 ») dans le bandeau de la carte, cartes de l'accueil en cascade, zoom à la molette sur la carte, pastille d'époque à la couleur or.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
@@ -1110,6 +1123,7 @@ function known(){
   Object.entries(S.rel||{}).forEach(([k,v])=>{const[a,b]=k.split("|");if(a===hf)set.add(b);if(b===hf)set.add(a)});return set;
 }
 function drawFog(g,P){
+  if(P){const at=n=>P.find(p=>like(p.n,n)),seen={};Object.entries(S.rel||{}).forEach(([k,v])=>{if(!v||v.t!=="alliance")return;const[a,b]=k.split("|"),key=[a,b].sort().join("|");if(seen[key])return;seen[key]=1;const pa=at(a),pb=at(b);if(!pa||!pb)return;g.save();g.strokeStyle="rgba(140,190,160,.28)";g.lineWidth=1.4;g.setLineDash([3,6]);g.beginPath();g.moveTo(pa.x,pa.y);g.quadraticCurveTo((pa.x+pb.x)/2-(pb.y-pa.y)*.18,(pa.y+pb.y)/2+(pb.x-pa.x)*.18,pb.x,pb.y);g.stroke();g.restore()})}
   if(S.opts.fog!=="activé"||!P)return;const K=known();
   P.forEach(p=>{if(K.has(p.n))return;const gr=g.createRadialGradient(p.x,p.y,10,p.x,p.y,120);gr.addColorStop(0,"rgba(10,10,18,.97)");gr.addColorStop(1,"rgba(10,10,18,0)");
     g.fillStyle=gr;g.fillRect(p.x-125,p.y-125,250,250);g.fillStyle="#d8d2e6";g.font="bold 28px Georgia,serif";g.textAlign="center";g.fillText("?",p.x,p.y+10)});
@@ -1259,6 +1273,24 @@ function brand(){
 function heroArt(){
   const pick=m=>PRESETS.find(p=>p.ms===m)||PRESETS[0];
   return el("div",{class:"heroart","aria-hidden":"true"},["terre","cercle","volcanique"].map((m,i)=>{const p=pick(m);return el("div",{class:"hc hc"+i},thumb(p.name,p.tone,p.factions,p.ms))}));
+}
+const DAYMAP_CACHE={k:"",c:null};
+function dayMapCanvas(){
+  const k=new Date().toDateString();
+  if(DAYMAP_CACHE.k!==k||!DAYMAP_CACHE.c){
+    const p=PRESETS[Math.floor((new Date().getDate()*7+new Date().getMonth()*3)%PRESETS.length)];
+    const N=(p.factions||"").split("\n").map(f=>f.split(":")[0].trim()).filter(Boolean).slice(0,6);
+    const c=document.createElement("canvas");c.width=900;c.height=570;
+    paintMap(c,N.length?N:["A"],false,{W:900,H:570,cols:{},style:p.ms||"continent",name:p.name,map:{power:{},places:[]}});
+    DAYMAP_CACHE.k=k;DAYMAP_CACHE.c=c;
+  }
+  return DAYMAP_CACHE.c;
+}
+function heroMap(){
+  const base=dayMapCanvas(),c=document.createElement("canvas");c.width=base.width;c.height=base.height;
+  c.getContext("2d").drawImage(base,0,0);
+  c.className="heromap";c.setAttribute("aria-hidden","true");
+  return c;
 }
 function applyA11y(){
   const r=document.documentElement;if(!r||!r.setAttribute)return;const o=S.opts;
@@ -1730,7 +1762,7 @@ function hub(){
   const mine=db&&me?shared.filter(d=>d.id===me).flatMap(itemsOf).filter(w=>w&&w.name):[],favs=db&&me?(myDoc("votes").keys||[]).length:0;
   return el("div",{},
     el("div",{class:"strip"},el("p",{},el("b",{text:"Version test ("+BUILD+") — "}),el("span",{text:"tu joues avec une préversion du jeu. Tout fonctionne dans ton navigateur, rien n'est envoyé. "+((S.testTurns||0)>0?"Tu as déjà joué "+S.testTurns+" tour"+(S.testTurns>1?"s":"")+". ":"")}),el("button",{class:"alt",on:{click:()=>{view="feedback";draw()}},text:"Signaler un bug ou dire ce que tu en penses"}))),
-    el("div",{class:"hero"},heroArt(),el("h1",{text:"Réécris l'histoire d'un monde."}),
+    el("div",{class:"hero"},heroMap(),heroArt(),el("h1",{text:"Réécris l'histoire d'un monde."}),
       el("p",{class:"mute",text:"Choisis une aventure ou invente la tienne. Jouable immédiatement, avec ou sans IA."}),
       el("div",{class:"row",style:"max-width:520px"},
         el("button",{on:{click:()=>{view="forge";draw()}},text:"Créer un monde"}),
@@ -2485,8 +2517,9 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
 async function run(action,faction,months,auto){
   if(!sample&&!HY()){S.opts.hybrid="activé";save()}
   S.choice=null;
-  retry=()=>run(action,faction,months,auto);busy=true;err="";draw();
-  try{await turn(action,faction,months,auto);retry=null;busy=false;S.lastAct=Date.now();goalCheck();chekhovFire(auto);draw();
+  retry=()=>run(action,faction,months,auto);busy=true;err="";turnbar(true);draw();
+  try{await turn(action,faction,months,auto);retry=null;busy=false;S.lastAct=Date.now();goalCheck();chekhovFire(auto);turnbar(false);draw();
+    toast(dateStr(S.m)+" — le monde a bougé.");
     if((S.opts.cine||"activée")!=="désactivée"&&faction)setTimeout(()=>zoomToFac(faction,true),150)}catch(e){fail(e)}
 }
 async function simulate(total){
@@ -2732,6 +2765,7 @@ function mapWidget(){
   c.setAttribute("role","img");c.setAttribute("aria-label","Carte du monde "+S.world.name+", couche "+mapLayer);
   c.style.cssText="width:"+mapZoom*100+"%;height:auto;display:block;cursor:pointer";
   c.addEventListener("click",ev=>mapClick(ev,c,base));
+  c.addEventListener("wheel",ev=>{if(!ev.ctrlKey&&!ev.metaKey){ev.preventDefault();mapZoom=Math.max(1,Math.min(4,mapZoom+(ev.deltaY<0?.5:-.5)));draw()}},{passive:false});
   const tip=el("div",{class:"maptip"});
   c.addEventListener("pointermove",ev=>{
     const r=c.getBoundingClientRect(),x=Math.floor((ev.clientX-r.left)/r.width*MW),y=Math.floor((ev.clientY-r.top)/r.height*MH),ow=base._ow,P=base._P;
@@ -3018,7 +3052,8 @@ function play(){
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
   const rawMdl=cfgAI&&cfgAI.d?String(cfgAI.d):"",mdl=rawMdl.length>18?rawMdl.slice(0,17)+"…":rawMdl;
   const goals=(S.goals&&Object.keys(S.goals).length)?el("span",{class:"pill goals",title:"Objectifs de cette partie — accomplies : "+((S.goalDone||[]).length),text:"🎯 "+Object.values(S.goals).filter(g=>g.ok).length+"/"+Object.keys(S.goals).length}):null;
-  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{text:"Tour "+S.log.length}),goals,el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"🤖 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
+  const season=["Hiver","Printemps","Été","Automne"][Math.floor(((S.m%12+1)%12)/3)];
+  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{class:"ep",text:season+" — "+(S.world.y0?(S.world.y0+Math.floor(S.m/12)):"an "+(Math.floor(S.m/12)+1))}),el("span",{text:"Tour "+S.log.length}),goals,el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"🤖 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
   const time=el("div",{class:"timebar"},el("span",{class:"mute",text:"Avancer le temps"}),
     [["+1 mois",1],["+1 saison",3],["+1 an",12]].map(([t,n])=>el("button",{class:"alt",on:{click:()=>simulate(n)},...dis,text:t})),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
@@ -3120,6 +3155,20 @@ function playClassic(){
       S.log.length?el("button",{class:"alt",on:{click:regen},...dis,text:"Régénérer"}):null,
       db&&me&&!myP()?el("button",{class:"alt",on:{click:()=>mpCreate($("fac").value)},text:"Passer en multijoueur"}):null,db&&me?el("button",{class:"alt",on:{click:cloudSave},text:"Sauvegarder en ligne"}):null,db&&me&&canW!==false?el("button",{class:"alt",on:{click:()=>publish(S.world,S.map,S.log[0]&&S.log[0].n,S.log.length)},text:"Publier mon monde"}):null,
       el("button",{class:"alt",on:{click:copyLog},text:"Copier la chronique"}),el("button",{class:"alt",on:{click:reset},text:"Nouveau monde"})));
+}
+let toastT=null;
+function toast(msg){
+  let t=document.getElementById("toast");
+  if(!t){t=document.createElement("div");t.id="toast";document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add("on");
+  if(toastT)clearTimeout(toastT);
+  toastT=setTimeout(()=>{t.classList.remove("on")},2600);
+}
+function turnbar(on){
+  let b=document.getElementById("turnbar");
+  if(!b){b=document.createElement("div");b.id="turnbar";document.body.appendChild(b)}
+  b.style.width=on?"18%":"0";
+  if(on)b.style.transition="width 3s ease";else b.style.transition="width .3s ease";
 }
 function draw(){
   if(view!=="replay")rpStop();applyA11y();
