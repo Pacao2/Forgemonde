@@ -4,6 +4,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#171310">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Forgemonde">
 <title>Forgemonde (version test)</title>
 <meta name="description" content="Forgemonde : dirige une faction dans un monde vivant qui se souvient de chacun de tes choix. Gratuit, sans inscription, IA optionnelle.">
 <meta property="og:title" content="Forgemonde — un monde qui se souvient de vos choix">
@@ -810,14 +814,14 @@ function mp(){
       err&&retry&&!busy?el("button",{class:"alt",on:{click:()=>retry()},text:"Réessayer"}):null),
     host&&(!S.world||S.world.name!==g.world.name)?el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>mpRestore(g)},text:"Restaurer l'état de la partie sur cet appareil"})):null,
     el("h2",{text:"Chronique"}),
-    (chronAll||log.length<=8?log:log.slice(0,8)).map(e=>el("article",{class:"entry"},el("div",{class:"act",text:(e.d||"")+" : "+cut(e.a,160)}),e.f?el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",on:{click:()=>{view="play";draw();setTimeout(()=>zoomToFac(e.f,true),80)}},text:"🎯 Zoomer sur la zone"}):null,el("p",{text:cut(e.n,600)}),
+    (chronAll||log.length<=8?log:log.slice(0,8)).map(e=>el("article",{class:"entry"},el("div",{class:"act",text:(e.d||"")+" : "+cut(e.a,160)}),e.f?el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",on:{click:()=>{view="play";draw();setTimeout(()=>zoomToFac(e.f,true),80)}},text:"🎯 Zoomer sur la zone"}):null,el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",title:"Graver cet événement au canon : le monde s'en souviendra dans les tours à venir",on:{click:()=>{S.canon=(S.canon||[]).slice(-11).concat("["+cut(e.d||"",20)+"] "+cut(e.a,100));save();err="Gravé au canon : le monde se souviendra de ce tour.";draw()}},text:"🧠 S'en souvenir"}),el("p",{text:cut(e.n,600)}),
       (e.maj||[]).map(x=>el("div",{class:"note"},el("b",{text:"Événement majeur : "+x.titre+". "}),x.description+" "+x.consequence)),
       (e.r||[]).length?el("ul",{class:"re"},e.r.map(x=>el("li",{},el("b",{text:x.faction+" : "}),x.reaction))):null)),
     (!chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=true;draw()}},text:"Afficher toute la chronique ("+log.length+" tours)"})):null,
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v15oct — objectifs, dilemmes, front de guerre, semences";
+const BUILD="v16oct — mondes vedettes, rebonds de Chekhov, épilogue, PWA";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -833,7 +837,35 @@ function goalCheck(){
   for(const k in S.goals){const g=S.goals[k],j=SEEDJOB.find(x=>x[0]===k);
     if(j&&!g.ok&&j[2](S)){g.ok=true;S.goalDone=S.goalDone||[];S.goalDone.push({t:g.t,when:dateStr(S.m)});}}
 }
+const REBONTS=["Le passé resurgit : la promesse oubliée de « {t} » éclate au grand jour et bouscule les cours.","Rien ne se perd : « {t} », semée jadis sans témoin, porte enfin ses fruits — amers ou dorés.","La mémoire du monde se manifeste : ce que « {t} » avait laissé en suspens se noue aujourd'hui.","Les anciens avaient raison de se méfier : « {t} » revient hanter le présent."];
+function chekhovFire(auto){
+  const open=(S.chekhov||[]).filter(x=>!x.payee),now=S.log?S.log.length:0;
+  const old=open.filter(x=>now-(x.tour||0)>=6);
+  if(!old.length||Math.random()>(auto?.25:.45))return;
+  const c=old[0];c.payee=true;
+  const txt=REBONTS[Math.floor(Math.random()*REBONTS.length)].replace("{t}",c.titre);
+  if(S.log[0]){
+    (S.log[0].maj=S.log[0].maj||[]).push({quand:dateStr(S.m),titre:"Rebond : "+c.titre,description:txt,consequence:"La promesse faite au tour "+c.tour+" vient d'être tenue — le monde s'en souvenait."});
+    S.canon=(S.canon||[]).slice(-11).concat("[Rebond] "+c.titre+" — "+cut(txt,120));
+  }
+  save();
+}
 const CHANGELOG=[
+["v16oct — 16 octobre 2026 : la mémoire qui paie",[
+"Mondes vedettes : trois aventures dramatiques jouables en un clic dès l'accueil, pour démarrer sans réfléchir.",
+"Rebonds de Chekhov : les promesses posées il y a plus de 6 tours explosent enfin — le passé resurgit dans les événements majeurs et se grave au canon (moteur de règles inclus, plus besoin d'IA).",
+"Épilogue : panneau « Clôturer la partie » dans Outils — bilan mémorable de vos trahisons, alliances, dilemmes et objectifs, prêt à copier.",
+"Chronique interactive : bouton 🧠 sur chaque tour — « le monde s'en souvient » grave l'événement au canon pour qu'il revienne plus tard.",
+"Négociation à deux voix : pendant un dilemme, le bouton « Consulter vos conseillers » ouvre le chat avant votre décision.",
+"Décrochage : après 2 minutes d'inaction, trois suggestions d'actions dramatiques en un clic.",
+"Saisons sur la carte : teinte hiver/printemps/été/automne selon la date du tour.",
+"Routes commerciales animées : les alliés commercent — des points dorés voyagent entre leurs capitales.",
+"Lieux explorables : chaque lieu et ruine du monde propose un bouton « Explorer ».",
+"Semences importables : collez un code FM-XXXXXX dans l'onglet Partager pour rejouer le monde d'un autre joueur.",
+"Fichiers de monde : chargez un .monde.txt téléchargé directement depuis l'onglet Outils.",
+"Test complet : le mode fantôme peut jouer 20 tours et rapporter les erreurs.",
+"PWA : le site s'installe sur l'écran d'accueil et fonctionne hors ligne (GitHub Pages).",
+"Allègement : nettoyage du HTML transporté (les serveurs compressent déjà en gzip)."]],
 ["v15oct — 15 octobre 2026 : objectifs, dilemmes et semences",[
 "Nouvel onglet « Télécharger » : télécharge le jeu complet en un fichier HTML pour jouer hors ligne, l'archiver ou le partager — bouton de partage de lien inclus.",
 "Objectifs de partie : 2 à 3 objectifs par partie (alliance, bataille gagnée, secret découvert, exploration), suivis dans le HUD (🎯 1/2) et archivés à l'accomplissement.",
@@ -1017,7 +1049,52 @@ function sharePanel(){
   return det("share","📣 Partager ma partie",
     el("p",{class:"mute",text:"Génère un post prêt pour Discord ou Reddit : récit du monde, événements marquants, lien du jeu. Ajoute l'image de la carte en pièce jointe pour plus d'impact."}),
     el("div",{class:"row"},el("button",{on:{click:shareCopy},text:"Copier mon post"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Image de la carte"}):null),
-    S.seed?el("p",{class:"mute",style:"margin-top:10px",text:"🌱 Semence de ce monde : "+S.seed+" — partage-la pour que d'autres rejouent le même monde et comparent leurs parties."}):null);
+    S.seed?el("p",{class:"mute",style:"margin-top:10px",text:"🌱 Semence de ce monde : "+S.seed+" — partage-la pour que d'autres rejouent le même monde et comparent leurs parties."}):null,
+    el("details",{style:"margin-top:8px"},el("summary",{text:"Rejouer le monde d'une semence partagée"}),el("p",{class:"mute",text:"Collez un code FM-XXXXXXXX : le monde correspondant démarre en un clic."}),el("input",{id:"impseed",placeholder:"FM-XXXXXXXX","aria-label":"Semence à importer",style:"width:100%"}),el("div",{class:"row",style:"margin-top:6px"},el("button",{class:"alt",on:{click:seedImport},text:"Rejouer ce monde"}))));
+}
+function placesPanel(){
+  const L=(S.map&&S.map.places)||[];
+  if(!L.length||!S.world)return null;
+  return det("lieux","Lieux et ruines à explorer",
+    el("p",{class:"mute",text:"Des endroits que le monde a fait naître — chacun cache des secrets, des trésors ou des ennuis."}),
+    L.map(x=>el("div",{class:"row",style:"margin:6px 0"},el("span",{style:"flex:1",text:x.name+" ("+cut(x.f||"?",30)+")"}),busy?el("button",{class:"alt",disabled:"",text:"…"}):el("button",{class:"alt",on:{click:()=>run("J'envoie une expédition explorer "+x.name+" et découvrir ce que ce lieu recèle.",facs()[0])},text:"Explorer"}))));
+}
+function epiloguePanel(){
+  if(!S.world||!S.log.length)return null;
+  const txt=(S.log||[]).map(e=>String(e.n||"")).join(" ");
+  const ntrait=(txt.match(/trahison|livr[ée]|d[ée]masqu|sabotage|complot/gi)||[]).length;
+  const nsec=(txt.match(/secret|d[ée]couvre|exhum|r[ée]v[eè]le/gi)||[]).length;
+  const nall=Object.values(S.rel||{}).filter(r=>r&&r.t==="alliance").length;
+  const nguerre=Object.values(S.rel||{}).filter(r=>r&&r.t==="guerre").length;
+  const ndil=(S.goalDone||[]).length,nobj=(S.goalDone||[]).length;
+  const bilan=S.world.name+" — épilogue après "+S.log.length+" tours ("+dateStr(S.m)+").\n"+
+    "Trahisons et complots tissés : "+ntrait+". Alliances vivantes : "+nall+". Guerres en cours : "+nguerre+". Secrets percés : "+nsec+".\n"+
+    "Dilemmes tranchés et objectifs accomplis : "+nobj+".\n"+
+    "Canon du monde ("+(S.canon||[]).length+" faits gravés) : "+(S.canon||[]).slice(-5).join(" | ")+"\n"+
+    (S.seed?"Semence : "+S.seed+"\n":"")+
+    "La bible du monde se souvient de vous.";
+  return det("epi","🏁 Clôturer la partie (épilogue)",
+    el("p",{class:"mute",text:"Termine en beauté : un bilan de tout ce que le monde a retenu de votre règne — à copier dans un post ou un livre de campagne."}),
+    el("div",{class:"strip"},el("p",{style:"white-space:pre-line",text:bilan})),
+    el("div",{class:"row"},el("button",{on:{click:()=>{(navigator.clipboard?navigator.clipboard.writeText(bilan):Promise.reject()).then(()=>{err="Épilogue copié : colle-le où tu veux !";draw()}).catch(()=>{err="Copie impossible ici.";draw()})}},text:"Copier l'épilogue"}),
+      el("button",{class:"alt",on:{click:()=>{view="book";draw()}},text:"Voir le livre de campagne"})));
+}
+function fileImportPanel(){
+  return el("div",{class:"row",style:"margin-top:6px"},
+    el("label",{class:"alt",style:"cursor:pointer;padding:8px 14px;border:1px solid var(--line, #555);border-radius:8px;display:inline-block"},
+      "📂 Charger un fichier de monde",
+      el("input",{type:"file",accept:".txt",style:"display:none",on:{change:ev=>{
+        const f=ev&&ev.target&&ev.target.files&&ev.target.files[0];if(!f)return;
+        const rd=new FileReader();
+        rd.onload=()=>importWorldCode(String(rd.result||"").trim().replace(/\s+/g,""));
+        rd.readAsText(f);}}})));
+}
+function seedImport(){
+  const v=($("impseed")||{value:""}).value.trim().toUpperCase().replace(/^FM-/,"").replace(/\s+/g,"");
+  if(!v){err="Collez d'abord une semence FM-XXXXXXXX.";return draw()}
+  const p=(PRESETS||[]).find(x=>hHash(x.name+"|"+x.tone+"|"+x.factions).toString(36).toUpperCase().slice(0,8)===v);
+  if(p){err="";playPreset({ms:p.ms,name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions});return}
+  err="Semence inconnue : elle vient peut-être d'un monde créé sur mesure. Demandez plutôt son code d'export complet (Outils → Exporter).";draw();
 }
 function explorePanel(){
   if(S.opts.fog!=="activé")return det("expl","Exploration",el("p",{class:"mute",text:"Active le brouillard d'exploration dans les réglages pour cacher les factions inconnues."}));
@@ -1141,8 +1218,8 @@ function exportCode(){
   const w=S.world;ensureMap();
   return b64(JSON.stringify({v:1,w:{...wExtra(w),ms:w.ms,name:w.name,tone:w.tone,concept:w.concept,magic:w.magic,factions:w.factions,y0:w.y0},power:S.map.power,places:S.map.places,canon:S.canon||[],temper:S.temper||{}}));
 }
-function importCode(){
-  const raw=(document.getElementById("impcode")||{value:""}).value.trim().replace(/\s+/g,"");
+function importCode(){importWorldCode((document.getElementById("impcode")||{value:""}).value.trim().replace(/\s+/g,""))}
+function importWorldCode(raw){
   try{const o=JSON.parse(unb64(raw)),w=o&&o.w;if(!o||o.v!==1||!w||!w.name||!w.factions)throw 0;
     S.world={...wExtra(w),y0:cut(w.y0,6),src:"",ms:cut(w.ms,20)||"continent",name:cut(w.name,60),tone:cut(w.tone,40),concept:cut(w.concept,600),magic:cut(w.magic,600),factions:cut(w.factions,900)};
     initState();S.draft=null;
@@ -1157,7 +1234,7 @@ function exportPanel(){
   return det("exp","Exporter ce monde",el("p",{class:"mute",text:"Un code à partager pour que quelqu'un importe ce monde (sans la chronique)."}),
     el("textarea",{readonly:"",style:"min-height:70px;font-size:.75rem;word-break:break-all","aria-label":"Code d'export",text:code}),
     el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>{(navigator.clipboard?navigator.clipboard.writeText(code):Promise.reject()).then(()=>{err="Code copié.";draw()}).catch(()=>{err="Copie impossible : sélectionne le code à la main.";draw()})}},text:"Copier le code"}),
-      dl?el("button",{class:"alt",on:{click:()=>dl.save({filename:S.world.name.replace(/[^\w-]+/g,"-")+".monde.txt",data:new Blob([code],{type:"text/plain"})}).catch(()=>{})},text:"Télécharger"}):null,dl?el("button",{class:"alt",on:{click:exportReplay},text:"Exporter le replay (fichier à partager)"}):null));
+      dl?el("button",{class:"alt",on:{click:()=>dl.save({filename:S.world.name.replace(/[^\w-]+/g,"-")+".monde.txt",data:new Blob([code],{type:"text/plain"})}).catch(()=>{})},text:"Télécharger"}):null,dl?el("button",{class:"alt",on:{click:exportReplay},text:"Exporter le replay (fichier à partager)"}):null,fileImportPanel()));
 }
 const rateAvg=k=>{let t=0,n=0;ext.rate.forEach(d=>(Array.isArray(d.items)?d.items:[]).forEach(x=>{if(x&&x.k===k){t+=Number(x.n)||0;n++}}));return{avg:n?t/n:0,n}};
 const myRate=k=>{const d=ext.rate.find(x=>x.id===me),it=d&&(d.items||[]).find(x=>x.k===k);return it?it.n:0};
@@ -1559,6 +1636,9 @@ function hub(){
         el("button",{on:{click:()=>{view="forge";draw()}},text:"Créer un monde"}),
         el("button",{class:"alt",on:{click:()=>{const p=PRESETS[Math.floor(Math.random()*PRESETS.length)];err="";playPreset({ms:p.ms,name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions})}},...(busy?{disabled:""}:{}),text:"Découvrir en 30 secondes →"}),
         S.world?el("button",{class:"alt",on:{click:()=>{view="play";draw()}},text:"Reprendre : "+cut(S.world.name,28)}):null,db?el("button",{class:"alt",on:{click:()=>{const e=document.getElementById("mpsec");if(e)e.scrollIntoView({behavior:"smooth"})}},text:"Parties multijoueur"}):null)),
+    el("h2",{style:"margin-top:14px",text:"Trois mondes vedettes"}),
+    el("p",{class:"mute",text:"Des drames prêts à vivre — un clic et l'histoire commence."}),
+    el("div",{class:"carousel"},PRESETS.filter(p=>VEDETTES.includes(p.l)).map(p=>el("button",{class:"alt mini",...(busy?{disabled:""}:{}),on:{click:()=>{err="";playPreset({ms:p.ms,name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions})}}},el("div",{class:"mth"},thumb(p.name,p.tone,p.factions,p.ms)),el("span",{text:p.l}),el("div",{class:"mute",style:"font-size:.8rem",text:cut(p.concept,80)+"…"})))),
     el("div",{class:"strip"},
       usr&&me?el("p",{class:"mute",text:"Mondes publiés : "+mine.length+". Favoris : "+favs+"."}):el("p",{class:"mute",text:"Ouvre la page dans Claude avec ton compte pour publier, commenter et sauvegarder en ligne. Sans compte, tu peux jouer : la partie reste sur cet appareil."}),
       mine.map(w=>el("span",{},w.name+" ",el("button",{class:"alt",on:{click:()=>unpublish(w.name)},text:"Retirer"}))),
@@ -1613,6 +1693,7 @@ const PRESETS=[
 {l:"Marche des glaces",g:"Fantasy",ms:"glace",name:"La Marche des Glaces",tone:"Fantasy sombre",concept:"Un continent gelé où les clans survivent autour de rares sources de chaleur, tandis qu'une glace ancienne avance.",magic:"Le froid conserve les âmes : les morts bien gelés peuvent encore parler.",factions:"Clans du Nord : survivre à l'hiver\nGarde des Braises : protéger les sources de chaleur\nSilencieux : laisser la glace tout recouvrir"},
 {l:"Îles du ciel",g:"Fantasy",ms:"flottantes",name:"Les Îles du Ciel",tone:"Médiéval-fantastique",concept:"Des îles flottent dans le ciel, reliées par des vaisseaux à voiles, au-dessus d'un monde ancien que nul ne revoit.",magic:"Des cristaux de vent maintiennent les îles en altitude, mais s'affaiblissent chaque année.",factions:"Cités marchandes : tenir les routes aériennes\nOrdre des Vigies : protéger les cristaux\nPirates des Nuées : piller les convois"}];
 const GROUPS=["Fantasy","Chasseurs et portails","Réincarnation","Autres univers"];
+const VEDETTES=["Royaume en guerre","Cités flottantes","Après la fin"];
 function usePreset(p){selP=p.l;S.draft={ms:p.ms||"continent",name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions};S.fresh=true;err="";draw()}
 const HINTS={len:"Longueur maximale du récit de chaque tour.",diff:"Plus la difficulté est haute, plus le monde se montre dur avec toi.",surp:"Fréquence des événements imprévus.",ton:"Style d'écriture de la narration.",step:"Temps qui s'écoule à chaque action du joueur.",lang:"Langue des récits et des réponses de l'IA.",detail:"Nombre de villes dessinées sur la carte.",contenu:"Tous publics évite la violence graphique et le contenu explicite.",tier:"Rapide coûte moins de jetons, Avancé réfléchit davantage.",depth:"La simulation complète suit ressources, objectifs, technologies et dynasties, mais coûte plus de jetons.",jetons:"Active le décompte de jetons (démonstration).",autoEvery:"Délai entre deux tours automatiques.",autoStep:"Temps simulé à chaque tour automatique.",autoMax:"Nombre maximum de tours avant l'arrêt.",autoStop:"S'arrête à un événement majeur, ou ne s'arrête jamais.",clock:"Fait vivre le monde pendant ton absence, au rythme choisi.",catch:"Rattrape le temps écoulé en demandant, ou automatiquement.",mpAuto:"Résout les tours tout seul tant que la page de l'hôte reste ouverte.",stop:"Arrête la simulation à un événement majeur ou à la fin du délai."};
 Object.assign(HINTS,{hybrid:"Le moteur de règles décide de ce qui se passe (guerres, alliances, ressources, événements). L'IA, si elle est configurée, ne fait que raconter. Fonctionne aussi sans IA.",pace:"Dose les crises : tranquille, tendu ou épique.",fog:"Cache les factions que tu n'as pas encore rencontrées.",stream:"Affiche le récit mot à mot pendant que l'IA écrit.",fs:"Taille du texte de toute l'application.",contrast:"Augmente le contraste des couleurs.",motion:"Réduit les animations.",theme:"Thème sombre, clair, ou celui de ton appareil."});
@@ -2067,6 +2148,7 @@ function choicePanel(){
       else S.choice=null;
       save();run(o.action,facs()[0])
     }},text:cut(o.label,40)})),
+    el("button",{class:"alt",on:{click:()=>{const cands=(S.npcs||[]).map(x=>x&&x.nom).filter(Boolean);chatWho=cands[0]||(names()[0]||"");ptab="chat";S.choice=S.choice;save();draw()}},text:"💬 Consulter vos conseillers"}),
     el("button",{class:"alt",on:{click:()=>{S.choice=null;save();draw()}},text:"Ignorer"}));
 }
 function surveyPanel(){
@@ -2137,7 +2219,7 @@ async function ghostRun(n){
 function ghostPanel(){
   return det("ghost","Mode fantôme (tests automatiques)",
     el("p",{class:"mute",text:"Joue quelques tours avec une IA factice pour vérifier que le moteur ne casse rien. Ta partie réelle est restaurée à la fin."}),
-    el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>ghostRun(3)},...(busy?{disabled:""}:{}),text:"Lancer 3 tours fantômes"})),
+    el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>ghostRun(3)},...(busy?{disabled:""}:{}),text:"Lancer 3 tours fantômes"}),el("button",{class:"alt",on:{click:()=>ghostRun(20)},...(busy?{disabled:""}:{}),text:"Test complet : 20 tours"})),
     ghostRep?el("p",{class:"mute",text:"Dernier test : "+ghostRep.tours+" tours simulés"+(ghostRep.erreurs.length?", erreurs : "+ghostRep.erreurs.join(" ; "):" sans erreur")+(ghostRep.anomalies.length?" — anomalies : "+ghostRep.anomalies.join(", ")+".":" et aucune anomalie.")}):null);
 }
 /* --- cohérence automatique --- */
@@ -2223,7 +2305,7 @@ async function run(action,faction,months,auto){
   if(!sample&&!HY()){S.opts.hybrid="activé";save()}
   S.choice=null;
   retry=()=>run(action,faction,months,auto);busy=true;err="";draw();
-  try{await turn(action,faction,months,auto);retry=null;busy=false;goalCheck();draw();
+  try{await turn(action,faction,months,auto);retry=null;busy=false;S.lastAct=Date.now();goalCheck();chekhovFire(auto);draw();
     if((S.opts.cine||"activée")!=="désactivée"&&faction)setTimeout(()=>zoomToFac(faction,true),150)}catch(e){fail(e)}
 }
 async function simulate(total){
@@ -2339,6 +2421,24 @@ function drawEvents(g,P,t){
   const at=n=>P.find(p=>like(p.n,n));
   const ph=(t||0)/1000;
   const pulse=.5+.5*Math.sin(ph*2.4);
+  // Saisons : teinte douce selon la date du tour
+  const sk=S.m%12,season=Math.floor(((sk+1)%12)/3);
+  const seaCol=["rgba(150,180,215,.07)","rgba(130,195,130,.06)","rgba(235,205,110,.05)","rgba(205,135,80,.06)"][season];
+  if(seaCol){g.save();g.fillStyle=seaCol;g.fillRect(0,0,g.canvas.width,g.canvas.height);g.restore()}
+  // Routes commerciales : points dorés voyageant entre alliés
+  let ri=0;const seenR={};
+  Object.entries(S.rel||{}).forEach(([k,v])=>{
+    if(!v||v.t!=="alliance")return;
+    const [a,b]=k.split("|"),key=[a,b].sort().join("|");
+    if(seenR[key])return;seenR[key]=1;
+    const pa=at(a),pb=at(b);if(!pa||!pb)return;
+    g.save();g.strokeStyle="rgba(140,190,160,.25)";g.lineWidth=1.2;g.setLineDash([2,5]);
+    g.beginPath();g.moveTo(pa.x,pa.y);g.lineTo(pb.x,pb.y);g.stroke();g.setLineDash([]);
+    const tt=((ph*.09)+(ri*.31))%1;
+    const cx=pa.x+(pb.x-pa.x)*tt,cy=pa.y+(pb.y-pa.y)*tt;
+    g.fillStyle="rgba(212,175,90,.8)";g.beginPath();g.arc(cx,cy,2.1,0,6.2832);g.fill();
+    g.restore();ri++;
+  });
   // Front de guerre : ligne dorée pulsante entre capitales des factions en guerre
   const warPairs=[];let seenPair={};
   Object.entries(S.rel||{}).forEach(([k,v])=>{
@@ -2716,7 +2816,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel());
+  P.monde.push(canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
@@ -2739,6 +2839,11 @@ function playClassic(){
     (!sample&&S.log.length>=3&&!S.nudgeHide)?el("div",{class:"strip"},el("p",{text:"Tu joues avec le moteur de règles, sans IA. Pour des récits plus vivants et des dialogues avec les personnages, ajoute une IA (Claude, Mistral, Gemini, OpenAI, OpenRouter ou un modèle local gratuit)."}),
       el("button",{on:{click:()=>window.__openAI()},text:"Ajouter une IA"}),
       el("button",{class:"alt",on:{click:()=>{S.nudgeHide=true;save();draw()}},text:"Continuer sans"})):null,
+    (S.world&&S.log.length>=3&&Date.now()-(S.lastAct||S.visit||0)>120000&&!busy)?el("div",{class:"strip"},el("p",{},el("b",{text:"Le monde retient son souffle… "}),"que faire de grand ? Une suggestion, en un clic :"),
+      el("div",{class:"row",style:"margin-top:8px"},
+        el("button",{on:{click:()=>run("J'envoie un émissaire proposer une alliance audacieuse à la faction la plus inattendue.",facs()[0])},text:"Une alliance audacieuse"}),
+        el("button",{class:"alt",on:{click:()=>run("Mes espions cherchent le secret le mieux gardé de mon rival.",facs()[0])},text:"Espionner mon rival"}),
+        el("button",{class:"alt",on:{click:()=>run("J'organise une fête grandiose pour graver mon nom dans la mémoire du monde.",facs()[0])},text:"Marquer l'histoire"}))):null,
     choicePanel(),
     surveyPanel(),
     det("bible","La bible du monde",el("p",{text:w.concept}),el("p",{text:w.magic}),el("p",{style:"white-space:pre-line",text:w.factions})),
@@ -2833,6 +2938,7 @@ function draw(){
 }
 draw();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
+try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
 </script>
 </body>
 </html>

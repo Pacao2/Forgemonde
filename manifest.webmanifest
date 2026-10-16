@@ -1,0 +1,14 @@
+{
+  "name": "Forgemonde — un monde qui se souvient de vos choix",
+  "short_name": "Forgemonde",
+  "description": "Jeu narratif de stratégie : dirigez une faction, le monde réagit et n'oublie jamais. Gratuit, sans inscription.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#171310",
+  "theme_color": "#171310",
+  "icons": [
+    { "src": "./docs/miniature-reddit.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
