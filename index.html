@@ -326,8 +326,9 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .pickcard:focus-visible{outline:2px solid var(--gold)}
 .pickcard .th{position:relative;aspect-ratio:8/5;background:linear-gradient(140deg,var(--sea),var(--land));display:flex;align-items:center;justify-content:center}
 .pickcard .th::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,9,16,.9) 0%,rgba(10,9,16,.25) 55%,transparent 100%)}
-.pickcard .th>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
-.pickcard .th .em img{position:static;width:56px;height:56px;opacity:1;vertical-align:middle}
+.pickcard .th canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
+.pickcard .th .em{position:relative;z-index:2}
+.pickcard .th .em canvas{width:56px;height:56px;display:block;opacity:1}
 .pickcard .em{position:relative;z-index:2;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
 .pickcard .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
 .pickcard h3{margin:0;font-family:var(--ff-title);font-weight:600;letter-spacing:.04em;font-size:1.05rem;color:var(--ink)}
@@ -539,7 +540,7 @@ const SY=["Val","Mor","Eld","Kor","Thal","Dun","Ar","Sen","Bel","Ryn","Os","Ka",
 const cityName=r=>SY[Math.floor(r()*SY.length)]+SY[Math.floor(r()*SY.length)].toLowerCase();
 const MW=900,MH=570,SEA=.5;
 let mapCache={k:"",c:null};
-let pickThumbCache={k:"",u:""};
+let pickThumbCache={k:"",c:null};
 function mapCanvas(){
   ensureMap();const N=names(),det=S.opts.detail==="détaillée";
   const key=JSON.stringify([S.world.name,N,S.map.power,S.map.places,det,S.world.ms,S.world.cols]);
@@ -1075,9 +1076,11 @@ function pushHist(){
 function autoBackup(){try{localStorage.setItem(KEY+"-bak",JSON.stringify(S))}catch(e){}}
 function regenWith(note){const e=undo();if(e)run(e.a+" [Consigne de réécriture du récit : "+note+"]",e.f,e.N,e.auto)}
 const embCache={};
-function emblem(n,col,sz){
-  const k=n+col+sz;let u=embCache[k];
-  if(!u){const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d"),h=hash(n),sh=h%3,sy=(h>>3)%6;
+const embDrawCache={};
+function emblemDraw(n,col){
+  const k=n+col;let c=embDrawCache[k];
+  if(!c){c=document.createElement("canvas");c.width=c.height=64;
+    const g=c.getContext("2d"),h=hash(n),sh=h%3,sy=(h>>3)%6;
     g.fillStyle=col;g.strokeStyle="#2a2233";g.lineWidth=4;g.beginPath();
     if(sh===0){g.moveTo(10,8);g.lineTo(54,8);g.lineTo(54,34);g.quadraticCurveTo(54,56,32,60);g.quadraticCurveTo(10,56,10,34);g.closePath()}
     else if(sh===1){g.arc(32,32,26,0,6.2832)}else{g.moveTo(32,4);g.lineTo(58,32);g.lineTo(32,60);g.lineTo(6,32);g.closePath()}
@@ -1088,8 +1091,20 @@ function emblem(n,col,sz){
     else if(sy===3){g.beginPath();g.arc(32,32,14,0,6.2832);g.fill();g.fillStyle=col;g.beginPath();g.arc(38,29,12,0,6.2832);g.fill()}
     else if(sy===4){g.fillRect(22,26,20,22);g.fillRect(22,20,5,8);g.fillRect(29.5,20,5,8);g.fillRect(37,20,5,8)}
     else{g.beginPath();g.arc(32,32,8,0,6.2832);g.fill();for(let i=0;i<8;i++){g.beginPath();g.moveTo(32+12*Math.cos(i*.7854),32+12*Math.sin(i*.7854));g.lineTo(32+19*Math.cos(i*.7854),32+19*Math.sin(i*.7854));g.stroke()}}
-    u=embCache[k]=c.toDataURL()}
+    embDrawCache[k]=c}
+  return c;
+}
+const embCache={};
+function emblem(n,col,sz){
+  const k=n+col+sz;let u=embCache[k];
+  if(!u)u=embCache[k]=emblemDraw(n,col).toDataURL();
   return el("img",{src:u,alt:"Emblème de "+n,width:sz,height:sz,style:"vertical-align:middle;margin-right:4px"});
+}
+function emblemEl(n,col,sz){
+  const c=emblemDraw(n,col);
+  c.setAttribute("role","img");c.setAttribute("aria-label","Emblème de "+n);
+  c.style.cssText="width:"+sz+"px;height:"+sz+"px;display:block";
+  return c;
 }
 function known(){
   const hf=(S.hero&&S.hero.faction)||playerFac(),set=new Set([hf,...(S.disc||[])]);
@@ -1913,16 +1928,17 @@ function pickFac(f){
 }
 function pickView(){
   const F=facs().map(s=>{const i=s.indexOf(":");return i<0?{n:s.trim(),g:""}:{n:s.slice(0,i).trim(),g:s.slice(i+1).trim()}});
-  let thI="";
+  let thC=null;
   try{const kk="pick|"+(S.world?S.world.name:"")+"|"+(S.world?S.world.ms:"")+"|"+S.m+"|"+JSON.stringify(S.map&&S.map.power||{});
     if(pickThumbCache.k!==kk){const c=document.createElement("canvas");c.width=460;c.height=288;
       paintMap(c,F.map(x=>x.n),false,{W:460,H:288,thumb:1,cols:(S.world&&S.world.cols)||{},style:(S.world&&S.world.ms)||"continent",name:(S.world&&S.world.name)||"",map:S.map||{power:{},places:[]}});
-      pickThumbCache={k:kk,u:c.toDataURL("image/jpeg",.88)}}
-    thI=pickThumbCache.u}catch(e){}
+      pickThumbCache={k:kk,c}}
+    thC=pickThumbCache.c}catch(e){}
+  const thEl=()=>{if(!thC)return null;const c2=document.createElement("canvas");c2.width=thC.width;c2.height=thC.height;c2.getContext("2d").drawImage(thC,0,0);c2.setAttribute("role","img");c2.setAttribute("aria-label","Aperçu de la carte du monde");return c2};
   const card=(kick,icon,em,title,goal,actfn,al)=>{
     const c=el("article",{class:"pickcard",tabindex:"0",role:"button","aria-label":al,on:{click:actfn,keydown:e=>{if(e.key==="Enter"||e.key===" ")actfn()}}},
       el("span",{class:"kicker",text:kick}),
-      el("div",{class:"th"},thI?el("img",{src:thI,alt:"Aperçu de la carte du monde",loading:"lazy"}):null,icon?el("span",{class:"em",style:"font-size:2.6rem;line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))",text:icon}):null,em||null,
+      el("div",{class:"th"},thEl(),icon?el("span",{class:"em",style:"font-size:2.6rem;line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))",text:icon}):null,em||null,
         el("div",{class:"bd",style:"position:absolute;left:0;right:0;bottom:0;z-index:2;padding:12px 16px 0"},el("h3",{style:"color:#ecebe6;text-shadow:0 2px 8px rgba(0,0,0,.7)",text:title}))),
       el("div",{class:"bd"},goal?el("p",{class:"goal",text:goal}):null));
     return c;
@@ -1931,7 +1947,7 @@ function pickView(){
     el("h1",{text:"Qui dirigeras-tu ?"}),
     el("p",{class:"mute",text:"Choisis l'entité que tu incarnes dans "+(S.world?S.world.name:"ce monde")+". Les autres factions vivront leur propre vie — et se souviendront de tes choix."}),
     el("div",{class:"pickgrid"},
-      F.map((f,i)=>card("Faction",null,el("span",{class:"em"},emblem(f.n,facColor(f.n,i),56)),f.n,
+      F.map((f,i)=>card("Faction",null,el("span",{class:"em"},emblemEl(f.n,facColor(f.n,i),56)),f.n,
         f.g?"But : "+f.g:null,()=>pickFac(f.n),"Diriger "+f.n)),
       card("Toi","✨",null,"Ma propre entité","Crée une faction ou un personnage, ou incarne une nation déjà présente dans le scénario.",()=>{view="picknew";draw()},"Créer ma propre entité"),
       card("Libre","🌍",null,"Le monde entier","Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour.",()=>pickFac("Le monde"),"Observer le monde entier")),
