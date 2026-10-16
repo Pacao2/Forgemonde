@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v16oct.3-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v17oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -50,7 +50,8 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - 🏁 **Épilogue** — clôturez la partie avec le bilan mémorable de vos trahisons et alliances
 - 🎯 **Objectifs de partie** — 2 à 3 objectifs suivis dans l'interface
 - ⚖️ **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
-- 🗺️ **Carte vivante** — saisons, front de guerre animé, routes commerciales, anneaux d'événements, zooms cinématiques
+- 🗺️ **Carte vivante** — saisons, front de guerre animé, routes commerciales, anneaux d'événements, zooms cinématiques, lueurs de relief et infobulle au survol
+- 🎨 **Interface vivante** — palette qui suit les saisons, éclat doré sur les événements marquants, lettrine enluminée, transition « page tournée », jauges circulaires, pastille d'alerte, parallaxe d'accueil, ambiance « livre ancien » optionnelle
 - 📍 **Lieux explorables** — chaque lieu du monde propose une expédition
 - 🤝 **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
 - 🌙 **Monde autonome** — le monde continue d'évoluer pendant votre absence
@@ -59,7 +60,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - ⬇️ **Téléchargeable** — l'onglet Télécharger emporte le jeu complet en un fichier HTML jouable hors ligne
 - 📲 **PWA** — le site s'installe sur l'écran d'accueil et joue hors ligne
 - 📰 **Journal relié au dépôt** — l'onglet Journal affiche l'activité GitHub du projet en plus du journal local
-- 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair, accessibilité
+- 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair avec bascule lune/soleil, accessibilité (animations réduites, contraste élevé, tailles de texte)
 
 ## 🔐 Sécurité
 
@@ -71,6 +72,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## 📜 Journal des versions
 
+- **v17oct** — l'atlas s'illumine (polish visuel) : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », bordure du tour aux couleurs de la faction, lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte sur « Ma partie », squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil dans la barre, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
 - **v16oct.3** — correctifs de partage et PWA : lien du post copiable et aperçu social (Open Graph) pointés vers le site principal, image d'aperçu hébergée sur le dépôt, cache du service worker renommé à chaque version
 - **v16oct.2** — journal des versions du jeu relié au dépôt : activité GitHub (6 derniers commits) affichée dans l'onglet Journal, lien vers le code source, résilient hors ligne
 - **v16oct.1** — durcissement sécurité : délai d'attente sur les appels IA (60 s / 120 s), CSP renforcée (workers, manifest)

@@ -293,6 +293,34 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .stars{display:flex;align-items:center;gap:2px;flex-wrap:wrap}.stars button{padding:0 3px;min-height:0;background:transparent;border:0;box-shadow:none;color:var(--mute);font-size:1.2rem;line-height:1}.stars button.on{color:var(--gold)}
 .wow{border:1px solid rgba(210,162,76,.55);background:linear-gradient(135deg,rgba(210,162,76,.12),transparent 60%),var(--panel)}
 .card.locked{opacity:.7;border-color:rgba(224,123,115,.3)}.card.locked .th img{filter:grayscale(.7) brightness(.75)}.card.locked:hover{transform:none;border-color:rgba(224,123,115,.5)}.card.locked .bd{background:rgba(224,123,115,.03)}.card .th{position:relative;aspect-ratio:8/5;background:linear-gradient(135deg,var(--sea),var(--land))}.tag{background:linear-gradient(135deg,rgba(210,162,76,.9),rgba(224,220,160,.8));color:#1a1424;font-weight:600;border:0;box-shadow:0 4px 12px rgba(210,162,76,.3)}
+/* ===== v17oct : polish visuel ===== */
+@keyframes rewardGlow{0%{box-shadow:0 0 0 0 rgba(210,162,76,0)}35%{box-shadow:0 0 26px 3px rgba(210,162,76,.5),inset 0 0 24px rgba(210,162,76,.2)}100%{box-shadow:0 0 0 0 rgba(210,162,76,0)}}
+.entry.glow{animation:rewardGlow 2.4s ease .2s both}
+@keyframes promisePulse{0%{box-shadow:0 0 0 0 rgba(210,162,76,.6)}75%,100%{box-shadow:0 0 0 16px rgba(210,162,76,0)}}
+.entry.pulse{animation:promisePulse 1.5s ease-out 2 both}
+.entry.pulse .act{color:#f0cf87}
+#tour-0>p:first-of-type::first-letter{font-family:var(--ff-title);font-size:2.9em;line-height:.82;float:left;padding:4px 9px 0 0;color:var(--gold);text-shadow:0 0 16px rgba(210,162,76,.45)}
+@keyframes pageTurn{from{opacity:0;transform:perspective(1400px) rotateX(7deg) translateY(18px)}to{opacity:1;transform:none}}
+#tour-0.turn{transform-origin:top center;animation:pageTurn .65s cubic-bezier(.2,.75,.25,1) both}
+@keyframes shimmer{from{background-position:220px 0}to{background-position:-220px 0}}
+.skel{height:13px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,rgba(255,255,255,.045) 30%,rgba(255,255,255,.13) 50%,rgba(255,255,255,.045) 70%);background-size:220px 100%;animation:shimmer 1.2s linear infinite}
+.skel.w2{width:75%}.skel.w3{width:55%}
+.ring{width:24px;height:24px;border-radius:50%;display:inline-block;vertical-align:-6px;position:relative;background:conic-gradient(var(--gold) 0%,rgba(255,255,255,.1) 0)}
+.ring i{position:absolute;inset:5px;border-radius:50%;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+:root[data-season="0"] body{background:radial-gradient(1100px 560px at 85% -8%,rgba(96,130,190,.26),transparent 62%),radial-gradient(900px 500px at -5% 105%,rgba(160,190,255,.09),transparent 60%),var(--bg);background-attachment:fixed}
+:root[data-season="1"] body{background:radial-gradient(1100px 560px at 85% -8%,rgba(90,170,90,.22),transparent 62%),radial-gradient(900px 500px at -5% 105%,rgba(160,255,160,.07),transparent 60%),var(--bg);background-attachment:fixed}
+:root[data-season="2"] body{background:radial-gradient(1100px 560px at 85% -8%,rgba(210,162,76,.28),transparent 62%),radial-gradient(900px 500px at -5% 105%,rgba(255,220,150,.09),transparent 60%),var(--bg);background-attachment:fixed}
+:root[data-season="3"] body{background:radial-gradient(1100px 560px at 85% -8%,rgba(200,110,50,.24),transparent 62%),radial-gradient(900px 500px at -5% 105%,rgba(230,150,90,.08),transparent 60%),var(--bg);background-attachment:fixed}
+:root[data-amb="activée"] body::after{content:"";position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.55;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.42))}
+.hero::after{transition:transform .25s ease}
+.hero[data-px]{--hx:0;--hy:0}
+.hero[data-px]::after{transform:translate(calc(var(--hx)*16px),calc(var(--hy)*11px))}
+.hero[data-px] h1{transform:translate(calc(var(--hx)*-6px),calc(var(--hy)*-4px))}
+.nbadge{display:inline-block;min-width:9px;height:9px;border-radius:999px;background:#e07b73;box-shadow:0 0 0 2px var(--bg);margin-left:6px;animation:badgeBeat 1.6s ease infinite}
+@keyframes badgeBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+.maptip{position:absolute;z-index:5;pointer-events:none;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(210,162,76,.4);border-radius:10px;padding:6px 10px;font-size:.8rem;max-width:230px;box-shadow:var(--sh);display:none}
+.nav .moon{transition:transform .45s ease}
+.nav .moon:active{transform:rotate(180deg)}
 </style>
 </head>
 <body>
@@ -394,7 +422,7 @@ const TONES=["Fantasy sombre","Médiéval-fantastique","Science-fiction","Post-a
 let S={world:null,log:[]},sample=null,busy=false,err="";
 try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){try{const b=localStorage.getItem(KEY+"-bak");if(b)S=JSON.parse(b)}catch(e2){}}
 S.opts=Object.assign({len:"moyen",diff:"équilibrée",surp:"normal",ton:"neutre",lang:"Français",detail:"détaillée",contenu:"tous publics",step:"1 mois",stop:"à la fin du délai",autoEvery:"1 minute",autoStep:"1 saison",autoMax:"10 tours",autoStop:"ne jamais s'arrêter",clock:"désactivée",catch:"demander",mpAuto:"désactivée",tier:"Rapide",jetons:"activée"},S.opts||{});
-if(!PAY)S.opts.jetons="désactivée";S.m=S.m||0;S.sum=S.sum||"";S.npcs=S.npcs||[];S.chats=S.chats||{};S.pending=S.pending||[];S.hero=S.hero||null;S.recap=S.recap||null;S.seen=S.seen||Date.now();S.visit=S.visit||Date.now();S.tuto=S.tuto==null?0:S.tuto;S.rel=S.rel||{};S.gm=S.gm||[];if(S.wallet==null)S.wallet=2;S.opts=Object.assign({pace:"équilibré",fog:"désactivé",stream:"activé",fs:"normal",contrast:"normal",motion:"normal",theme:"auto"},S.opts);S.hist=S.hist||[];S.gaz=S.gaz||[];S.incoh=S.incoh||[];if(!S.mig2){S.opts.tier="Rapide";S.opts.jetons=PAY?"activée":"désactivée";S.mig2=1}if(!PAY)S.opts.jetons="désactivée";S.free=S.free||{d:"",used:0};S.plan=S.plan||"gratuit";S.owned=S.owned||[];S.intent=S.intent||[];S.earn=S.earn||{};S.res=S.res||{};S.tech=S.tech||{};S.dyn=S.dyn||{};S.rumors=S.rumors||[];S.spy=S.spy||0;S.ach=S.ach||{};S.usage=S.usage||{calls:0,tin:0,tout:0,usd:0,jet:0};S.bible=S.bible||{factions:{},lieux:{},arcs:[]};S.chekhov=S.chekhov||[];S.tensionHist=S.tensionHist||[];S.lastCanon=S.lastCanon||0;
+if(!PAY)S.opts.jetons="désactivée";S.m=S.m||0;S.sum=S.sum||"";S.npcs=S.npcs||[];S.chats=S.chats||{};S.pending=S.pending||[];S.hero=S.hero||null;S.recap=S.recap||null;S.seen=S.seen||Date.now();S.visit=S.visit||Date.now();S.tuto=S.tuto==null?0:S.tuto;S.rel=S.rel||{};S.gm=S.gm||[];if(S.wallet==null)S.wallet=2;S.opts=Object.assign({pace:"équilibré",fog:"désactivé",stream:"activé",fs:"normal",contrast:"normal",motion:"normal",theme:"auto",amb:"désactivée"},S.opts);S.hist=S.hist||[];S.gaz=S.gaz||[];S.incoh=S.incoh||[];if(!S.mig2){S.opts.tier="Rapide";S.opts.jetons=PAY?"activée":"désactivée";S.mig2=1}if(!PAY)S.opts.jetons="désactivée";S.free=S.free||{d:"",used:0};S.plan=S.plan||"gratuit";S.owned=S.owned||[];S.intent=S.intent||[];S.earn=S.earn||{};S.res=S.res||{};S.tech=S.tech||{};S.dyn=S.dyn||{};S.rumors=S.rumors||[];S.spy=S.spy||0;S.ach=S.ach||{};S.usage=S.usage||{calls:0,tin:0,tout:0,usd:0,jet:0};S.bible=S.bible||{factions:{},lieux:{},arcs:[]};S.chekhov=S.chekhov||[];S.tensionHist=S.tensionHist||[];S.lastCanon=S.lastCanon||0;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 if(window.claude&&claude.use){claude.use("sample").then(s=>{sample=s;aiChecked=true;draw()}).catch(()=>{aiChecked=true;draw()})}
 /* --- i18n : interface traduite (le français est la langue source) --- */
@@ -823,7 +851,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v16oct.3 — correctifs de partage et PWA";
+const BUILD="v17oct — l'atlas s'illumine";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -849,10 +877,23 @@ function chekhovFire(auto){
   if(S.log[0]){
     (S.log[0].maj=S.log[0].maj||[]).push({quand:dateStr(S.m),titre:"Rebond : "+c.titre,description:txt,consequence:"La promesse faite au tour "+c.tour+" vient d'être tenue — le monde s'en souvenait."});
     S.canon=(S.canon||[]).slice(-11).concat("[Rebond] "+c.titre+" — "+cut(txt,120));
+    if(S.log[0])S.log[0].rebond=true;
   }
   save();
 }
 const CHANGELOG=[
+["v17oct — 17 octobre 2026 : l'atlas s'illumine (polish visuel)",[
+"Récompenses : éclat doré animé sur les tours aux événements marquants, pulsation sur les rebonds de Chekhov tenus.",
+"Narration : lettrine enluminée en tête du dernier tour, bordure du tour à la couleur de la faction concernée, transition « page tournée » à chaque nouveau tour.",
+"Carte : lueurs de relief animées balayant les terres, infobulle au survol d'un territoire (nom et influence). Le brouillard d'exploration existe déjà : il garde son rôle.",
+"Palette : l'ambiance de l'interface glisse avec les saisons (hiver bleuté, printemps verdoyant, été doré, automne ambré).",
+"Panneau faction : jauges circulaires dorées pour or, nourriture, armée et influence.",
+"Alertes : pastille rouge battante sur « Ma partie » quand le monde a vécu, qu'une promesse attend son rebond ou que les objectifs avancent.",
+"Chargement : squelettes de texte animés pendant que le monde s'éveille, à la place d'un simple pointillés.",
+"Accueil : parallaxe discrète de la lune et du titre sous le doigt ou la souris.",
+"Thème : bouton lune/soleil directement dans la barre de navigation, animation au clic.",
+"Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
+"Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct.3 — 16 octobre 2026 : correctifs de partage et PWA",[
 "Partage : le lien du post copiable est désormais le site principal (pacao2.github.io/Forgemonde), plus le miroir.",
 "Partage social : l'aperçu (Open Graph) pointe vers le site principal avec une image hébergée sur le dépôt — l'ancienne image renvoyait une erreur 404.",
@@ -1198,8 +1239,10 @@ function applyA11y(){
   const r=document.documentElement;if(!r||!r.setAttribute)return;const o=S.opts;
   r.setAttribute("data-fs",o.fs||"normal");r.setAttribute("data-contrast",o.contrast||"normal");r.setAttribute("data-motion",o.motion||"normal");
   if(o.theme==="sombre")r.setAttribute("data-theme","dark");else if(o.theme==="clair")r.setAttribute("data-theme","light");else r.removeAttribute("data-theme");
+  r.setAttribute("data-season",String(Math.floor(((S.m%12+1)%12)/3)));
+  r.setAttribute("data-amb",o.amb||"désactivée");
 }
-const a11yPanel=()=>det("a11y","Accessibilité et thème",opt("Taille du texte","fs",["petit","normal","grand","très grand"]),opt("Contraste","contrast",["normal","élevé"]),opt("Animations","motion",["normal","réduit"]),opt("Thème","theme",["auto","sombre","clair"]));
+const a11yPanel=()=>det("a11y","Accessibilité et thème",opt("Taille du texte","fs",["petit","normal","grand","très grand"]),opt("Contraste","contrast",["normal","élevé"]),opt("Animations","motion",["normal","réduit"]),opt("Ambiance livre ancien","amb",["désactivée","activée"]),opt("Thème","theme",["auto","sombre","clair"]));
 const SLOTS="forge-slots-v1",KEEPG=["opts","usage","wallet","earn","ach","fl","tuto","fbSent","fbHide","visit","seen","plan","owned","free","mig2","chalClaim","intent","planAt","subHide"];
 const slotsGet=()=>{try{return JSON.parse(localStorage.getItem(SLOTS)||"{}")}catch(e){return{}}};
 const slotsSet=o=>{try{localStorage.setItem(SLOTS,JSON.stringify(o));return true}catch(e){err="Espace de stockage plein : supprime une sauvegarde.";return false}};
@@ -1679,12 +1722,23 @@ function hub(){
     el("div",{class:"err",role:"status",text:err}),
     aiBanner(),tutoCard(),fbBanner(),testerPanel(),PAY?subBanner():null,PAY?premiumSection():null,wowCard(),catalog(),chalCard(),campSection(),achPanel(),mpSection(),a11yPanel(),slotsPanel());
 }
+function navAlert(){
+  if(!S.world||busy||autoOn)return"";
+  if(catchMonths()>=1)return"Le monde a vécu pendant ton absence";
+  const open=(S.chekhov||[]).filter(x=>!x.payee&&S.log.length-(x.tour||0)>=6);
+  if(open.length)return"Une promesse du monde attend son rebond";
+  const gs=S.goals&&Object.values(S.goals).filter(g=>g&&!g.ok);
+  if(gs&&gs.length&&S.log.length&&S.log.length%3===0)return"Des objectifs avancent";
+  return"";
+}
 function nav(){
   const who=usr&&me?(pname[me]||"compte Claude"):"";
   const b=(v,t)=>el("button",{class:view===v?"":"alt",on:{click:()=>{view=v;err="";draw()}},text:t});
+  const light=document.documentElement.getAttribute("data-theme")==="light"||(!document.documentElement.getAttribute("data-theme")&&window.matchMedia&&matchMedia("(prefers-color-scheme:light)").matches);
+  const al=navAlert();
   return el("nav",{class:"nav"},brand(),
     b("hub","Accueil"),
-    S.world?b("play","Ma partie"):null,
+    S.world?(()=>{const n=el("button",{class:view==="play"?"":"alt",on:{click:()=>{view="play";err="";draw()}},text:"Ma partie",...(al?{title:al}:{})});if(al)n.appendChild(el("span",{class:"nbadge","aria-label":al}));return n})():null,
     b("forge","Créer"),
     S.world&&S.log.length>1?b("replay","Replay"):null,
     S.world?b("book","Livre"):null,
@@ -1693,6 +1747,7 @@ function nav(){
     b("download","Télécharger"),
     b("feedback","Retours"),
     el("button",{class:"alt",on:{click:()=>window.__openAI()},text:"⚙ IA"}),
+    el("button",{class:"alt moon",title:"Basculer le thème sombre/clair","aria-label":"Basculer le thème",on:{click:()=>{const rt=document.documentElement.getAttribute("data-theme");const sysLight=window.matchMedia&&matchMedia("(prefers-color-scheme:light)").matches;const lightNow=rt==="light"||(!rt&&sysLight);S.opts.theme=lightNow?"sombre":"clair";applyA11y();save();draw()}},text:(light?"☀":"🌙")}),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Arrêter l'autonomie"}):null,
     PAY&&me?b("gains","Mes gains"):null,
     (PAY||isOwn)?b("jetons","Jetons"+(S.opts.jetons==="activée"?" ("+fmt(freeLeft()+(S.wallet||0),1)+")":"")):null,
@@ -1729,7 +1784,7 @@ const VEDETTES=["Royaume en guerre","Cités flottantes","Après la fin"];
 function usePreset(p){selP=p.l;S.draft={ms:p.ms||"continent",name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions};S.fresh=true;err="";draw()}
 const HINTS={len:"Longueur maximale du récit de chaque tour.",diff:"Plus la difficulté est haute, plus le monde se montre dur avec toi.",surp:"Fréquence des événements imprévus.",ton:"Style d'écriture de la narration.",step:"Temps qui s'écoule à chaque action du joueur.",lang:"Langue des récits et des réponses de l'IA.",detail:"Nombre de villes dessinées sur la carte.",contenu:"Tous publics évite la violence graphique et le contenu explicite.",tier:"Rapide coûte moins de jetons, Avancé réfléchit davantage.",depth:"La simulation complète suit ressources, objectifs, technologies et dynasties, mais coûte plus de jetons.",jetons:"Active le décompte de jetons (démonstration).",autoEvery:"Délai entre deux tours automatiques.",autoStep:"Temps simulé à chaque tour automatique.",autoMax:"Nombre maximum de tours avant l'arrêt.",autoStop:"S'arrête à un événement majeur, ou ne s'arrête jamais.",clock:"Fait vivre le monde pendant ton absence, au rythme choisi.",catch:"Rattrape le temps écoulé en demandant, ou automatiquement.",mpAuto:"Résout les tours tout seul tant que la page de l'hôte reste ouverte.",stop:"Arrête la simulation à un événement majeur ou à la fin du délai."};
 Object.assign(HINTS,{hybrid:"Le moteur de règles décide de ce qui se passe (guerres, alliances, ressources, événements). L'IA, si elle est configurée, ne fait que raconter. Fonctionne aussi sans IA.",pace:"Dose les crises : tranquille, tendu ou épique.",fog:"Cache les factions que tu n'as pas encore rencontrées.",stream:"Affiche le récit mot à mot pendant que l'IA écrit.",fs:"Taille du texte de toute l'application.",contrast:"Augmente le contraste des couleurs.",motion:"Réduit les animations.",theme:"Thème sombre, clair, ou celui de ton appareil."});
-const opt0=(label,key,ch)=>el("div",{},el("label",{text:label}),el("select",{on:{change:e=>{S.opts[key]=e.target.value;save();if(key==="detail")draw();if(key==="mpAuto")mpAutoSet();if(["fs","contrast","motion","theme"].includes(key))applyA11y()}}},ch.map(c=>el("option",{value:c,...(S.opts[key]===c?{selected:""}:{}),text:c}))));
+const opt0=(label,key,ch)=>el("div",{},el("label",{text:label}),el("select",{on:{change:e=>{S.opts[key]=e.target.value;save();if(key==="detail")draw();if(key==="mpAuto")mpAutoSet();if(["fs","contrast","motion","theme","amb"].includes(key))applyA11y()}}},ch.map(c=>el("option",{value:c,...(S.opts[key]===c?{selected:""}:{}),text:c}))));
 const opt=(label,key,ch)=>{const d=opt0(label,key,ch);if(HINTS[key])d.append(el("div",{class:"mute",style:"font-size:.8rem;margin:3px 0 6px",text:HINTS[key]}));return d};
 
 const TIERS={"Rapide":["quick",.05,1,5],"Équilibré":["default",.1,2,10],"Avancé":["complex",.2,4,20]};
@@ -2323,7 +2378,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   S.m+=N2;
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
-  S.log=S.log.slice(0,60);S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];
+  S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];
   S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
@@ -2457,6 +2512,8 @@ function drawEvents(g,P,t){
   const sk=S.m%12,season=Math.floor(((sk+1)%12)/3);
   const seaCol=["rgba(150,180,215,.07)","rgba(130,195,130,.06)","rgba(235,205,110,.05)","rgba(205,135,80,.06)"][season];
   if(seaCol){g.save();g.fillStyle=seaCol;g.fillRect(0,0,g.canvas.width,g.canvas.height);g.restore()}
+  // Vagues de relief : lueurs lentes balayant les terres
+  if(S.opts.motion!=="réduit"){g.save();g.globalAlpha=.04+.03*Math.sin(ph*.5);g.fillStyle="#f4e7c5";for(let b=0;b<3;b++){const yy=((ph*16+b*(MH+140)/3)%(MH+140))-70;g.beginPath();g.moveTo(0,yy);g.quadraticCurveTo(MW/2,yy-46,MW,yy);g.lineTo(MW,yy+22);g.quadraticCurveTo(MW/2,yy-24,0,yy+22);g.closePath();g.fill()}g.restore()}
   // Routes commerciales : points dorés voyageant entre alliés
   let ri=0;const seenR={};
   Object.entries(S.rel||{}).forEach(([k,v])=>{
@@ -2581,10 +2638,23 @@ function mapWidget(){
   c.setAttribute("role","img");c.setAttribute("aria-label","Carte du monde "+S.world.name+", couche "+mapLayer);
   c.style.cssText="width:"+mapZoom*100+"%;height:auto;display:block;cursor:pointer";
   c.addEventListener("click",ev=>mapClick(ev,c,base));
+  const tip=el("div",{class:"maptip"});
+  c.addEventListener("pointermove",ev=>{
+    const r=c.getBoundingClientRect(),x=Math.floor((ev.clientX-r.left)/r.width*MW),y=Math.floor((ev.clientY-r.top)/r.height*MH),ow=base._ow,P=base._P;
+    if(x<0||y<0||x>=MW||y>=MH){tip.style.display="none";return}
+    const o=ow&&ow[y*MW+x],p=(o!=null&&o<255&&P[o])?P[o]:null,wr=wrap.getBoundingClientRect();
+    if(!p){tip.style.display="none";return}
+    tip.replaceChildren(el("b",{text:p.n}),el("div",{text:"Influence : "+Math.round(((S.map||{}).power&&(S.map.power[p.n]??1))/1.6)+" %"}));
+    tip.style.display="block";
+    tip.style.left=Math.max(4,Math.min(wr.width-236,ev.clientX-wr.left+14))+"px";
+    tip.style.top=Math.max(4,ev.clientY-wr.top-8)+"px";
+  });
+  c.addEventListener("pointerleave",()=>{tip.style.display="none"});
+  const wrap=el("div",{class:"mapwrap"},c,tip);
   return el("div",{},
     el("div",{class:"row"},el("select",{"aria-label":"Couche de la carte",style:"flex:2 1 140px",on:{change:e=>{mapLayer=e.target.value;draw()}}},LAYERS.map(l=>el("option",{value:l,...(mapLayer===l?{selected:""}:{}),text:"Couche : "+l}))),
       el("button",{class:"alt",on:{click:()=>{mapZoom=Math.max(1,mapZoom-.5);draw()}},text:"Zoom -"}),el("button",{class:"alt",on:{click:()=>{mapZoom=Math.min(4,mapZoom+.5);draw()}},text:"Zoom +"})),
-    el("div",{class:"mapwrap"},c),
+    wrap,
     el("p",{class:"mute",style:"font-size:.85rem",text:"Touche un territoire pour voir son histoire."}));
 }
 function medit(d){const f=$("mefac").value;ensureMap();S.map.power[f]=Math.max(.55,Math.min(1.6,(S.map.power[f]??1)+d));S.pending.push("Le Maître du jeu a modifié l'influence de "+f+" ("+(d>0?"hausse":"baisse")+").");S.pending=S.pending.slice(-5);save();draw()}
@@ -2716,7 +2786,7 @@ function mjDecree(now){
   else{S.pending.push(msg);S.pending=S.pending.slice(-5);save();err="Décret enregistré pour le prochain tour.";draw()}
 }
 function sysPanels(){
-  const R=S.res||{},bar=v=>el("i",{class:"bar",style:"width:90px"},el("i",{style:"width:"+Math.max(0,Math.min(100,v))+"%"})),LB={or:"Or",nourriture:"Nourriture",armee:"Armée",influence:"Influence"},dis=busy?{disabled:""}:{};
+  const R=S.res||{},bar=v=>el("i",{class:"ring",style:"background:conic-gradient(var(--gold) "+Math.max(0,Math.min(100,v))+"%,rgba(255,255,255,.1) 0)"},el("i",{})),LB={or:"Or",nourriture:"Nourriture",armee:"Armée",influence:"Influence"},dis=busy?{disabled:""}:{};
   return[
     det("eco","Ressources et puissance",Object.keys(R).length?names().filter(n=>R[n]).map(n=>el("div",{class:"entry"},el("b",{text:n}),Object.keys(LB).map(k=>el("div",{class:"mute",style:"display:flex;gap:8px;align-items:center"},el("span",{style:"width:90px",text:LB[k]}),bar(R[n][k]),el("span",{text:String(R[n][k])}))))):el("p",{class:"mute",text:"Les ressources apparaissent après le premier tour."})),
     det("tech","Technologies et magies",names().map(n=>el("p",{},el("b",{text:n+" : "}),((S.tech||{})[n]||[]).map(x=>x.nom+" ("+x.effet+")").join(" ; ")||"rien pour l'instant"))),
@@ -2944,13 +3014,13 @@ function playClassic(){
           el("summary",{},el("span",{class:"act",text:x.e.d+" — "}),el("span",{text:cut(who,90)})),
           el("div",{class:"hist",text:who}),el("p",{text:cut(x.e.n,600)}),...x.D);
         d.addEventListener("toggle",()=>{openD["arch"+i]=d.open});return d});
-      const top=E[0],recent=top?el("article",{id:"tour-0",class:"entry"},
+      const top=E[0],recent=top?el("article",{id:"tour-0",class:"entry"+(((top.e.maj||[]).length)?" glow":"")+(top.e.rebond?" pulse":"")+((Date.now()-(S.lastTurnAt||0)<2500)?" turn":""),style:"border-left-color:"+facColor(String(top.e.f).split(":")[0].trim(),0)},
         el("div",{class:"act",text:top.e.d}),el("div",{class:"hist",text:String(top.e.f).split(":")[0].trim()+" : "+top.e.a}),
         el("p",{text:top.e.n}),
         (top.e.maj||[]).length?el("p",{class:"mute",style:"font-size:.9rem",text:"★ "+top.e.maj.map(x=>x.titre).join(" · ")}):null,
         top.D.length?det("ced"+(top.e.at||0),"Détails du tour ("+top.D.length+")",...top.D):null):null;
       const old=one.slice(1);
-      return el("div",{},recent,old.length?det("archives","Tours précédents ("+old.length+")",...old):null)})():el("p",{class:"wait",text:busy?"Le monde s'éveille…":"Rien n'est encore écrit."}),
+      return el("div",{},recent,old.length?det("archives","Tours précédents ("+old.length+")",...old):null)})():el("p",{class:"wait",text:busy?"Le monde s'éveille…":"Rien n'est encore écrit."}),busy?el("div",{role:"status","aria-label":"Le monde s'éveille"},el("p",{class:"mute",style:"margin-bottom:2px",text:"Le monde s'éveille…"}),el("div",{class:"skel w3"}),el("div",{class:"skel"}),el("div",{class:"skel w2"})):null,
     el("div",{class:"row"},
       S.log.length?el("button",{class:"alt",on:{click:undo},...dis,text:"Annuler le dernier tour"}):null,
       S.log.length?el("button",{class:"alt",on:{click:regen},...dis,text:"Régénérer"}):null,
@@ -2969,6 +3039,7 @@ function draw(){
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
 }
 draw();
+document.addEventListener("pointermove",ev=>{const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(ev.clientY<r.top-120||ev.clientY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((ev.clientX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((ev.clientY-r.top)/r.height-.5).toFixed(3))},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
 try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
 </script>
