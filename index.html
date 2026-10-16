@@ -319,8 +319,20 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .nbadge{display:inline-block;min-width:9px;height:9px;border-radius:999px;background:#e07b73;box-shadow:0 0 0 2px var(--bg);margin-left:6px;animation:badgeBeat 1.6s ease infinite}
 @keyframes badgeBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .maptip{position:absolute;z-index:5;pointer-events:none;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(210,162,76,.4);border-radius:10px;padding:6px 10px;font-size:.8rem;max-width:230px;box-shadow:var(--sh);display:none}
-.nav .moon{transition:transform .45s ease}
-.nav .moon:active{transform:rotate(180deg)}
+/* ===== v17oct.3 : cartes de sélection soignées ===== */
+.pickgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:18px}
+.pickcard{position:relative;overflow:hidden;border-radius:18px;border:1px solid var(--line);background:var(--panel);cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;outline-offset:3px}
+.pickcard:hover,.pickcard:focus-visible{transform:translateY(-4px);border-color:rgba(210,162,76,.7);box-shadow:0 16px 36px rgba(0,0,0,.45),0 0 0 1px rgba(210,162,76,.35)}
+.pickcard:focus-visible{outline:2px solid var(--gold)}
+.pickcard .th{position:relative;aspect-ratio:8/5;background:linear-gradient(140deg,var(--sea),var(--land));display:flex;align-items:center;justify-content:center}
+.pickcard .th::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,9,16,.9) 0%,rgba(10,9,16,.25) 55%,transparent 100%)}
+.pickcard .th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.pickcard .em{position:relative;z-index:2;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
+.pickcard .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+.pickcard h3{margin:0;font-family:var(--ff-title);font-weight:600;letter-spacing:.04em;font-size:1.05rem;color:var(--ink)}
+.pickcard .goal{margin:0;font-size:.88rem;line-height:1.5;color:var(--mute);background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px}
+.pickcard .kicker{position:absolute;left:12px;top:12px;z-index:2;background:var(--glass);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 11px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.pickhint{margin:14px 0 0;font-size:.85rem;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -851,7 +863,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct.2 — joue une faction du scénario ou crée la tienne";
+const BUILD="v17oct.3 — cartes de sélection soignées";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -882,6 +894,11 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v17oct.3 — 17 octobre 2026 : cartes de sélection soignées",[
+"Écran « Qui dirigeras-tu ? » redessiné : cartes plus aérées, coins arrondis, liseré doré au survol et au clavier.",
+"Hiérarchie claire : chaque carte porte son type en pastille (Faction, Toi, Libre), le nom en grand sur l'image et le but en encart lisible.",
+"Emblèmes agrandis avec ombre portée : ils restent nets et lisibles sur le fond.",
+"Astuce ajoutée sous la grille : rappel que le camp peut changer à tout moment."]],
 ["v17oct.2 — 17 octobre 2026 : joue une faction du scénario ou crée la tienne",[
 "Sur l'écran « Qui dirigeras-tu ? », une nouvelle carte « ✨ Ma propre entité » : crée une faction, une nation ou un personnage que le monde intégrera comme une puissance à part entière.",
 "Ton entité reçoit un nom et un but ; elle rejoint la liste des factions du monde, la carte, la diplomatie et la mémoire du monde comme les autres.",
@@ -1912,19 +1929,23 @@ function pickFac(f){
 }
 function pickView(){
   const F=facs().map(s=>{const i=s.indexOf(":");return i<0?{n:s.trim(),g:""}:{n:s.slice(0,i).trim(),g:s.slice(i+1).trim()}});
+  const card=(kick,icon,em,title,goal,actfn,al)=>{
+    const c=el("article",{class:"pickcard",tabindex:"0",role:"button","aria-label":al,on:{click:actfn,keydown:e=>{if(e.key==="Enter"||e.key===" ")actfn()}}},
+      el("span",{class:"kicker",text:kick}),
+      el("div",{class:"th"},icon?el("span",{class:"em",style:"font-size:2.6rem;line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))",text:icon}):null,em||null,
+        el("div",{class:"bd",style:"position:absolute;left:0;right:0;bottom:0;z-index:2;padding:12px 16px 0"},el("h3",{style:"color:#ecebe6;text-shadow:0 2px 8px rgba(0,0,0,.7)",text:title}))),
+      el("div",{class:"bd"},goal?el("p",{class:"goal",text:goal}):null));
+    return c;
+  };
   return el("div",{class:"col"},
     el("h1",{text:"Qui dirigeras-tu ?"}),
-    el("p",{class:"mute",text:"Comme dans Pax Historia : choisis l'entité que tu incarnes dans "+(S.world?S.world.name:"ce monde")+". Les autres factions vivront leur propre vie — et se souviendront de tes choix."}),
-    el("div",{class:"grid",style:"margin-top:14px"},
-      F.map((f,i)=>el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Diriger "+f.n,on:{click:()=>pickFac(f.n),keydown:e=>{if(e.key==="Enter"||e.key===" ")pickFac(f.n)}}},
-        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center;gap:8px"},emblem(f.n,facColor(f.n,i),34)),
-        el("div",{class:"bd"},el("h3",{text:f.n}),f.g?el("p",{text:"But : "+f.g}):null))),
-      el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Observer le monde entier",on:{click:()=>pickFac("Le monde"),keydown:e=>{if(e.key==="Enter"||e.key===" ")pickFac("Le monde")}}},
-        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center"},el("span",{style:"font-size:2rem",text:"🌍"})),
-        el("div",{class:"bd"},el("h3",{text:"Le monde entier"}),el("p",{text:"Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour."}))),
-      el("article",{class:"card",style:"cursor:pointer",tabindex:"0",role:"button","aria-label":"Créer ma propre entité",on:{click:()=>{view="picknew";draw()},keydown:e=>{if(e.key==="Enter"||e.key===" "){view="picknew";draw()}}}},
-        el("div",{class:"th",style:"display:flex;align-items:center;justify-content:center"},el("span",{style:"font-size:2rem",text:"✨"})),
-        el("div",{class:"bd"},el("h3",{text:"Ma propre entité"}),el("p",{text:"Faction, nation ou personnage : crée ce que tu diriges — le monde l'intégrera comme une puissance à part entière."})))));
+    el("p",{class:"mute",text:"Choisis l'entité que tu incarnes dans "+(S.world?S.world.name:"ce monde")+". Les autres factions vivront leur propre vie — et se souviendront de tes choix."}),
+    el("div",{class:"pickgrid"},
+      F.map((f,i)=>card("Faction",null,el("span",{class:"em"},emblem(f.n,facColor(f.n,i),56)),f.n,
+        f.g?"But : "+f.g:null,()=>pickFac(f.n),"Diriger "+f.n)),
+      card("Toi","✨",null,"Ma propre entité","Crée une faction, une nation ou un personnage : le monde l'intégrera comme une puissance à part entière.",()=>{view="picknew";draw()},"Créer ma propre entité"),
+      card("Libre","🌍",null,"Le monde entier","Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour.",()=>pickFac("Le monde"),"Observer le monde entier")),
+    el("p",{class:"pickhint",text:"Tu pourras changer de camp à tout moment dans « Ma partie »."}));
 }
 function pickNewView(){
   return el("div",{class:"col"},
