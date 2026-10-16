@@ -835,6 +835,7 @@ function goalCheck(){
 }
 const CHANGELOG=[
 ["v15oct — 15 octobre 2026 : objectifs, dilemmes et semences",[
+"Nouvel onglet « Télécharger » : télécharge le jeu complet en un fichier HTML pour jouer hors ligne, l'archiver ou le partager — bouton de partage de lien inclus.",
 "Objectifs de partie : 2 à 3 objectifs par partie (alliance, bataille gagnée, secret découvert, exploration), suivis dans le HUD (🎯 1/2) et archivés à l'accomplissement.",
 "Dilemmes mémorisés : à partir du 2e tour, un dilemme à 3 choix (refugié, mine disputée, prophète, famine voisine) — la décision est gravée au canon du monde, avec sa date.",
 "Front de guerre animé : ligne dorée pulsante entre les capitales des factions en guerre, tires animés et éclat de bataille au milieu.",
@@ -1529,6 +1530,25 @@ function changelogView(){
       el("ul",{class:"re"},items.map(x=>el("li",{},x))))),
     el("p",{class:"mute",style:"font-style:italic",text:"Le jeu évolue grâce à vos retours : l'onglet Retours permet de signaler un bug ou suggérer une amélioration."}));
 }
+function downloadView(){
+  const grab=()=>("\n<!DOCTYPE html>\n"+document.documentElement.outerHTML);
+  const save=(fn,data,type)=>{const b=new Blob([data],{type:type||"text/html"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)};
+  return el("div",{},
+    el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>{view="hub";draw()}},text:"Retour à l'accueil"})),
+    el("h1",{text:"Télécharger le jeu"}),
+    el("p",{class:"mute",text:"Forgemonde tient dans un seul fichier HTML ("+Math.round(grab().length/1024)+" Ko). Une fois téléchargé, il fonctionne hors ligne, sans installation — double-clique simplement dessus."}),
+    el("div",{class:"strip"},el("p",{},el("b",{text:"Votre copie complète : "}),el("span",{text:"la version "+BUILD+" du jeu, avec toutes vos données de partie déjà incluses (monde, chronique, sauvegarde locale)."})),
+      el("div",{class:"row",style:"margin-top:10px"},
+        el("button",{on:{click:()=>save("forgemonde-"+BUILD.split(" ")[0]+".html",grab())},text:"⬇ Télécharger le jeu (HTML)"}),
+        el("button",{class:"alt",on:{click:()=>{try{navigator.share&&navigator.share({title:"Forgemonde",text:"Forgemonde — un monde qui se souvient de vos choix : "+location.href}).catch(()=>{})}catch(e){}}},text:"🔗 Partager le lien"}))),
+    el("h2",{style:"margin-top:18px",text:"Ce que tu peux faire avec"}),
+    el("ul",{class:"re"},
+      el("li",{},"Jouer hors ligne : ouvre le fichier téléchargé sans internet — tout fonctionne (mode sans IA entièrement local)."),
+      el("li",{},"Le transmettre : envoie le fichier à qui tu veux — le destinataire double-clique et joue, aucune installation."),
+      el("li",{},"L'archiver : garde une copie de la version actuelle avant une mise à jour."),
+      el("li",{},"L'héberger : le fichier marche tel quel sur n'importe quel hébergement statique.")),
+    el("p",{class:"mute",style:"font-style:italic;margin-top:10px",text:"Astuce : la version en ligne est toujours à jour sur "+(location.host||"le site officiel")+" — le fichier téléchargé est une copie du moment."}));
+}
 function hub(){
   const mine=db&&me?shared.filter(d=>d.id===me).flatMap(itemsOf).filter(w=>w&&w.name):[],favs=db&&me?(myDoc("votes").keys||[]).length:0;
   return el("div",{},
@@ -1558,6 +1578,7 @@ function nav(){
     S.world?b("book","Livre"):null,
     (myP()||watchId)?b("mp",watchId&&!myP()?"Spectateur":"Multijoueur"):null,
     b("changelog","Journal"),
+    b("download","Télécharger"),
     b("feedback","Retours"),
     el("button",{class:"alt",on:{click:()=>window.__openAI()},text:"⚙ IA"}),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Arrêter l'autonomie"}):null,
@@ -2805,7 +2826,7 @@ function draw(){
   const keep={};document.querySelectorAll("#app input[id],#app textarea[id]").forEach(n=>{keep[n.id]=n.value});
   const ks={};document.querySelectorAll("#app select[id^=jf-],#app select#goaltype,#app select#goalyears").forEach(n=>{ks[n.id]=n.value});
   const msv=$("mapstyle")&&$("mapstyle").value,tone=$("tone")&&$("tone").value,fac=$("fac")&&$("fac").value,dur=$("dur")&&$("dur").value,sy=window.scrollY;
-  {const body=(view==="play"&&S.world)?play():view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
+  {const body=(view==="play"&&S.world)?play():view==="forge"?forge():view==="mp"?mp():view==="jetons"&&(PAY||isOwn)?jetonsView():view==="gains"&&PAY?gainsView():view==="replay"?replayView():view==="book"?bookView():view==="feedback"?feedbackView():view==="changelog"?changelogView():view==="download"?downloadView():view==="profile"?profileView():view==="admin"?adminView():hub();$("app").replaceChildren(nav(),view==="hub"?body:el("div",{class:view==="play"?"colw":"col"},body))}
   if(!S.fresh){for(const k in keep){const n=$(k);if(n&&keep[k])n.value=keep[k]}if(tone&&$("tone"))$("tone").value=tone;if(msv&&$("mapstyle"))$("mapstyle").value=msv}
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
