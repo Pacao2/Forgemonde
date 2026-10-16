@@ -824,7 +824,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v16oct.1 — durcissement sécurité";
+const BUILD="v16oct.2 — journal relié au dépôt GitHub";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -854,6 +854,10 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v16oct.2 — 16 octobre 2026 : journal relié au dépôt",[
+"L'onglet Journal affiche désormais l'activité récente du dépôt GitHub (6 derniers commits) en plus du journal local — avec lien direct vers le code source.",
+"Résilient : hors ligne, le journal local reste complet ; la section dépôt affiche un message discret.",
+"Sécurité : le lien externe ouvre GitHub avec rel=noopener, aucune exécution de données distantes."]],
 ["v16oct.1 — durcissement sécurité",[
 "Appels IA protégés par délai d'attente : 60 s en réponse directe, 120 s en streaming — plus de tour bloqué à l'infini si un fournisseur ne répond pas, avec message explicite.",
 "Content-Security-Policy renforcée : workers et manifest verrouillés, sources de connexion inchangées (fournisseurs IA et Ollama local toujours autorisés)."]],
@@ -1604,6 +1608,7 @@ function catalog(){
     db?null:el("p",{class:"mute",style:"margin-top:14px",text:"Les mondes de la communauté apparaissent ici quand tu ouvres la page dans Claude, connecté."}));
 }
 function changelogView(){
+  setTimeout(ghFeed,0);
   return el("div",{},
     el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>{view="hub";draw()}},text:"Retour à l'accueil"})),
     el("h1",{text:"Journal des versions"}),
@@ -1611,7 +1616,25 @@ function changelogView(){
     CHANGELOG.map(([t,items],i)=>el("article",{class:"entry"+(i===0?" new":"")},
       el("h2",{style:"margin:.2em 0",text:t}),
       el("ul",{class:"re"},items.map(x=>el("li",{},x))))),
-    el("p",{class:"mute",style:"font-style:italic",text:"Le jeu évolue grâce à vos retours : l'onglet Retours permet de signaler un bug ou suggérer une amélioration."}));
+    el("h2",{style:"margin-top:18px",text:"Activité du dépôt GitHub"}),
+    el("div",{id:"ghfeed"},el("p",{class:"mute",text:"Chargement des derniers changements publiés…"})),
+    el("p",{class:"mute",style:"margin-top:6px"},el("a",{href:"https://github.com/Pacao2/Forgemonde",target:"_blank",rel:"noopener noreferrer",style:"color:var(--gold,#d2a24c)"},el("span",{text:"Voir le code source sur GitHub ↗ — open source, licence MIT"}))),
+    el("p",{class:"mute",style:"font-style:italic",text:"Le jeu évolue grâce à vos retours : l'onglet Retours permet de signaler un bug ou suggérer une amélioration. Le journal local ci-dessus reste complet même hors ligne : le dépôt est une couche d'information en plus, pas une dépendance."}));
+}
+function ghFeed(){
+  const box=$("ghfeed");if(!box)return;
+  const fill=(items)=>{try{box.replaceChildren(...items)}catch(e){}};
+  fetch("https://api.github.com/repos/Pacao2/Forgemonde/commits?per_page=6")
+    .then(r=>{if(!r.ok)throw 0;return r.json()})
+    .then(cs=>{
+      if(!Array.isArray(cs)||!cs.length)throw 0;
+      fill(cs.map(c=>{
+        const d=(c.commit&&c.commit.author&&c.commit.author.date||"").slice(0,10);
+        const m=String((c.commit&&c.commit.message)||"").split("\n")[0].slice(0,110);
+        return el("p",{class:"mute"},el("b",{text:d+" — "}),m);
+      }));
+    })
+    .catch(()=>{fill([el("p",{class:"mute",text:"Hors ligne ou dépôt inaccessible — le journal des versions ci-dessus reste complet."})])});
 }
 function downloadView(){
   const grab=()=>("\n<!DOCTYPE html>\n"+document.documentElement.outerHTML);
