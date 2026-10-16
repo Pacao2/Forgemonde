@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v17oct.3-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v17oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -74,17 +74,13 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## 📜 Journal des versions
 
+Une version par jour, du plus récent au plus ancien.
+
 ### Vendredi 17 octobre 2026
-- **v17oct.3** — cartes de sélection soignées : écran « Qui dirigeras-tu ? » redessiné (cartes aérées, liseré doré au survol et au clavier, pastilles de type, nom en grand, but en encart lisible, emblèmes agrandis avec ombre)
-- **v17oct.2** — joue une faction du scénario ou crée la tienne : carte « ✨ Ma propre entité » sur l'écran de sélection (faction, nation ou personnage avec nom et but), intégrée au monde, à la carte et à la diplomatie comme les autres puissances ; un personnage créé devient aussi votre héros
-- **v17oct.1** — choisis qui tu diriges : écran de sélection de faction au lancement (emblème + but de chaque camp), option « Le monde entier » pour observer sans incarner, choix mémorisé partout (compositeur, brouillard, partage, monde autonome)
-- **v17oct** — l'atlas s'illumine (polish visuel) : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », bordure du tour aux couleurs de la faction, lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte sur « Ma partie », squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil dans la barre, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
+- **v17oct — l'atlas s'illumine, et tu choisis qui tu diriges** : écran « Qui dirigeras-tu ? » (factions du scénario en cartes avec emblème et but, « Ma propre entité » — faction, nation ou personnage intégrée au monde — ou « Le monde entier »), choix mémorisé partout et modifiable à tout moment ; polish visuel : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte, squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit
 
 ### Jeudi 16 octobre 2026
-- **v16oct.3** — correctifs de partage et PWA : lien du post copiable et aperçu social (Open Graph) pointés vers le site principal, image d'aperçu hébergée sur le dépôt, cache du service worker renommé à chaque version
-- **v16oct.2** — journal des versions du jeu relié au dépôt : activité GitHub (6 derniers commits) affichée dans l'onglet Journal, lien vers le code source, résilient hors ligne
-- **v16oct.1** — durcissement sécurité : délai d'attente sur les appels IA (60 s / 120 s), CSP renforcée (workers, manifest)
-- **v16oct** — mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, saisons, routes commerciales, lieux explorables, semences importables, fichiers .monde, test 20 tours, PWA
+- **v16oct — la mémoire qui paie** : mondes vedettes, rebonds de Chekhov, épilogue, chronique interactive, négociation à deux voix pendant les dilemmes, saisons et routes commerciales sur la carte, lieux explorables, semences FM-XXXXXX importables, fichiers .monde, test fantôme 20 tours, PWA ; journal relié au dépôt GitHub ; sécurité : délais d'attente sur les appels IA (60 s / 120 s), CSP renforcée ; correctifs de partage (lien et aperçu social vers le site principal, cache service worker renommé à chaque version)
 
 ### Mercredi 15 octobre 2026
 - **v15oct** — objectifs de partie, dilemmes mémorisés, front de guerre animé, semences partageables, onglet Télécharger
