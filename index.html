@@ -332,6 +332,7 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .pickcard .em{position:relative;z-index:2;filter:drop-shadow(0 3px 10px rgba(0,0,0,.55))}
 .pickcard .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
 /* ===== v17oct : carte plein écran, chronique et composer superposés ===== */
+main:has(.colw.fullmap){max-width:none;padding-left:0;padding-right:0}
 .colw.fullmap{max-width:none}
 .colw.fullmap .pax{display:block;margin-top:0}
 .colw.fullmap .pbanner{margin-bottom:8px}
@@ -349,11 +350,29 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .colw.fullmap .legwrap[open]>summary::after{content:"▴"}
 .colw.fullmap .legwrap>.leg{display:block;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:6px;box-shadow:var(--sh)}
 .colw.fullmap .side{position:fixed;right:12px;top:74px;bottom:170px;width:min(440px,42vw);z-index:22;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow:auto;box-shadow:var(--sh)}
-.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px 6px;box-shadow:var(--sh);max-height:46vh;overflow:auto}
+.colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:10px 14px 8px;box-shadow:var(--sh);max-height:60vh;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"fac fac" "act send" "insp regen" "err err" "live live";gap:8px;align-items:center}
+.colw.fullmap .composer>#fac{grid-area:fac;margin:0;width:auto;justify-self:start;max-width:75%;min-height:32px;padding:4px 30px 4px 12px;font-size:.8rem}
+.colw.fullmap .composer>#act{grid-area:act;min-height:48px;max-height:120px}
+.colw.fullmap .composer>.row{grid-area:send;margin:0}
+.colw.fullmap .composer>.row button{min-height:48px}
+.colw.fullmap .composer>.err{grid-area:err;margin:0}
+.colw.fullmap .composer>.err:empty{display:none}
+.colw.fullmap .composer .inspwrap{grid-area:insp}
+.colw.fullmap .composer .regenwrap{grid-area:regen;justify-self:end}
+.colw.fullmap .composer #live{grid-area:live}
+.colw.fullmap .composer #live:empty{display:none}
+.colw.fullmap .composer .strip{margin:0}
+.colw.fullmap .composer details.inspwrap,.colw.fullmap .composer details.regenwrap{border:0;padding:0;margin:0;background:none}
+.colw.fullmap .composer details.inspwrap>summary,.colw.fullmap .composer details.regenwrap>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:600 .8rem/1.2 var(--ff-ui);color:var(--mute);padding:3px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
+.colw.fullmap .composer details.inspwrap>summary::after,.colw.fullmap .composer details.regenwrap>summary::after{content:"▾";font-size:.7rem}
+.colw.fullmap .composer details[open]>summary{color:var(--gold);border-color:rgba(210,162,76,.4)}
+.colw.fullmap .composer details[open]>summary::after{content:"▴"}
+.colw.fullmap .composer details.inspwrap>div,.colw.fullmap .composer details.regenwrap>div{margin-top:6px}
 .colw.fullmap .composer .chips{padding-bottom:6px}
 @media(max-width:1100px){
  .colw.fullmap .side{position:static;width:auto;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:0 4px 0 0;box-shadow:none;max-height:none}
  .colw.fullmap .composer{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:14px 0 10px;max-height:none;box-shadow:none}
+ .colw.fullmap .composer>.err:empty,.colw.fullmap .composer #live:empty{display:none}
  .colw.fullmap .mapstage{height:auto}
  .colw.fullmap .mapwrap{height:auto;max-height:62vh}
  .colw.fullmap .legwrap{position:static;max-width:none}
@@ -942,7 +961,7 @@ const CHANGELOG=[
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
-"Carte plein écran : dans « Ma partie », la carte occupe tout l'écran et s'éclaircit (vignette et grain allégés) — la date et les commandes du temps forment une barre compacte en haut à droite, la légende des factions se replie derrière une pastille en haut à gauche, et le récit, les suggestions et le champ d'action sont regroupés dans le panneau du bas ; la chronique et les onglets restent en panneau flottant à droite, et sur petit écran tout redevient empilé.",
+"Écran de jeu épuré : la carte s'étend sur toute la largeur de l'écran, la date et les commandes du temps forment une barre compacte en haut à droite, la légende des factions se replie derrière une pastille en haut à gauche, la barre du bas se réduit à l'essentiel (faction, action, Agir) avec les suggestions « Pas d'inspiration » et « Réécrire le dernier récit » regroupées en pastilles cliquables qui se déroulent au besoin.",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
@@ -2987,7 +3006,7 @@ async function start(){
 function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
 function copyLog(){
   const w=S.world,t=`${w.name}\n\n`+S.log.slice().reverse().map(e=>`${e.f} : ${e.a}\n${e.n}\n`+e.r.map(x=>`- ${x.faction} : ${x.reaction}`).join("\n")+`\nRumeur : ${e.u}\nChangement : ${e.c}\n`).join("\n");
-  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copiée.";draw()}).catch(()=>{})
+  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copi��e.";draw()}).catch(()=>{})
 }
 
 function forge(){
@@ -3056,8 +3075,8 @@ function play(){
     banners.length?el("div",{class:"pbanner"},banners):null,
     el("div",{class:"pmap"},stageNode(el("div",{class:"hud"},hud,time),mapNode),
       legend?el("details",{class:"legwrap"},el("summary",{text:"Factions"}),legend):null),
-    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null),
-    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k])))));
+    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action,el("details",{class:"regenwrap"},el("summary",{text:"✍️ Réécrire le dernier récit"}),el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
+    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
 function playClassic(){
   const w=S.world,F=facs(),ents=entities(),who=chatWho&&ents.some(x=>x.nom===chatWho)?chatWho:(ents[0]&&ents[0].nom)||"",dis=busy?{disabled:""}:{};
@@ -3086,8 +3105,9 @@ function playClassic(){
     dl?el("div",{class:"row"},el("button",{class:"alt",on:{click:exportMap},text:"Exporter la carte (image)"})):null,
     el("label",{for:"fac",text:"Tu joues"}),el("select",{id:"fac"},F.map((f,i)=>el("option",{value:f,...((S.playerFac&&like(f.split(":")[0].trim(),S.playerFac))||(!S.playerFac&&S.hero&&like(f.split(":")[0].trim(),S.hero.faction)))?{selected:""}:{},text:f}))),
     el("label",{for:"act",text:"Ton action"}),el("textarea",{id:"act",placeholder:(window.innerWidth<560?"Ex. J'envoie un émissaire proposer une trêve.":"Ex. J'envoie un émissaire proposer une trêve, mais je fais fortifier la frontière en secret.")}),
-    S.log.length<3?el("div",{class:"strip",style:"flex-direction:column;align-items:stretch;gap:4px"},el("p",{class:"mute",style:"margin:0;font-size:.85rem",text:"Pas d'inspiration ? Essaie :"}),
-      ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x}))):null,
+    S.log.length<3?el("details",{class:"inspwrap"},el("summary",{text:"💡 Pas d'inspiration ? Essaie :)"}),
+      el("div",{class:"chips",style:"flex-wrap:wrap;gap:6px;margin-top:6px"},
+      ACTEX.map(x=>el("button",{class:"alt",style:"text-align:left;font-size:.85rem",on:{click:()=>{const t=$("act");t.value=x;draw()}},text:"→ "+x})))):null,
     el("div",{class:"err",role:"status",text:err||sim}),
     el("div",{class:"row"},
       el("button",{on:{click:()=>{const a=$("act").value.trim();if(!a){err="Écris une action.";return draw()}run(a,$("fac").value)}},...dis,text:busy&&!sim?"Le monde réagit…":"Agir"}),
