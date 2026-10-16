@@ -338,11 +338,16 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .colw.fullmap .pmap{position:relative;min-width:0}
 .colw.fullmap .mapstage{height:calc(100vh - 120px);min-height:430px}
 .colw.fullmap .mapwrap{height:100%;max-height:none}
-.colw.fullmap .maptools{position:absolute;left:12px;top:12px;z-index:8;display:flex;flex-direction:column;gap:8px;max-width:min(400px,55%)}
-.colw.fullmap .maptools:empty{display:none}
-.colw.fullmap .maptools .leg,.colw.fullmap .maptools .timebar{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:0;box-shadow:var(--sh)}
-.colw.fullmap .maptools .timebar{flex-wrap:wrap}
-.colw.fullmap .regen{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.colw.fullmap .hud{left:auto;right:12px;top:12px;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(560px,70%)}
+.colw.fullmap .hud .timebar{pointer-events:auto;margin:0;padding:6px 8px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;gap:6px}
+.colw.fullmap .hud .pill,.colw.fullmap .hud button{pointer-events:auto}
+.colw.fullmap .hud .timebar .mute{flex:0 0 auto;font-size:.72rem;margin:0;align-self:center}
+.colw.fullmap .hud .timebar button{min-height:30px;padding:4px 12px;font-size:.8rem;border-radius:999px}
+.colw.fullmap .legwrap{position:absolute;left:12px;top:12px;z-index:8;max-width:min(320px,80%)}
+.colw.fullmap .legwrap>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font:600 .8rem/1.2 var(--ff-ui);color:var(--ink);box-shadow:var(--sh)}
+.colw.fullmap .legwrap>summary::after{content:"▾";color:var(--gold);font-size:.7rem}
+.colw.fullmap .legwrap[open]>summary::after{content:"▴"}
+.colw.fullmap .legwrap>.leg{display:block;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:6px;box-shadow:var(--sh)}
 .colw.fullmap .side{position:fixed;right:12px;top:74px;bottom:170px;width:min(440px,42vw);z-index:22;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow:auto;box-shadow:var(--sh)}
 .colw.fullmap .composer{position:fixed;left:12px;right:12px;bottom:12px;z-index:22;max-width:none;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:12px 14px 6px;box-shadow:var(--sh);max-height:46vh;overflow:auto}
 .colw.fullmap .composer .chips{padding-bottom:6px}
@@ -351,8 +356,9 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
  .colw.fullmap .composer{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;padding:14px 0 10px;max-height:none;box-shadow:none}
  .colw.fullmap .mapstage{height:auto}
  .colw.fullmap .mapwrap{height:auto;max-height:62vh}
- .colw.fullmap .maptools{position:static;max-width:none;background:none}
- .colw.fullmap .maptools .leg,.colw.fullmap .maptools .timebar,.colw.fullmap .regen{background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
+ .colw.fullmap .legwrap{position:static;max-width:none}
+ .colw.fullmap .legwrap>.leg{background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
+ .colw.fullmap .hud .timebar{position:static;background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 .pickcard h3{margin:0;font-family:var(--ff-title);font-weight:600;letter-spacing:.04em;font-size:1.05rem;color:var(--ink)}
 .pickcard .goal{margin:0;font-size:.88rem;line-height:1.5;color:var(--mute);background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px}
@@ -688,8 +694,8 @@ function paintMap(c,N,det,o){o=o||{};const WW=o.W||MW,HH=o.H||MH,k=WW/MW,nmz=o.n
   MP.places.forEach(pl=>{const p=P.find(x=>x.n===pl.f)||P[0],r2=rng(hash(pl.name));let x=p.x+(r2()-.5)*110,y=p.y+(r2()-.5)*80-26;
     if(elev(x,y)<SEA+.04){x=p.x;y=p.y-30}
     g.beginPath();g.moveTo(x,y-8);g.lineTo(x+6,y);g.lineTo(x,y+8);g.lineTo(x-6,y);g.closePath();g.fillStyle="#a8423f";g.fill();g.lineWidth=2;g.strokeStyle="#2a2233";g.stroke();tx(pl.name,x,y-14,17,false)});
-  {const vg=g.createRadialGradient(WW/2,HH/2,Math.min(WW,HH)*.35,WW/2,HH/2,Math.max(WW,HH)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.34)");g.fillStyle=vg;g.fillRect(0,0,WW,HH)}
-  {const gr=rng(sd+7);g.globalAlpha=.07;for(let i=0;i<5200;i++){g.fillStyle=gr()<.5?"#000":"#fff";g.fillRect(gr()*WW,gr()*HH,1.2,1.2)}g.globalAlpha=1}
+  {const vg=g.createRadialGradient(WW/2,HH/2,Math.min(WW,HH)*.35,WW/2,HH/2,Math.max(WW,HH)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.14)");g.fillStyle=vg;g.fillRect(0,0,WW,HH)}
+  {const gr=rng(sd+7);g.globalAlpha=.035;for(let i=0;i<5200;i++){g.fillStyle=gr()<.5?"#000":"#fff";g.fillRect(gr()*WW,gr()*HH,1.2,1.2)}g.globalAlpha=1}
   g.strokeStyle="rgba(210,162,76,.6)";g.lineWidth=1.5;g.strokeRect(11,11,WW-22,HH-22);
   g.strokeStyle="#2a2233";g.lineWidth=3;g.strokeRect(4,4,WW-8,HH-8);
   g.beginPath();g.moveTo(WW-50,HH-78);g.lineTo(WW-42,HH-48);g.lineTo(WW-58,HH-48);g.closePath();g.fillStyle="#f4e7c5";g.fill();g.lineWidth=2;g.stroke();
@@ -936,7 +942,7 @@ const CHANGELOG=[
 "Ambiance « livre ancien » : option grain + vignette dans Accessibilité (désactivée par défaut).",
 "Nations du scénario : dans « Ma propre entité », le type Nation ne s'invente plus — il se choisit parmi les nations qui existent déjà dans le monde, avec leur but repris du scénario.",
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
-"Carte plein écran : dans « Ma partie », la carte occupe maintenant toute la hauteur de l'écran — la chronique, les onglets (conseillers, monde, outils) et le champ d'action flottent par-dessus en panneaux translucides ; sur petit écran, tout redevient empilé comme avant.",
+"Carte plein écran : dans « Ma partie », la carte occupe tout l'écran et s'éclaircit (vignette et grain allégés) — la date et les commandes du temps forment une barre compacte en haut à droite, la légende des factions se replie derrière une pastille en haut à gauche, et le récit, les suggestions et le champ d'action sont regroupés dans le panneau du bas ; la chronique et les onglets restent en panneau flottant à droite, et sur petit écran tout redevient empilé.",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
@@ -3048,9 +3054,10 @@ function play(){
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
   return el("div",{class:"pax"},
     banners.length?el("div",{class:"pbanner"},banners):null,
-    el("div",{class:"pmap"},stageNode(hud,mapNode),el("div",{class:"maptools"},legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null))),
-    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action),
-    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
+    el("div",{class:"pmap"},stageNode(el("div",{class:"hud"},hud,time),mapNode),
+      legend?el("details",{class:"legwrap"},el("summary",{text:"Factions"}),legend):null),
+    el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"Réécrire le dernier récit :"}),["plus dramatique","plus court","avec un traître","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null),
+    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k])))));
 }
 function playClassic(){
   const w=S.world,F=facs(),ents=entities(),who=chatWho&&ents.some(x=>x.nom===chatWho)?chatWho:(ents[0]&&ents[0].nom)||"",dis=busy?{disabled:""}:{};
