@@ -923,6 +923,9 @@ const CHANGELOG=[
 "Chronique vue par le peuple : à chaque tour, le monde colporte une rumeur déformée des événements — visible dans les détails du tour (gratuit, sans IA)",
 "Catastrophes mémorées : sécheresse, peste, tempête… frappent le monde, laissent un statut durable et un chapitre noir qui peut resurgir en écho (gratuit, sans IA)",
 "Rejouer ce monde : reprends le même monde avec une autre faction — le canon et toute l'histoire sont conservés, le monde se souvient de tes choix passés",
+"Vendettas héritées : un dilemme d ambitions croisées grave une rancune (ou une alliance) durable entre deux personnages, réinjectée dans les récits.",
+"Statuts qui évoluent : les blessés guérissent, les dettes peuvent être rachetées, les exilés rappelés — le temps agit sur les statuts durables.",
+"Convergences de chapitres : deux chapitres anciens qui partagent un personnage finissent par se recouper.",
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1981,7 +1984,7 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[];S.ambCroise=[];S.echoFait=[];S.rumeurs=[];S.catas=[]}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[];S.ambCroise=[];S.echoFait=[];S.rumeurs=[];S.catas=[];S.relPerso=[];S.convFait=[]}
 const playerFac=()=>S.playerFac||names()[0]||"";
 let introAct="";
 function pickFac(f){
@@ -2167,6 +2170,7 @@ async function hybridTurn(action,faction,N,auto,stopMajor,words){
 Monde : ${w.name} (${w.tone}). Concept : ${cut(w.concept,300)}.
 Date : ${dateStr(S.m)}. Période écoulée : ${N} mois.
 Chapitres bouclés de l'histoire (mémoire longue, ne les contredis jamais) : ${chapterText()}
+Rancunes et liens personnels durables (mémoire longue) : ${relPersoText()}
 ${auto?"Le joueur n'intervient pas.":"Le joueur incarne : "+faction+". Action du joueur : \""+action+"\"."}
 Voici ce qui s'est réellement passé. Raconte-le sans rien contredire et sans ajouter d'événement majeur :
 ${h.facts.map(f=>"- "+f.t).join("\n")}
@@ -2391,6 +2395,7 @@ function choicePanel(){
   const c=S.choice;if(!c||busy)return null;
   return el("div",{class:"strip"},el("p",{},el("b",{text:"Le monde attend ta décision — "}),cut(c.titre,90)),
     (c.options||[]).map(o=>el("button",{on:{click:()=>{
+      if(o.rel){try{gravRel(o.rel)}catch(x){}}
       if(o.canon){S.canon=(S.canon||[]).slice(-11).concat("["+dateStr(S.m)+"] "+o.canon);S.choice=null}
       else S.choice=null;
       save();run(o.action,facs()[0])
@@ -2558,9 +2563,9 @@ function ambCroisees(){
   if(S.ambCroise.includes(k))return;
   S.ambCroise.push(k);if(S.ambCroise.length>20)S.ambCroise.shift();
   S.choice={titre:"Deux ambitions murissent en meme temps : "+a.c.nom+" ("+a.o.but+") et "+b.c.nom+" ("+b.o.but+"). Laquelle favoriser ?",options:[
-    {label:"Favoriser "+a.c.nom,action:"Je veille a ce que l ambition de "+a.c.nom+" l emporte : "+a.o.but+".",canon:"L ambition de "+a.c.nom+" a pris le dessus sur celle de "+b.c.nom+"."},
-    {label:"Favoriser "+b.c.nom,action:"Je veille a ce que l ambition de "+b.c.nom+" l emporte : "+b.o.but+".",canon:"L ambition de "+b.c.nom+" a pris le dessus sur celle de "+a.c.nom+"."},
-    {label:"Les monter l un contre l autre",action:"Je monte subtilement "+a.c.nom+" et "+b.c.nom+" l un contre l autre : que leurs ambitions s affrontent.",canon:"Les ambitions de "+a.c.nom+" et "+b.c.nom+" se sont affrontees."}]};
+    {label:"Favoriser "+a.c.nom,action:"Je veille a ce que l ambition de "+a.c.nom+" l emporte : "+a.o.but+".",canon:"L ambition de "+a.c.nom+" a pris le dessus sur celle de "+b.c.nom+".",rel:{x:a.c.nom,y:b.c.nom,t:"rancune"}},
+    {label:"Favoriser "+b.c.nom,action:"Je veille a ce que l ambition de "+b.c.nom+" l emporte : "+b.o.but+".",canon:"L ambition de "+b.c.nom+" a pris le dessus sur celle de "+a.c.nom+".",rel:{x:a.c.nom,y:b.c.nom,t:"rancune"}},
+    {label:"Les monter l un contre l autre",action:"Je monte subtilement "+a.c.nom+" et "+b.c.nom+" l un contre l autre : que leurs ambitions s affrontent.",canon:"Les ambitions de "+a.c.nom+" et "+b.c.nom+" se sont affrontees.",rel:{x:a.c.nom,y:b.c.nom,t:"rancune"}}]};
   try{if(S.log&&S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Ambitions croisees : "+a.c.nom+" et "+b.c.nom+" approchent chacun de leur but."})}catch(x){}
   try{toast("⚔ Deux ambitions se croisent — le monde attend ta decision.")}catch(x){}
 }
@@ -2598,6 +2603,72 @@ function rejouerMonde(){
   introAct="Changement de règne : le dirigeant de "+old+" cède sa place. Décris la situation vue par ce nouveau dirigeant (rappel : le monde garde en mémoire toute l'histoire jusqu'ici, canon inclus).";
   view="pick";save();draw();
 }
+function gravRel(r){
+  if(!r||!r.x||!r.y)return;
+  S.relPerso=S.relPerso||[];
+  const k=r.x+"|"+r.y;
+  const ex=S.relPerso.find(p=>p.k===k||p.k===(r.y+"|"+r.x));
+  if(ex){ex.t=r.t;ex.n=(ex.n||0)+1;ex.depuis=S.log.length;return}
+  S.relPerso.push({k,x:r.x,y:r.y,t:r.t,n:1,depuis:S.log.length});
+  if(S.relPerso.length>24)S.relPerso.shift();
+}
+function relPersoText(){
+  const R=S.relPerso||[];
+  if(!R.length)return "(aucune)";
+  return R.slice(-6).map(p=>p.x+" et "+p.y+" : "+p.t+" (depuis le tour "+p.depuis+")").join(" ; ");
+}
+function relationEvents(){
+  const R=S.relPerso||[];if(!R.length)return;
+  if(Math.random()>.18)return;
+  const p=R[R.length-1];
+  const age=S.log.length-(p.depuis||0);
+  if(p.t==="rancune"&&age>=4&&Math.random()<.25){
+    p.t="alliance";
+    try{if(S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Réconciliation : "+p.x+" et "+p.y+" laissent leur rancune derrière eux et s allient."})}catch(x){}
+    try{toast("🤝 "+p.x+" et "+p.y+" se réconcilient — une alliance naît d une vieille rancune.")}catch(x){}
+    return;
+  }
+  try{S.pending.push("MÉMOIRE LONGUE : "+p.x+" et "+p.y+" entretiennent une "+p.t+" profonde depuis l affaire de leurs ambitions croisées — cela doit transparaître dans le récit.")}catch(x){}
+  try{if(S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Rancune vivace : "+p.x+" et "+p.y+" ("+p.t+") se croisent à nouveau."})}catch(x){}
+  try{toast("⚔ "+p.x+" et "+p.y+" : leur "+p.t+" resurgit.")}catch(x){}
+}
+function statutHorloge(){
+  const st=S.statuses||[];if(!st.length)return;
+  st.forEach(s=>{s.n=(s.n||0)+1});
+  const done=[];
+  st.forEach((s,i)=>{
+    if(/bless/i.test(s.s)&&s.n>=5&&Math.random()<.4)done.push({i,txt:s.who+" a fini par guérir : sa blessure se referme enfin."});
+    else if(/endett/i.test(s.s)&&s.n>=3&&Math.random()<.2){
+      const autres=(S.npcs||[]).map(c=>c&&c.nom).filter(n=>n&&n!==s.who);
+      const r=autres.length?autres[Math.floor(Math.random()*autres.length)]:"un rival";
+      done.push({i,txt:"La dette de "+s.who+" est rachetée par "+r+" — qui attend désormais quelque chose en retour."})}
+    else if(/exil/i.test(s.s)&&s.n>=8&&Math.random()<.15)done.push({i,txt:s.who+" est rappelé de son exil : le monde a de nouveau besoin de lui."});
+  });
+  done.slice().reverse().forEach(d=>{st.splice(d.i,1)});
+  done.forEach(d=>{
+    try{S.pending.push("ÉVOLUTION D ÉTAT : "+d.txt)}catch(x){}
+    try{if(S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:d.txt})}catch(x){}
+    try{toast("⏳ "+d.txt)}catch(x){}
+  });
+}
+function chapterConvergence(){
+  const C=S.chapters||[];S.convFait=S.convFait||[];
+  if(C.length<2||Math.random()>.08)return;
+  const pers=[...(S.npcs||[]).map(c=>c&&c.nom),...(S.hero&&S.hero.nom?[S.hero.nom]:[])].filter(Boolean);
+  for(const n of pers){
+    const hits=C.filter(c=>(c.text||"").includes(n));
+    if(hits.length>=2){
+      const a=hits[hits.length-2],b=hits[hits.length-1];
+      const k=n+"|"+a.from+"|"+b.from;
+      if(S.convFait.includes(k))continue;
+      S.convFait.push(k);if(S.convFait.length>12)S.convFait.shift();
+      try{S.pending.push("CONVERGENCE DU PASSÉ : "+n+" est le fil qui relie deux chapitres anciens — « "+a.titre+" » et « "+b.titre+" ». Raconte comment ces souvenirs se recoupent et reviennent dans le présent.")}catch(x){}
+      try{if(S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Convergence : les chapitres « "+a.titre+" » et « "+b.titre+" » se rejoignent autour de "+n+"."})}catch(x){}
+      try{toast("🌀 Le passé se recoupe autour de "+n+".")}catch(x){}
+      return;
+    }
+  }
+}
 function chapterPanel(){
   const C=S.chapters||[];
   if(!C.length)return null;
@@ -2613,6 +2684,7 @@ Factions :
 ${w.factions}
 Résumé de l'histoire jusqu'ici : ${S.sum||"(aucun)"}
 Chapitres bouclés de l'histoire (mémoire longue, ne les contredis jamais) : ${chapterText()}
+Rancunes et liens personnels durables (mémoire longue) : ${relPersoText()}
 Chronique récente :
 ${rec}
 Relations diplomatiques actuelles : ${relText()}.
@@ -2660,7 +2732,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
   canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter();chapterEcho()}catch(x){}
-  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};try{ambCroisees()}catch(x){};try{rumeurMonde()}catch(x){};try{catastrophe()}catch(x){};applyDirector(r);
+  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};try{ambCroisees()}catch(x){};try{rumeurMonde()}catch(x){};try{catastrophe()}catch(x){};try{statutHorloge()}catch(x){};try{relationEvents()}catch(x){};try{chapterConvergence()}catch(x){};applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
   if(sample&&!auto&&S.log.length-(S.lastCanon||0)>=5){S.lastCanon=S.log.length;setTimeout(canonAuto,1200)}
