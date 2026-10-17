@@ -1,13 +1,15 @@
 # 🌍 Forgemonde — un monde qui se souvient de vos choix
 
 <p align="center">
-  <img src="docs/miniature-reddit.svg" alt="Forgemonde — miniature du jeu" width="640">
+  <img src="docs/images/banner.svg" alt="Forgemonde — bannière : carte du monde, titre doré" width="800">
 </p>
 
 <p align="center">
   <a href="https://pacao2.github.io/Forgemonde/"><strong>▶ JOUER MAINTENANT — en 30 secondes</strong></a>
   &nbsp;·&nbsp;
   <a href="#-comment-jouer">Comment jouer</a>
+  &nbsp;·&nbsp;
+  <a href="#-fonctionnalités">Fonctionnalités</a>
   &nbsp;·&nbsp;
   <a href="#-journal-des-versions">Versions</a>
 </p>
@@ -24,9 +26,18 @@
 
 **Forgemonde** est un jeu narratif de stratégie qui tourne dans votre navigateur — un seul fichier HTML, aucune installation. Vous dirigez une faction, vous écrivez vos actions en langage naturel, et le monde réagit. Sa particularité : **le monde tient une bible vivante**. Chaque trahison, alliance ou famine laisse une trace durable qui revient vous hanter des dizaines de tours plus tard.
 
+## 🖼️ Aperçus
+
+| | |
+|---|---|
+| ![Carte vivante](docs/images/carte.svg) | ![Choisir sa faction](docs/images/factions.svg) |
+| **Carte vivante** — saisons, routes commerciales, front de guerre, lieux explorables | **Qui dirigeras-tu ?** — factions du scénario, votre propre entité, ou le monde entier |
+| ![Chronique interactive](docs/images/chronique.svg) | |
+| **Chronique interactive** — chaque tour se grave dans la bible du monde | |
+
 ## 🎮 Comment jouer
 
-1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/) (miroir : [forge-des-mondes.netlify.app](https://forge-des-mondes.netlify.app/))
+1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/)
 2. Choisissez un **monde vedette** en un clic, ou « Découvrir en 30 secondes »
 3. **Choisissez qui vous incarnerez** : une faction du scénario, **votre propre entité** (faction ou personnage), une nation déjà présente dans le scénario, ou « le monde entier »
 4. Écrivez ce que fait votre camp — des exemples cliquables vous guident
@@ -45,25 +56,38 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 
 ## ✨ Fonctionnalités
 
-- 🎭 **Choisissez qui vous diriges** — les factions du scénario, ou créez votre propre entité (faction ou personnage) intégrée au monde comme une puissance à part entière, ou incarnez une nation déjà présente dans le scénario, ou mode « monde entier »
-- 📖 **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
-- 🎭 **Rebonds de Chekhov** — les promesses posées il y a plus de 6 tours explosent enfin, même sans IA
-- 🧠 **Chronique interactive** — gravez n'importe quel tour au canon d'un clic (« le monde s'en souvient »)
-- 🏁 **Épilogue** — clôturez la partie avec le bilan mémorable de vos trahisons et alliances
-- 🎯 **Objectifs de partie** — 2 à 3 objectifs suivis dans l'interface
-- ⚖️ **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
-- 🗺️ **Carte vivante** — saisons, front de guerre animé, routes commerciales, anneaux d'événements, zooms cinématiques, lueurs de relief et infobulle au survol
-- 🎨 **Interface vivante** — palette qui suit les saisons, éclat doré sur les événements marquants, lettrine enluminée, transition « page tournée », jauges circulaires, pastille d'alerte, parallaxe de l'accueil, ambiance « livre ancien » optionnelle
-- 📍 **Lieux explorables** — chaque lieu du monde propose une expédition
-- 🤝 **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
-- 🌙 **Monde autonome** — le monde continue d'évoluer pendant votre absence
-- 👥 **Multijoueur local** — jusqu'à 5 factions + mode spectateur
-- 📤 **Partage** — livre de campagne, replay, image de carte, post Reddit/Discord, **semence FM-XXXXXX** importable
-- ⬇️ **Téléchargeable** — l'onglet Télécharger emporte le jeu complet en un fichier HTML jouable hors ligne
-- 📲 **PWA** — le site s'installe sur l'écran d'accueil et joue hors ligne
-- 📰 **Journal relié au dépôt** — l'onglet Journal affiche l'activité GitHub du projet en plus du journal local
-- 🐛 **Retours reliés aux issues** — l'onglet Retours ouvre une issue GitHub préremplie (titre, description, label bug ou amélioration)
-- 🌍 **6 langues** (fr, en, es, de, it, pt), mode sombre/clair avec bascule lune/soleil, accessibilité (animations réduites, contraste élevé, tailles de texte)
+### 🎭 Votre rôle
+- **Choisissez qui vous dirigez** — les factions du scénario en cartes illustrées, ou créez **votre propre entité** (faction ou personnage) intégrée au monde comme une puissance à part entière, ou incarnez une nation déjà présente dans le scénario, ou jouez « le monde entier » en conteur
+
+### 📖 La mémoire du monde
+- **Bible du monde** — canon des faits établis, arcs narratifs, pistes de Chekhov : le monde n'oublie pas
+- **Rebonds de Chekhov** — les promesses posées il y a plus de 6 tours explosent enfin, même sans IA
+- **Chronique interactive** — gravez n'importe quel tour au canon d'un clic (« le monde s'en souvient »)
+- **Épilogue** — clôturez la partie avec le bilan mémorable de vos trahisons et alliances
+- **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
+
+### 🗺️ Le monde
+- **Carte vivante** — saisons, front de guerre animé, routes commerciales, zooms cinématiques, lueurs de relief et infobulle au survol
+- **Lieux explorables** — chaque lieu du monde propose une expédition
+- **Diplomatie vivante** — alliances, guerres, dettes, espionnage, commerce
+- **Monde autonome** — le monde continue d'évoluer pendant votre absence
+- **Objectifs de partie** — 2 à 3 objectifs suivis dans l'interface
+
+### 👥 Jeu et partage
+- **Multijoueur local** — jusqu'à 5 factions + mode spectateur
+- **Partage** — livre de campagne, replay, image de carte, post Reddit/Discord, **semence FM-XXXXXX** importable
+- **Téléchargeable** — l'onglet Télécharger emporte le jeu complet en un fichier HTML jouable hors ligne
+- **PWA** — le site s'installe sur l'écran d'accueil et joue hors ligne
+
+### 🎨 Interface et accessibilité
+- **Interface vivante** — palette qui suit les saisons, éclat doré sur les événements marquants, lettrine enluminée, transition « page tournée », jauges circulaires, ambiance « livre ancien » optionnelle
+- **6 langues** (fr, en, es, de, it, pt)
+- **Mode sombre/clair** avec bascule lune/soleil
+- **Accessibilité** — animations réduites, contraste élevé, tailles de texte réglables
+
+### 🔌 Intégrations
+- **Journal relié au dépôt** — l'onglet Journal affiche l'activité GitHub du projet en plus du journal local
+- **Retours reliés aux issues** — l'onglet Retours ouvre une issue GitHub préremplie (titre, description, label bug ou amélioration)
 
 ## 🔐 Sécurité
 

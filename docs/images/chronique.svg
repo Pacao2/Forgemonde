@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-label="Chronique interactive">
+<defs><linearGradient id="pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16151f"/><stop offset="1" stop-color="#111019"/></linearGradient>
+<linearGradient id="goldL2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8c877"/><stop offset="1" stop-color="#b5873a"/></linearGradient></defs>
+<rect width="1200" height="520" fill="#0d0c14"/>
+<text x="80" y="72" font-family="Georgia,serif" font-size="30" font-weight="bold" fill="#d2a24c" letter-spacing="5">CHRONIQUE — AN 12, PRINTEMPS</text>
+<g transform="translate(80,100)">
+<rect width="740" height="150" rx="12" fill="url(#pan)" stroke="#2a2936" stroke-width="1.5"/>
+<rect x="1" y="1" width="4" height="148" rx="2" fill="url(#goldL2)"/>
+<text x="30" y="34" font-family="Georgia,serif" font-style="italic" font-size="16" fill="#d2a24c" letter-spacing="2">VALDOR · TRAHISON DU TRAITÉ</text>
+<text x="30" y="82" font-family="Georgia,serif" font-size="20" fill="#ecebe6" opacity="0.95"><tspan font-size="46" font-weight="bold" fill="#d2a24c">L</tspan>a reine signe le traité de la bonne main — et tend l'autre vers l'acier.</text>
+<text x="30" y="112" font-family="Georgia,serif" font-size="20" fill="#ecebe6" opacity="0.9">Les clauses seront honorées, mot pour mot. Pas un de plus.</text>
+<text x="30" y="136" font-family="Georgia,serif" font-size="14" fill="#9593a3" font-style="italic">★ Événement majeur · graver au canon : « le monde s'en souviendra »</text>
+</g>
+<g transform="translate(80,272)">
+<rect width="740" height="120" rx="12" fill="url(#pan)" stroke="#2a2936" stroke-width="1.5"/>
+<rect x="1" y="1" width="4" height="118" rx="2" fill="url(#goldL2)"/>
+<text x="30" y="32" font-family="Georgia,serif" font-style="italic" font-size="16" fill="#d2a24c" letter-spacing="2">REBOND DE CHEKHOV · AN 18</text>
+<text x="30" y="68" font-family="Georgia,serif" font-size="20" fill="#ecebe6" opacity="0.95">La promesse oubliée du traité de l'an 12 éclate au grand jour — six ans plus tard.</text>
+<text x="30" y="96" font-family="Georgia,serif" font-size="14" fill="#9593a3" font-style="italic">Le monde n'oublie jamais une dette, fût-elle de sang.</text>
+</g>
+<g font-family="Georgia,serif" transform="translate(880,100)">
+<rect width="240" height="292" rx="14" fill="url(#pan)" stroke="#2a2936"/>
+<text x="24" y="40" font-size="17" font-weight="bold" fill="#d2a24c" letter-spacing="2">OBJECTIFS</text>
+<circle cx="34" cy="76" r="7" fill="none" stroke="#e8c877" stroke-width="2"/><path d="M30,76 L33,79 L39,72" stroke="#e8c877" stroke-width="2" fill="none"/>
+<text x="52" y="81" font-size="15" fill="#ecebe6">Conclure une alliance</text>
+<circle cx="34" cy="116" r="7" fill="none" stroke="#e8c877" stroke-width="2"/>
+<text x="52" y="121" font-size="15" fill="#ecebe6">Gagner une bataille</text>
+<circle cx="34" cy="156" r="7" fill="none" stroke="#e8c877" stroke-width="2"/>
+<text x="52" y="161" font-size="15" fill="#ecebe6">Découvrir un secret</text>
+<text x="24" y="212" font-size="17" font-weight="bold" fill="#d2a24c" letter-spacing="2">DILEMME</text>
+<text x="24" y="240" font-size="14" fill="#ecebe6" opacity="0.9">Lever l'impôt du sel ?</text>
+<text x="24" y="260" font-size="14" fill="#9593a3" font-style="italic">3 choix · gravé au canon</text>
+</g>
+<text x="600" y="465" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="18" fill="#9593a3">Chaque tour se grave dans la bible du monde — et revient des dizaines de tours plus tard</text>
+</svg>
