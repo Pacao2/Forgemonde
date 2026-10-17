@@ -351,8 +351,6 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 </style>
 </head>
 <body>
-<div id="boot" style="color:#d2a24c;font:16px sans-serif;padding:20px;text-align:center">Chargement de Forgemonde...</div>
-<script>window._ferr=function(m,info){try{var NL=String.fromCharCode(10);var d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.setAttribute("id","errbox");d.textContent="Diagnostic Forgemonde :"+NL+info;document.body.appendChild(d)}catch(e){}};window.onerror=function(m,u,l,c,err){var st=(err&&err.stack)?(NL()+"Stack: "+err.stack):"";function NL(){return String.fromCharCode(10)}window._ferr(m,"Erreur: "+m+NL()+"Fichier: "+(u||"?")+" ligne "+l+" col "+c+st);return false};window.addEventListener("unhandledrejection",function(ev){var r=ev.reason;window._ferr(String(r),"Promesse rejet"+String.fromCharCode(233)+"e : "+((r&&r.stack)||(r&&r.message)||String(r)))});</script>
 <main id="app"></main>
 <style>
 #aidlg{max-height:calc(100dvh - 24px);overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;max-width:520px;width:calc(100% - 24px);padding:18px 20px}
@@ -876,7 +874,7 @@ function mp(){
       err&&retry&&!busy?el("button",{class:"alt",on:{click:()=>retry()},text:"Réessayer"}):null),
     host&&(!S.world||S.world.name!==g.world.name)?el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>mpRestore(g)},text:"Restaurer l'état de la partie sur cet appareil"})):null,
     el("h2",{text:"Chronique"}),
-    (chronAll||log.length<=8?log:log.slice(0,8)).map(e=>el("article",{class:"entry"},el("div",{class:"act",text:(e.d||"")+" : "+cut(e.a,160)}),e.f?el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",on:{click:()=>{view="play";draw();setTimeout(()=>zoomToFac(e.f,true),80)}},text:" Zoomer sur la zone"}):null,el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",title:"Graver cet événement au canon : le monde s'en souviendra dans les tours à venir",on:{click:()=>{S.canon=(S.canon||[]).slice(-11).concat("["+cut(e.d||"",20)+"] "+cut(e.a,100));save();err="Gravé au canon : le monde se souviendra de ce tour.";draw()}},text:"易 S'en souvenir"}),el("p",{text:cut(e.n,600)}),
+    (chronAll||log.length<=8?log:log.slice(0,8)).map(e=>el("article",{class:"entry"},el("div",{class:"act",text:(e.d||"")+" : "+cut(e.a,160)}),e.f?el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",on:{click:()=>{view="play";draw();setTimeout(()=>zoomToFac(e.f,true),80)}},text:"🎯 Zoomer sur la zone"}):null,el("button",{class:"alt",style:"font-size:.78rem;padding:4px 10px;min-height:0",title:"Graver cet événement au canon : le monde s'en souviendra dans les tours à venir",on:{click:()=>{S.canon=(S.canon||[]).slice(-11).concat("["+cut(e.d||"",20)+"] "+cut(e.a,100));save();err="Gravé au canon : le monde se souviendra de ce tour.";draw()}},text:"🧠 S'en souvenir"}),el("p",{text:cut(e.n,600)}),
       (e.maj||[]).map(x=>el("div",{class:"note"},el("b",{text:"Événement majeur : "+x.titre+". "}),x.description+" "+x.consequence)),
       (e.r||[]).length?el("ul",{class:"re"},e.r.map(x=>el("li",{},el("b",{text:x.faction+" : "}),x.reaction))):null)),
     (!chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=true;draw()}},text:"Afficher toute la chronique ("+log.length+" tours)"})):null,
@@ -943,7 +941,7 @@ const CHANGELOG=[
 "Mondes vedettes : trois aventures dramatiques jouables en un clic dès l'accueil, pour démarrer sans réfléchir.",
 "Rebonds de Chekhov : les promesses posées il y a plus de 6 tours explosent enfin — le passé resurgit dans les événements majeurs et se grave au canon (moteur de règles inclus, plus besoin d'IA).",
 "Épilogue : panneau « Clôturer la partie » dans Outils — bilan mémorable de vos trahisons, alliances, dilemmes et objectifs, prêt à copier.",
-"Chronique interactive : bouton 易 sur chaque tour — « le monde s'en souvient » grave l'événement au canon pour qu'il revienne plus tard.",
+"Chronique interactive : bouton 🧠 sur chaque tour — « le monde s'en souvient » grave l'événement au canon pour qu'il revienne plus tard.",
 "Négociation à deux voix : pendant un dilemme, le bouton « Consulter vos conseillers » ouvre le chat avant votre décision.",
 "Décrochage : après 2 minutes d'inaction, trois suggestions d'actions dramatiques en un clic.",
 "Saisons sur la carte : teinte hiver/printemps/été/automne selon la date du tour.",
@@ -956,18 +954,18 @@ const CHANGELOG=[
 "Allègement : nettoyage du HTML transporté (les serveurs compressent déjà en gzip)."]],
 ["v15oct — 15 octobre 2026 : objectifs, dilemmes et semences",[
 "Nouvel onglet « Télécharger » : télécharge le jeu complet en un fichier HTML pour jouer hors ligne, l'archiver ou le partager — bouton de partage de lien inclus.",
-"Objectifs de partie : 2 à 3 objectifs par partie (alliance, bataille gagnée, secret découvert, exploration), suivis dans le HUD ( 1/2) et archivés à l'accomplissement.",
+"Objectifs de partie : 2 à 3 objectifs par partie (alliance, bataille gagnée, secret découvert, exploration), suivis dans le HUD (🎯 1/2) et archivés à l'accomplissement.",
 "Dilemmes mémorisés : à partir du 2e tour, un dilemme à 3 choix (refugié, mine disputée, prophète, famine voisine) — la décision est gravée au canon du monde, avec sa date.",
 "Front de guerre animé : ligne dorée pulsante entre les capitales des factions en guerre, tires animés et éclat de bataille au milieu.",
 "Semence de monde partageable : code court FM-XXXXXX affiché dans le panneau Partager pour rejouer le même monde.",
 "Correctif : écran vide lié à la pastille IA du HUD ; navigation mobile en rangées visibles."]],
 ["v14oct — 14 octobre 2026 : la grande refonte visuelle",[
 "Carte vivante : anneaux d'événements animés (pulsations dorées pour ta faction, rouges décalés pour celles qui réagissent), onde de choc sur les événements majeurs, lueur au sol — désactivable via Réglages → Animations.",
-"Zoom cinématique : après chaque action, la caméra zoome sur la zone concernée ; bouton «  Zoomer sur la zone » dans chaque entrée de la chronique.",
+"Zoom cinématique : après chaque action, la caméra zoome sur la zone concernée ; bouton « 🎯 Zoomer sur la zone » dans chaque entrée de la chronique.",
 "Refonte mobile : barre de navigation fixe en bas, champ d'action toujours visible pendant le défilement, cibles tactiles élargies, fin du zoom automatique iOS.",
 "Écran allégé : panneaux repliés par défaut, chronique limitée aux 8 derniers tours (bouton pour tout afficher), HUD épuré.",
-"Indicateur de moteur : pastille « ⚙ Règles » ou « 烙 IA : modèle » dans le HUD, cliquable pour configurer l'IA.",
-"Partage intégré : panneau «  Partager ma partie » (post prêt pour Discord/Reddit + image de carte avec bandeau doré).",
+"Indicateur de moteur : pastille « ⚙ Règles » ou « 🤖 IA : modèle » dans le HUD, cliquable pour configurer l'IA.",
+"Partage intégré : panneau « 📣 Partager ma partie » (post prêt pour Discord/Reddit + image de carte avec bandeau doré).",
 "Retours repensés : « Copier mon retour » et ouverture directe de Discord/Reddit, plus d'envoi en ligne.",
 "Aperçus de lien : balises Open Graph pour que les liens partagés affichent titre et image."]],
 ["v13oct — 13 octobre 2026 : autonomie et Pax Historia",[
@@ -1137,7 +1135,7 @@ function drawFog(g,P){
 }
 function sharePost(){
   const w=S.world,ev=S.log.flatMap(e=>(e.maj||[]).map(x=>x.titre)).slice(-3),last=S.log[0];
-  return " **"+w.name+"** — "+w.tone+", "+dateStr(S.m)+" (tour "+S.log.length+")\n"+
+  return "🌍 **"+w.name+"** — "+w.tone+", "+dateStr(S.m)+" (tour "+S.log.length+")\n"+
   "> "+cut(w.concept,180)+"\n\n"+
   "Factions : "+names().slice(0,6).join(", ")+(names().length>6?" et d'autres…":"")+"\n"+
   (ev.length?"Derniers événements marquants :\n"+ev.map(x=>"- "+x).join("\n")+"\n":"")+
@@ -1146,10 +1144,10 @@ function sharePost(){
 }
 function shareCopy(){(navigator.clipboard?navigator.clipboard.writeText(sharePost()):Promise.reject()).then(()=>{err="Post copié : colle-le sur Discord ou Reddit avec l'image de la carte !";draw()}).catch(()=>{err="Copie impossible sur cet appareil.";draw()})}
 function sharePanel(){
-  return det("share"," Partager ma partie",
+  return det("share","📣 Partager ma partie",
     el("p",{class:"mute",text:"Génère un post prêt pour Discord ou Reddit : récit du monde, événements marquants, lien du jeu. Ajoute l'image de la carte en pièce jointe pour plus d'impact."}),
     el("div",{class:"row"},el("button",{on:{click:shareCopy},text:"Copier mon post"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Image de la carte"}):null),
-    S.seed?el("p",{class:"mute",style:"margin-top:10px",text:" Semence de ce monde : "+S.seed+" — partage-la pour que d'autres rejouent le même monde et comparent leurs parties."}):null,
+    S.seed?el("p",{class:"mute",style:"margin-top:10px",text:"🌱 Semence de ce monde : "+S.seed+" — partage-la pour que d'autres rejouent le même monde et comparent leurs parties."}):null,
     el("details",{style:"margin-top:8px"},el("summary",{text:"Rejouer le monde d'une semence partagée"}),el("p",{class:"mute",text:"Collez un code FM-XXXXXXXX : le monde correspondant démarre en un clic."}),el("input",{id:"impseed",placeholder:"FM-XXXXXXXX","aria-label":"Semence à importer",style:"width:100%"}),el("div",{class:"row",style:"margin-top:6px"},el("button",{class:"alt",on:{click:seedImport},text:"Rejouer ce monde"}))));
 }
 function placesPanel(){
@@ -1173,7 +1171,7 @@ function epiloguePanel(){
     "Canon du monde ("+(S.canon||[]).length+" faits gravés) : "+(S.canon||[]).slice(-5).join(" | ")+"\n"+
     (S.seed?"Semence : "+S.seed+"\n":"")+
     "La bible du monde se souvient de vous.";
-  return det("epi"," Clôturer la partie (épilogue)",
+  return det("epi","🏁 Clôturer la partie (épilogue)",
     el("p",{class:"mute",text:"Termine en beauté : un bilan de tout ce que le monde a retenu de votre règne — à copier dans un post ou un livre de campagne."}),
     el("div",{class:"strip"},el("p",{style:"white-space:pre-line",text:bilan})),
     el("div",{class:"row"},el("button",{on:{click:()=>{(navigator.clipboard?navigator.clipboard.writeText(bilan):Promise.reject()).then(()=>{err="Épilogue copié : colle-le où tu veux !";draw()}).catch(()=>{err="Copie impossible ici.";draw()})}},text:"Copier l'épilogue"}),
@@ -1182,7 +1180,7 @@ function epiloguePanel(){
 function fileImportPanel(){
   return el("div",{class:"row",style:"margin-top:6px"},
     el("label",{class:"alt",style:"cursor:pointer;padding:8px 14px;border:1px solid var(--line, #555);border-radius:8px;display:inline-block"},
-      " Charger un fichier de monde",
+      "📂 Charger un fichier de monde",
       el("input",{type:"file",accept:".txt",style:"display:none",on:{change:ev=>{
         const f=ev&&ev.target&&ev.target.files&&ev.target.files[0];if(!f)return;
         const rd=new FileReader();
@@ -1421,9 +1419,9 @@ function modePanel(){
     el("select",{"aria-label":"Mode de jeu",on:{change:e=>{S.world.mode=e.target.value;save();draw()}}},Object.keys(MODES).map(m=>el("option",{value:m,...((S.world.mode||"libre")===m?{selected:""}:{}),text:m}))));
 }
 const PLANS=[
- {id:"aventurier",nom:"Aventurier",prix:9.99,j:24,perks:["24 jetons/mois (≈480 tours Rapide)"," Modèle Équilibré : récits riches et détaillés"," 1 pack de scénarios premium au choix"," Suivi des statistiques du monde"]},
- {id:"chroniqueur",nom:"Chroniqueur",prix:19.99,j:55,best:true,perks:["55 jetons/mois (≈1 100 tours Rapide)","⭐ Modèle Avancé : narrations sophistiquées","️ Tous les scénarios premium (12 mondes)"," Livre de campagne gratuit (export PDF)"," Priorité sur les nouvelles fonctions"]},
- {id:"maitre",nom:"Maître du jeu",prix:39.99,j:120,perks:["120 jetons/mois (≈2 400 tours Rapide)","⭐ Modèle Avancé illimité","️ Tous les scénarios premium + futurs"," Exports gratuits (PDF, images haute res)"," Accès avant-première aux nouveautés"," Badge créateur sur tes mondes publiés"]}];
+ {id:"aventurier",nom:"Aventurier",prix:9.99,j:24,perks:["24 jetons/mois (≈480 tours Rapide)","💬 Modèle Équilibré : récits riches et détaillés","🎮 1 pack de scénarios premium au choix","📊 Suivi des statistiques du monde"]},
+ {id:"chroniqueur",nom:"Chroniqueur",prix:19.99,j:55,best:true,perks:["55 jetons/mois (≈1 100 tours Rapide)","⭐ Modèle Avancé : narrations sophistiquées","🗺️ Tous les scénarios premium (12 mondes)","📚 Livre de campagne gratuit (export PDF)","🎯 Priorité sur les nouvelles fonctions"]},
+ {id:"maitre",nom:"Maître du jeu",prix:39.99,j:120,perks:["120 jetons/mois (≈2 400 tours Rapide)","⭐ Modèle Avancé illimité","🗺️ Tous les scénarios premium + futurs","📚 Exports gratuits (PDF, images haute res)","🚀 Accès avant-première aux nouveautés","👑 Badge créateur sur tes mondes publiés"]}];
 const PLANBY=id=>PLANS.find(x=>x.id===id);
 async function recordIntent(k){
   S.intent=(S.intent||[]).filter(x=>x.k!==k).concat({k,t:Date.now()}).slice(-20);save();
@@ -1444,7 +1442,7 @@ function freeBox(){
       el("span",{class:"mute",style:"font-size:.85rem",text:pct+"% utilisé"})),
     el("div",{class:"bar",style:"width:100%;height:12px;background:rgba(255,255,255,.08);border-radius:6px"},
       el("i",{style:"width:"+pct+"%",style:{background:"linear-gradient(90deg,#d2a24c,#e4bc6c)",borderRadius:"6px",transition:"width .3s"}})),
-    el("p",{style:"margin:10px 0 0;font-size:.95rem",text:" "+fmt(left,2)+" jeton restant"}),
+    el("p",{style:"margin:10px 0 0;font-size:.95rem",text:"📍 "+fmt(left,2)+" jeton restant"}),
     el("p",{class:"mute",style:"font-size:.9rem",text:"≈"+calls+" tours au modèle Rapide. Reviens demain pour +1 gratuit, ou passe à l'abonnement pour continuer tout de suite."}),
     S.plan&&S.plan!=="gratuit"?el("p",{style:"color:var(--gold);font-size:.9rem",text:"✓ Offre active (démo) : "+PLANBY(S.plan).nom}):null);
 }
@@ -1471,7 +1469,7 @@ function subBanner(){
 function paywallCard(){
   if(true)return null;
   return el("div",{class:"strip wow",style:"flex-direction:column;align-items:stretch"},
-    el("b",{style:"color:var(--gold);font-size:1.1rem",text:" Jeton gratuit du jour épuisé"}),
+    el("b",{style:"color:var(--gold);font-size:1.1rem",text:"🎮 Jeton gratuit du jour épuisé"}),
     el("p",{class:"mute",text:"Tu as utilisé ton 1 jeton gratuit d'aujourd'hui. Reviens demain pour continuer, ou passe à l'abonnement pour jouer sans limite."}),
     el("div",{class:"row"},
       el("button",{on:{click:()=>{paywall=false;view="jetons";draw()}},text:"Voir les abonnements"}),
@@ -1520,7 +1518,7 @@ const PACKS_P=[
   factions:"République fédérale d'Allemagne : encourager le changement sans violence\nRépublique démocratique allemande : garder le contrôle\nUnion soviétique : réformer sans perdre son empire\nÉtats-Unis : soutenir les mouvements démocratiques\nPologne : mener une transition négociée",
   canon:["Des manifestations massives ont lieu à Leipzig en octobre 1989.","Mikhaïl Gorbatchev dirige l'Union soviétique et prône des réformes.","En Pologne, une négociation entre pouvoir et opposition est en cours."],
   temper:{"République fédérale d'Allemagne":"diplomate","République démocratique allemande":"belliqueuse","Union soviétique":"prudente","États-Unis":"opportuniste","Pologne":"diplomate"}}]},
-{id:"asie",name:" Asie ancienne et dynasties",items:[
+{id:"asie",name:"🏯 Asie ancienne et dynasties",items:[
  {id:"as1",name:"200 av. J.-C. : la Route de la Soie débute",y0:-200,ms:"terre",tone:"Historique alternatif",mode:"libre",concept:"Les empires de Chine, Perse et Inde convergent vers le commerce.",magic:"Pas de magie : caravanes, chevaux, épices et marchands.",rules:"Les routes commerciales enrichissent durablement. Les attaques affaiblissent.",tags:["histoire","asie","commerce"],
   factions:"Dynastie Han : dominer l'Est\nEmpire séleucide : contrôler l'Ouest\nRoyaume Maurya : dominer l'Inde\nRoyaumes nomades : piller les routes\nRépubliques grecques : garder leurs comptoirs",
   canon:["L'empereur Han envoie des ambassadeurs.","Les royaumes nomades menacent les routes.","Les trois empires ignorent presque l'existence mutuelle."],
@@ -1533,7 +1531,7 @@ const PACKS_P=[
   factions:"Shogunat Tokugawa : unifier le Japon\nGrands daimyo : rester autonomes\nCommerçants étrangers : établir des comptoirs\nMonastères bouddhistes : conserver leur influence\nRonins : causer du chaos",
   canon:["Tokugawa Ieyasu établit son shogunat.","Les daimyo doivent séjourner à Edo.","Les étrangers sont vus avec suspicion."],
   temper:{"Shogunat Tokugawa":"prudente","Grands daimyo":"opportuniste","Commerçants étrangers":"marchande","Monastères bouddhistes":"mystique","Ronins":"belliqueuse"}}]},
-{id:"ameriques",name:" Mondes américains alternatifs",items:[
+{id:"ameriques",name:"🌎 Mondes américains alternatifs",items:[
  {id:"am1",name:"1492 : le Nouveau Monde s'éveille",y0:1492,ms:"archipel",tone:"Historique alternatif",mode:"libre",concept:"Les Amérindiens voient les premiers voiliers européens. Trois continents se rencontrent.",magic:"Pas de magie : chevaux, canons et alliances.",rules:"Les maladies se propagent lentement. Le commerce peut enrichir ou dominer.",tags:["histoire","amériques","1492"],
   factions:"Empire aztèque : comprendre cette menace\nConfédération inca : étendre son empire\nAlliance caraïbe : commercer\nRoyaumes mayas : rester indépendants\nExplorateurs européens : établir des colonies",
   canon:["Les premiers voiliers arrivent aux Caraïbes.","Les peuples autochtones ont une armée nombreuse.","L'or et les épices attirent les convoitises."],
@@ -1546,7 +1544,7 @@ const PACKS_P=[
   factions:"Confédération andine : unir le sud\nBrésil empire : dominer l'Amazonie\nChili républicain : organiser le cône sud\nArgentine prospère : imposer son leadership\nÉtats-Unis : conserver leur influence",
   canon:["Les nations sud-américaines sont jeunes.","Les États-Unis cherchent à dominer.","Or, pétrole et agriculture attirent les convoitises."],
   temper:{"Confédération andine":"diplomate","Brésil empire":"expansionniste","Chili républicain":"prudente","Argentine prospère":"ambitieuse","États-Unis":"belliqueuse"}}]},
-{id:"futur",name:" Futurs et science-fiction",items:[
+{id:"futur",name:"🚀 Futurs et science-fiction",items:[
  {id:"fu1",name:"2087 : l'après-changement climatique",y0:2087,ms:"terre",tone:"Post-apocalyptique",mode:"survie",concept:"Le climat a basculé. Les côtes ont disparu. Les survivants se regroupent dans des mégacités. Peut-on rebâtir une civilisation coopérative ?",magic:"Pas de magie : technologie de survie et ressources rares.",rules:"L'eau et les terres agricoles sont précieuses. Les alliances créent une stabilité fragile.",tags:["futur","sf","climat"],
   factions:"Fédération des côtes : reconstruire en mer\nArcologies du centre : autosuffisance\nNouvel OPEP énergétique : contrôler l'énergie\nTribu technologique : garder les savoirs\nNo mans lands : liberté et chaos",
   canon:["Les côtes ont été englouties.","La technologie pré-crise est mythifiée.","Les premières générations ne connaissent que ce monde."],
@@ -1578,7 +1576,7 @@ function premiumCard(sc,pk){
 function premiumSection(){
   if(true)return null;
   const totalScenarios=PACKS_P.reduce((a,p)=>a+p.items.length,0);
-  return el("div",{id:"premsec"},el("h2",{text:" Scénarios premium ("+totalScenarios+" mondes)"}),
+  return el("div",{id:"premsec"},el("h2",{text:"📜 Scénarios premium ("+totalScenarios+" mondes)"}),
     el("p",{class:"mute",text:"Mondes historiques alternatifs écrits à la main. Inclus avec les abonnements Chroniqueur ou Maître du jeu, ou débloquez des packs à 4,99 €."}),
     PACKS_P.map(pk=>el("div",{style:"margin-top:24px"},el("h3",{style:"margin:0 0 12px;font-size:1rem;color:var(--gold)",text:pk.name+(hasPack(pk.id)?" ✓ (débloqué)":"")}),el("div",{class:"grid"},pk.items.map(sc=>premiumCard(sc,pk))))));
 }
@@ -1615,7 +1613,7 @@ function testerPanel(){
   S.tdone=S.tdone||{};
   TESTER.forEach(t=>{try{if(!S.tdone[t[0]]&&t[2](S))S.tdone[t[0]]=Date.now()}catch(e){}});
   const done=TESTER.filter(t=>S.tdone[t[0]]).length;
-  return det("tester","Mes objectifs de testeur ("+done+" sur "+TESTER.length+")"+(done===TESTER.length?" — Testeur confirmé ":""),
+  return det("tester","Mes objectifs de testeur ("+done+" sur "+TESTER.length+")"+(done===TESTER.length?" — Testeur confirmé 🏅":""),
     el("i",{class:"bar",style:"width:100%;display:block"},el("i",{style:"width:"+Math.round(done/TESTER.length*100)+"%"})),
     TESTER.map(t=>el("p",{class:S.tdone[t[0]]?"":"mute",style:"margin:2px 0",text:(S.tdone[t[0]]?"✅ ":"⬜ ")+t[1]})));
 }
@@ -1756,7 +1754,7 @@ function downloadView(){
     el("div",{class:"strip"},el("p",{},el("b",{text:"Votre copie complète : "}),el("span",{text:"la version "+BUILD+" du jeu, avec toutes vos données de partie déjà incluses (monde, chronique, sauvegarde locale)."})),
       el("div",{class:"row",style:"margin-top:10px"},
         el("button",{on:{click:()=>save("forgemonde-"+BUILD.split(" ")[0]+".html",grab())},text:"⬇ Télécharger le jeu (HTML)"}),
-        el("button",{class:"alt",on:{click:()=>{try{navigator.share&&navigator.share({title:"Forgemonde",text:"Forgemonde — un monde qui se souvient de vos choix : "+location.href}).catch(()=>{})}catch(e){}}},text:" Partager le lien"}))),
+        el("button",{class:"alt",on:{click:()=>{try{navigator.share&&navigator.share({title:"Forgemonde",text:"Forgemonde — un monde qui se souvient de vos choix : "+location.href}).catch(()=>{})}catch(e){}}},text:"🔗 Partager le lien"}))),
     el("h2",{style:"margin-top:18px",text:"Ce que tu peux faire avec"}),
     el("ul",{class:"re"},
       el("li",{},"Jouer hors ligne : ouvre le fichier téléchargé sans internet — tout fonctionne (mode sans IA entièrement local)."),
@@ -1811,7 +1809,7 @@ function nav(){
     b("download","Télécharger"),
     b("feedback","Retours"),
     el("button",{class:"alt",on:{click:()=>window.__openAI()},text:"⚙ IA"}),
-    el("button",{class:"alt moon",title:"Basculer le thème sombre/clair","aria-label":"Basculer le thème",on:{click:()=>{const rt=document.documentElement.getAttribute("data-theme");const sysLight=window.matchMedia&&matchMedia("(prefers-color-scheme:light)").matches;const lightNow=rt==="light"||(!rt&&sysLight);S.opts.theme=lightNow?"sombre":"clair";applyA11y();save();draw()}},text:(light?"☀":"")}),
+    el("button",{class:"alt moon",title:"Basculer le thème sombre/clair","aria-label":"Basculer le thème",on:{click:()=>{const rt=document.documentElement.getAttribute("data-theme");const sysLight=window.matchMedia&&matchMedia("(prefers-color-scheme:light)").matches;const lightNow=rt==="light"||(!rt&&sysLight);S.opts.theme=lightNow?"sombre":"clair";applyA11y();save();draw()}},text:(light?"☀":"🌙")}),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Arrêter l'autonomie"}):null,
     PAY&&me?b("gains","Mes gains"):null,
     (PAY||isOwn)?b("jetons","Jetons"+(S.opts.jetons==="activée"?" ("+fmt(freeLeft()+(S.wallet||0),1)+")":"")):null,
@@ -1988,7 +1986,7 @@ function pickView(){
       F.map((f,i)=>card("Faction",null,el("span",{class:"em"},emblemEl(f.n,facColor(f.n,i),56)),f.n,
         f.g?"But : "+f.g:null,()=>pickFac(f.n),"Diriger "+f.n)),
       card("Toi","✨",null,"Ma propre entité","Crée une faction ou un personnage, ou incarne une nation déjà présente dans le scénario.",()=>{view="picknew";draw()},"Créer ma propre entité"),
-      card("Libre","",null,"Le monde entier","Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour.",()=>pickFac("Le monde"),"Observer le monde entier")),
+      card("Libre","🌍",null,"Le monde entier","Pas de faction : tu observes le monde et tu influences qui tu veux, tour après tour.",()=>pickFac("Le monde"),"Observer le monde entier")),
     el("p",{class:"pickhint",text:"Tu pourras changer de camp à tout moment dans « Ma partie »."}));
 }
 function pickNewView(){
@@ -2368,7 +2366,7 @@ function choicePanel(){
       else S.choice=null;
       save();run(o.action,facs()[0])
     }},text:cut(o.label,40)})),
-    el("button",{class:"alt",on:{click:()=>{const cands=(S.npcs||[]).map(x=>x&&x.nom).filter(Boolean);chatWho=cands[0]||(names()[0]||"");ptab="chat";S.choice=S.choice;save();draw()}},text:" Consulter vos conseillers"}),
+    el("button",{class:"alt",on:{click:()=>{const cands=(S.npcs||[]).map(x=>x&&x.nom).filter(Boolean);chatWho=cands[0]||(names()[0]||"");ptab="chat";S.choice=S.choice;save();draw()}},text:"💬 Consulter vos conseillers"}),
     el("button",{class:"alt",on:{click:()=>{S.choice=null;save();draw()}},text:"Ignorer"}));
 }
 function surveyPanel(){
@@ -3058,9 +3056,9 @@ function play(){
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
   const rawMdl=cfgAI&&cfgAI.d?String(cfgAI.d):"",mdl=rawMdl.length>18?rawMdl.slice(0,17)+"…":rawMdl;
-  const goals=(S.goals&&Object.keys(S.goals).length)?el("span",{class:"pill goals",title:"Objectifs de cette partie — accomplies : "+((S.goalDone||[]).length),text:" "+Object.values(S.goals).filter(g=>g.ok).length+"/"+Object.keys(S.goals).length}):null;
+  const goals=(S.goals&&Object.keys(S.goals).length)?el("span",{class:"pill goals",title:"Objectifs de cette partie — accomplies : "+((S.goalDone||[]).length),text:"🎯 "+Object.values(S.goals).filter(g=>g.ok).length+"/"+Object.keys(S.goals).length}):null;
   const season=["Hiver","Printemps","Été","Automne"][Math.floor(((S.m%12+1)%12)/3)];
-  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{class:"ep",text:season+" — "+(S.world.y0?(S.world.y0+Math.floor(S.m/12)):"an "+(Math.floor(S.m/12)+1))}),el("span",{text:"Tour "+S.log.length}),goals,el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"烙 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
+  const hud=el("div",{class:"hud"},el("b",{text:S.world.name}),el("span",{text:dateStr(S.m)}),el("span",{class:"ep",text:season+" — "+(S.world.y0?(S.world.y0+Math.floor(S.m/12)):"an "+(Math.floor(S.m/12)+1))}),el("span",{text:"Tour "+S.log.length}),goals,el("button",{class:"alt pill",title:typeof sample==="function"?"IA active : "+(rawMdl||"modèle configuré")+" — clic pour configurer":"Moteur de règles (sans IA) : clic pour ajouter une IA",on:{click:()=>window.__openAI()},text:typeof sample==="function"?"🤖 "+(mdl?"IA : "+mdl:"IA"):"⚙ Règles"}));
   const time=el("div",{class:"timebar"},el("span",{class:"mute",text:"Avancer le temps"}),
     [["+1 mois",1],["+1 saison",3],["+1 an",12]].map(([t,n])=>el("button",{class:"alt",on:{click:()=>simulate(n)},...dis,text:t})),
     autoOn?el("button",{on:{click:()=>autoStop("Autonomie arrêtée.")},text:"Pause"}):el("button",{class:"alt",on:{click:autoStart},...dis,text:"Autonomie"}),dl?el("button",{class:"alt",on:{click:shareImage},text:"Partager l'image"}):null);
@@ -3188,8 +3186,7 @@ function draw(){
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
 }
-window.addEventListener("error",ev=>{try{const a=document.getElementById("app");if(a&&!a.children.length){const d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Le jeu n'a pas pu d\x65marrer : "+((ev.error&&ev.error.message)||ev.message||"?")+" — recharge la page.";document.body.appendChild(d)}}catch(e){}});
-try{draw();var _b=document.getElementById("boot");if(_b)_b.remove()}catch(e){try{var _b0=document.getElementById("boot");if(_b0)_b0.remove();const d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Le jeu n'a pas pu d\x65marrer : "+((e&&e.message)||e)+String.fromCharCode(10)+((e&&e.stack)||"(pas de stack)")+String.fromCharCode(10)+"recharge la page (ou vide les donn\x65es du site dans les r\x65glages du navigateur).";document.body.appendChild(d)}catch(e2){}}
+draw();
 document.addEventListener("pointermove",ev=>{const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(ev.clientY<r.top-120||ev.clientY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((ev.clientX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((ev.clientY-r.top)/r.height-.5).toFixed(3))},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
 try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
