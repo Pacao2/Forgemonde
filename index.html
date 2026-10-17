@@ -914,6 +914,8 @@ function chekhovFire(auto){
 }
 const CHANGELOG=[
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine, et tu choisis qui tu diriges",[
+"Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
+"Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
 "Cartes de sélection soignées : pastilles de type, nom en grand sur l'image, but en encart lisible, liseré doré au survol et au clavier, emblèmes agrandis.",
 "Le choix est mémorisé partout : compositeur « Tu joues », brouillard d'exploration, partage, monde autonome — et modifiable à tout moment.",
@@ -2490,6 +2492,29 @@ function canonGuard(e){
   }catch(x){}
 }
 
+/* --- Chapitres : memoire longue de l’histoire, bouclee localement a chaque dizaine de tours (sans IA) --- */
+function mkChapter(){
+  if(!S.log||S.log.length<10)return;
+  if((S.testTurns||0)%10!==0)return;
+  const B=S.log.slice(0,10).reverse();
+  const C=S.chapters=S.chapters||[];
+  if(C.length&&C[C.length-1].to===B[B.length-1].d)return;
+  const imps=B.filter(x=>(x.maj||[]).length).flatMap(x=>x.maj);
+  const lignes=B.map(x=>"["+x.d+"] "+cut(String(x.f).split(":")[0].trim()+" : "+x.a,90)+(x.c?" — "+cut(x.c,90):"")).join(" ");
+  const t=imps.slice(0,3).map(x=>x.titre+" — "+x.description).join(" ");
+  C.push({from:B[0].d,to:B[B.length-1].d,titre:cut(imps.length?imps[imps.length>2?2:imps.length-1].titre:"Chapitre "+(C.length+1)+" : "+B[0].d,80),text:cut((t?t+" ":"")+lignes,700)});
+  S.chapters=C.slice(-12);
+}
+function chapterText(){
+  const C=S.chapters||[];
+  if(!C.length)return "(aucun chapitre boucle pour l’instant)";
+  return C.slice(-4).map(c=>c.titre+" ("+c.from+" → "+c.to+") : "+cut(c.text,320)).join(" || ");
+}
+function chapterPanel(){
+  const C=S.chapters||[];
+  if(!C.length)return null;
+  return det("chap","📖 Chapitres de l’histoire ("+C.length+")",C.slice().reverse().map(c=>el("div",{class:"entry"},el("b",{text:c.titre}),el("div",{class:"act",text:c.from+" → "+c.to}),el("p",{text:c.text}))));
+}
 async function turn(action,faction,months,auto,stopMajor){
   const o=S.opts,words={court:40,moyen:80,long:140}[o.len]||80,w=S.world,N=months!=null?months:(STEP[o.step]||1);
   const rec=S.log.slice(0,5).reverse().map(e=>`- [${e.d}] ${e.f}: ${e.a} => ${e.n}`).join("\n")||"(début de l'histoire)";
@@ -2499,6 +2524,7 @@ Monde : ${w.name} (${w.tone}). Concept : ${w.concept}. Surnaturel : ${w.magic}.
 Factions :
 ${w.factions}
 Résumé de l'histoire jusqu'ici : ${S.sum||"(aucun)"}
+Chapitres bouclés de l'histoire (mémoire longue, ne les contredis jamais) : ${chapterText()}
 Chronique récente :
 ${rec}
 Relations diplomatiques actuelles : ${relText()}.
@@ -2520,7 +2546,7 @@ Rumeurs en circulation (confirme-les, démens-les ou fais-les évoluer) :
 ${rumorText()}
 Tendance d'influence : ${trendText()}
 Événements majeurs passés (ne les redécouvre pas) : ${pastMajText()}
-Personnages (fiches complètes, mets à jour leur humeur et leur opinion du joueur quand ils apparaissent) :
+Personnages (fiches complètes) : fais évoluer à CHAQUE tour chaque personnage, même absent du récit — humeur, opinion, progression de son objectif (champ progression). Quand une progression atteint 80 ou plus, ce personnage revient de lui-même dans l'histoire : son ambition éclate au grand jour et réussit ou échoue :
 ${npcSheetsText()}
 Mémoire du monde (dossiers des factions marquantes et arcs en cours) :
 ${bibleText(action)||"(vierge pour l'instant)"}
@@ -2545,7 +2571,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   S.m+=N2;
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
-  canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];
+  canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter()}catch(x){}
   S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
@@ -3029,7 +3055,7 @@ async function start(){
   const gt=($("goaltype")||{}).value,gy=($("goalyears")||{}).value;if(f.diverge)f.concept=f.concept+" Point de divergence : "+f.diverge+".";selP="";S.world=f;initState();S.goal=newGoal(gt,gy);S.hero=S.heroDraft||null;S.heroDraft=null;S.draft=null;save();
   introAct="Décris la situation initiale du monde et les tensions entre les factions.";view="pick";draw();
 }
-function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,statuses:[],seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
+function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,statuses:[],chapters:[],seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
 function copyLog(){
   const w=S.world,t=`${w.name}\n\n`+S.log.slice().reverse().map(e=>`${e.f} : ${e.a}\n${e.n}\n`+e.r.map(x=>`- ${x.faction} : ${x.reaction}`).join("\n")+`\nRumeur : ${e.u}\nChangement : ${e.c}\n`).join("\n");
   navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copiée.";draw()}).catch(()=>{})
@@ -3087,7 +3113,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),epiloguePanel());
+  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
