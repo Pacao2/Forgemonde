@@ -28,13 +28,14 @@
 
 ## 🖼️ Aperçus
 
-| | |
-|---|---|
-| ![Carte vivante](docs/images/carte.svg) | ![Choisir sa faction](docs/images/factions.svg) |
-| **Carte vivante** — saisons, routes commerciales, front de guerre, lieux explorables | **Qui dirigeras-tu ?** — factions du scénario, votre propre entité, ou le monde entier |
-| ![Chronique interactive](docs/images/chronique.svg) | |
-| **Chronique interactive** — chaque tour se grave dans la bible du monde | |
+<p align="center"><img src="docs/images/carte.svg" alt="Carte vivante de Forgemonde : factions, routes commerciales, saisons" width="940"></p>
+<p align="center"><b>Carte vivante</b> — saisons, routes commerciales, front de guerre, lieux explorables</p>
 
+<p align="center"><img src="docs/images/factions.svg" alt="Écran de sélection : faction du scénario, ma propre entité, le monde entier" width="940"></p>
+<p align="center"><b>Qui dirigeras-tu ?</b> — factions du scénario, votre propre entité, ou le monde entier</p>
+
+<p align="center"><img src="docs/images/chronique.svg" alt="Chronique interactive : tour gravé au canon, rebond de Chekhov, objectifs" width="940"></p>
+<p align="center"><b>Chronique interactive</b> — chaque tour se grave dans la bible du monde</p>
 ## 🎮 Comment jouer
 
 1. Ouvrez [pacao2.github.io/Forgemonde](https://pacao2.github.io/Forgemonde/)

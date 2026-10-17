@@ -16,11 +16,11 @@
 <circle cx="240" cy="230" r="9" fill="#2a2233"/><circle cx="360" cy="380" r="9" fill="#2a2233"/><circle cx="900" cy="200" r="9" fill="#2a2233"/><circle cx="830" cy="510" r="9" fill="#2a2233"/><circle cx="170" cy="590" r="9" fill="#2a2233"/>
 </g>
 <g font-family="Georgia,serif" text-anchor="middle" fill="#f4e7c5">
-<text x="290" y="300" font-size="30" font-weight="bold" letter-spacing="6">VALDOR</text>
-<text x="900" y="255" font-size="30" font-weight="bold" letter-spacing="6">MORVENNE</text>
-<text x="770" y="545" font-size="30" font-weight="bold" letter-spacing="6">ELDRIS</text>
-<text x="150" y="618" font-size="26" font-weight="bold" letter-spacing="6">KARITH</text>
-<text x="240" y="205" font-size="17" opacity="0.85">Corbeaux-Blancs</text><text x="368" y="415" font-size="17" opacity="0.85">Verger-du-Nord</text><text x="900" y="172" font-size="17" opacity="0.85">Port-Cendré</text><text x="830" y="480" font-size="17" opacity="0.85">Fer-de-Lance</text>
+<text x="290" y="300" font-size="36" font-weight="bold" letter-spacing="6">VALDOR</text>
+<text x="900" y="255" font-size="36" font-weight="bold" letter-spacing="6">MORVENNE</text>
+<text x="770" y="545" font-size="36" font-weight="bold" letter-spacing="6">ELDRIS</text>
+<text x="150" y="622" font-size="30" font-weight="bold" letter-spacing="6">KARITH</text>
+<text x="240" y="200" font-size="22" opacity="0.9">Corbeaux-Blancs</text><text x="368" y="420" font-size="22" opacity="0.9">Verger-du-Nord</text><text x="900" y="165" font-size="22" opacity="0.9">Port-Cendré</text><text x="830" y="476" font-size="22" opacity="0.9">Fer-de-Lance</text>
 </g>
 <g stroke="#d2a24c" stroke-width="2.4" stroke-dasharray="9 7" fill="none" opacity="0.9">
 <path d="M265,255 C420,330 520,300 640,275 C740,255 820,340 860,470"/>
@@ -28,11 +28,11 @@
 </g>
 <path d="M362,378 L392,384 L368,404 Z" fill="#a8423f" stroke="#f4e7c5" stroke-width="2"/>
 <g font-family="Georgia,serif">
-<rect x="60" y="52" width="330" height="74" rx="12" fill="rgba(13,12,20,0.82)" stroke="rgba(255,255,255,0.18)"/>
-<text x="80" y="82" fill="#d2a24c" font-size="21" font-weight="bold" letter-spacing="2">AN 12 — PRINTEMPS</text>
-<text x="80" y="108" fill="#ecebe6" font-size="16" opacity="0.9">Traité secret Valdor–Eldris · carte vivante</text>
+<rect x="60" y="52" width="470" height="96" rx="14" fill="rgba(13,12,20,0.82)" stroke="rgba(255,255,255,0.18)"/>
+<text x="86" y="90" fill="#d2a24c" font-size="28" font-weight="bold" letter-spacing="2">AN 12 — PRINTEMPS</text>
+<text x="86" y="124" fill="#ecebe6" font-size="22" opacity="0.95">Traité secret Valdor–Eldris · carte vivante</text>
 </g>
-<g transform="translate(1105,70)"><circle r="20" fill="#f4e7c5"/><path d="M0,-13 L5,4 L0,1.5 L-5,4 Z" fill="#8a6420"/><path d="M0,18 L0,8" stroke="#8a6420" stroke-width="2.5"/><text y="34" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#f4e7c5" font-weight="bold">N</text></g>
+<g transform="translate(1105,70)"><circle r="20" fill="#f4e7c5"/><path d="M0,-13 L5,4 L0,1.5 L-5,4 Z" fill="#8a6420"/><path d="M0,18 L0,8" stroke="#8a6420" stroke-width="2.5"/><text y="36" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#f4e7c5" font-weight="bold">N</text></g>
 <rect width="1200" height="660" fill="url(#vig)"/>
 <rect x="6" y="6" width="1188" height="648" fill="none" stroke="rgba(210,162,76,0.5)" stroke-width="3" rx="12"/>
 </svg>
