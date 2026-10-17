@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v17oct-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v17oct-d2a24c"> ; correctifs du soir : chapitres fidèles au mode hybride, ambitions accomplies gravées dans la chronique et sur la carte, chapitres remis à zéro entre mondes
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -71,6 +71,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - **Dilemmes mémorisés** — des décisions à 3 choix gravées au canon, consultation de vos conseillers possible avant de trancher
 - **Chapitres de l'histoire** — tous les 10 tours, un chapitre est bouclé (gratuit, sans IA) : sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde
 - **Ambitions autonomes** — chaque personnage évolue à chaque tour, même absent du récit ; une ambition mûrie ramène son auteur dans l'histoire
+- **Chapitres en mode hybride** — la mémoire longue alimente désormais aussi le récit du mode hybride (règles + IA), pas seulement le mode complet
+- **Ambitions accomplies** — à 100 % de progression, l'événement est gravé dans la chronique, un lieu apparaît sur la carte et un toast l'annonce (gratuit, sans IA)
+- **Chapitres remis à zéro** — chaque nouveau monde repart d'une histoire vierge : plus de mémoire héritée du monde précédent
 
 ### 🗺️ Le monde
 - **Carte vivante** — saisons, front de guerre animé, routes commerciales, zooms cinématiques, lueurs de relief et infobulle au survol
