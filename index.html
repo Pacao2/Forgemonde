@@ -348,6 +348,11 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 .pickcard .goal{margin:0;font-size:.88rem;line-height:1.5;color:var(--mute);background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px}
 .pickcard .kicker{position:absolute;left:12px;top:12px;z-index:2;background:var(--glass);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 11px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
 .pickhint{margin:14px 0 0;font-size:.85rem;color:var(--mute)}
+/* ===== Colonne décision dédiée à gauche de la carte (grand écran) ===== */
+@media(min-width:1180px){
+ .pax{grid-template-columns:minmax(290px,330px) minmax(0,1fr) minmax(310px,1fr);grid-template-areas:"banner banner banner" "choice map side"}
+ .composer{grid-area:choice;position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;background:none;border-top:0;box-shadow:none;z-index:auto;padding:0 10px 12px 0}
+}
 </style>
 </head>
 <body>
@@ -935,7 +940,8 @@ const CHANGELOG=[
 "Mise en page revue : la chronique est toujours visible à droite, juste à côté de la carte (plus besoin d'onglet), le composeur d'action reste épinglé en bas de l'écran pendant le défilement, et la carte peut être dézoomée davantage (jusqu'à 50 %)",
 "Garde du canon : contrôle de cohérence local et gratuit après chaque tour — un personnage mort au canon qui reparaît vivant ou de la magie dans un monde sans magie est signalé immédiatement, sans consommer un seul jeton d'IA.",
 "Lois verrouillées : chaque fait du canon peut être verrouillé 🔒 ; les lois verrouillées sont imposées au moteur narratif en priorité absolue, et l'IA reçoit l'ordre de refuser toute action qui les contredit — même si le joueur insiste.",
-"Statuts durables : blessé(e), exilé(e), endetté(e), en disgrâce ou affaibli(e) — des états qui durent et contraignent le récit ; leur levée doit être racontée par un événement, et le Garde du canon signale ceux qu'on efface par simple oubli (exilé qui agit ouvertement, blessé qui mène des troupes, dette effacée sans raison)."]],
+"Statuts durables : blessé(e), exilé(e), endetté(e), en disgrâce ou affaibli(e) — des états qui durent et contraignent le récit ; leur levée doit être racontée par un événement, et le Garde du canon signale ceux qu'on efface par simple oubli (exilé qui agit ouvertement, blessé qui mène des troupes, dette effacée sans raison).",
+"Mise en page grand écran : le panneau de décision (écrire son action, Agir) s'affiche désormais dans une vraie colonne dédiée, à gauche de la carte — il ne se superpose plus à la carte, ni aux boutons, ni aux onglets."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperçu social (Open Graph) pointent vers le site principal — l'ancienne image renvoyait une erreur 404.",
 "PWA : le cache du service worker est renommé à chaque version pour que les mises à jour arrivent immédiatement chez les joueurs installés.",
