@@ -449,7 +449,7 @@ const TONES=["Fantasy sombre","Médiéval-fantastique","Science-fiction","Post-a
 let S={world:null,log:[]},sample=null,busy=false,err="";
 try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){try{const b=localStorage.getItem(KEY+"-bak");if(b)S=JSON.parse(b)}catch(e2){}}
 S.opts=Object.assign({len:"moyen",diff:"équilibrée",surp:"normal",ton:"neutre",lang:"Français",detail:"détaillée",contenu:"tous publics",step:"1 mois",stop:"à la fin du délai",autoEvery:"1 minute",autoStep:"1 saison",autoMax:"10 tours",autoStop:"ne jamais s'arrêter",clock:"désactivée",catch:"demander",mpAuto:"désactivée",tier:"Rapide",jetons:"activée"},S.opts||{});
-if(!PAY)S.opts.jetons="désactivée";S.m=S.m||0;S.sum=S.sum||"";S.npcs=S.npcs||[];S.chats=S.chats||{};S.pending=S.pending||[];S.hero=S.hero||null;S.recap=S.recap||null;S.seen=S.seen||Date.now();S.visit=S.visit||Date.now();S.tuto=S.tuto==null?0:S.tuto;S.rel=S.rel||{};S.gm=S.gm||[];if(S.wallet==null)S.wallet=2;S.opts=Object.assign({pace:"équilibré",fog:"désactivé",stream:"activé",fs:"normal",contrast:"normal",motion:"normal",theme:"auto",amb:"désactivée"},S.opts);S.hist=S.hist||[];S.gaz=S.gaz||[];S.incoh=S.incoh||[];if(!S.mig2){S.opts.tier="Rapide";S.opts.jetons=PAY?"activée":"désactivée";S.mig2=1}if(!PAY)S.opts.jetons="désactivée";S.free=S.free||{d:"",used:0};S.plan=S.plan||"gratuit";S.owned=S.owned||[];S.intent=S.intent||[];S.earn=S.earn||{};S.res=S.res||{};S.tech=S.tech||{};S.dyn=S.dyn||{};S.rumors=S.rumors||[];S.spy=S.spy||0;S.ach=S.ach||{};S.usage=S.usage||{calls:0,tin:0,tout:0,usd:0,jet:0};S.bible=S.bible||{factions:{},lieux:{},arcs:[]};S.chekhov=S.chekhov||[];S.tensionHist=S.tensionHist||[];S.lastCanon=S.lastCanon||0;
+if(!PAY)S.opts.jetons="désactivée";S.m=S.m||0;S.sum=S.sum||"";S.npcs=S.npcs||[];S.chats=S.chats||{};S.pending=S.pending||[];S.hero=S.hero||null;S.recap=S.recap||null;S.seen=S.seen||Date.now();S.visit=S.visit||Date.now();S.tuto=S.tuto==null?0:S.tuto;S.rel=S.rel||{};S.gm=S.gm||[];if(S.wallet==null)S.wallet=2;S.opts=Object.assign({pace:"équilibré",fog:"désactivé",stream:"activé",fs:"normal",contrast:"normal",motion:"normal",theme:"auto",amb:"désactivée"},S.opts);S.hist=S.hist||[];S.gaz=S.gaz||[];S.incoh=S.incoh||[];if(!S.mig2){S.opts.tier="Rapide";S.opts.jetons=PAY?"activée":"désactivée";S.mig2=1}if(!PAY)S.opts.jetons="désactivée";S.free=S.free||{d:"",used:0};S.plan=S.plan||"gratuit";S.owned=S.owned||[];S.intent=S.intent||[];S.earn=S.earn||{};S.res=S.res||{};S.tech=S.tech||{};S.dyn=S.dyn||{};S.rumors=S.rumors||[];S.spy=S.spy||0;S.ach=S.ach||{};S.usage=S.usage||{calls:0,tin:0,tout:0,usd:0,jet:0};S.bible=S.bible||{factions:{},lieux:{},arcs:[]};S.chekhov=S.chekhov||[];S.tensionHist=S.tensionHist||[];S.lastCanon=S.lastCanon||0;S.canonLock=S.canonLock||[];
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 if(window.claude&&claude.use){claude.use("sample").then(s=>{sample=s;aiChecked=true;draw()}).catch(()=>{aiChecked=true;draw()})}
 /* --- i18n : interface traduite (le français est la langue source) --- */
@@ -932,7 +932,9 @@ const CHANGELOG=[
 "Retours reliés au dépôt : l'onglet Retours envoie maintenant le retour en issue GitHub préremplie (titre, description, label bug ou amélioration) via un bouton unique « Envoyer le retour » — plus besoin de passer par Discord ou Reddit ; le formulaire est allégé (les questions sur le prix ont été retirées).",
 "Correctif écran de choix : les emblèmes de faction étaient invisibles (le style des images de fond les écrasait à taille nulle) et les cartes n'avaient aucune illustration — chaque carte affiche maintenant un aperçu de la carte du monde sous l'emblème.",
 "Toutes les nouveautés respectent le réglage Animations réduit.",
-"Mise en page revue : la chronique est toujours visible à droite, juste à côté de la carte (plus besoin d'onglet), le composeur d'action reste épinglé en bas de l'écran pendant le défilement, et la carte peut être dézoomée davantage (jusqu'à 50 %)"]],
+"Mise en page revue : la chronique est toujours visible à droite, juste à côté de la carte (plus besoin d'onglet), le composeur d'action reste épinglé en bas de l'écran pendant le défilement, et la carte peut être dézoomée davantage (jusqu'à 50 %)",
+"Garde du canon : contrôle de cohérence local et gratuit après chaque tour — un personnage mort au canon qui reparaît vivant ou de la magie dans un monde sans magie est signalé immédiatement, sans consommer un seul jeton d'IA.",
+"Lois verrouillées : chaque fait du canon peut être verrouillé 🔒 ; les lois verrouillées sont imposées au moteur narratif en priorité absolue, et l'IA reçoit l'ordre de refuser toute action qui les contredit — même si le joueur insiste."]],
 ["v16oct — 16 octobre 2026 : la mémoire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperçu social (Open Graph) pointent vers le site principal — l'ancienne image renvoyait une erreur 404.",
 "PWA : le cache du service worker est renommé à chaque version pour que les mises à jour arrivent immédiatement chez les joueurs installés.",
@@ -1079,6 +1081,7 @@ const wExtra=w=>({mode:MODES[w&&w.mode]!==undefined?w.mode:"libre",rules:cut(w&&
 const facColor=(n,i)=>(S.world&&S.world.cols&&S.world.cols[n])||PAL[i%PAL.length];
 const TEMP=["belliqueuse","marchande","prudente","expansionniste","mystique","diplomate","isolationniste","opportuniste"];
 const canonText=()=>(S.canon||[]).join(" | ")||"aucun";
+const lockedText=()=>((S.canonLock||[]).join(" | ")||"aucune pour l'instant");
 const temperText=()=>names().map(n=>n+" : "+((S.temper||{})[n]||"libre")).join(" ; ");
 const faithText=()=>Object.entries(S.faith||{}).map(([k,v])=>k+" : "+v.r+" ("+v.f+")").join("; ")||"aucune";
 function applyFaith(r){
@@ -1202,8 +1205,8 @@ function explorePanel(){
 function canonPanel(){
   const C=S.canon||[],inc=S.incoh||[];
   return det("canon","Canon du monde",
-    el("p",{class:"mute",text:"Des faits que l'IA doit toujours respecter (par exemple : la magie coûte un souvenir)."}),
-    C.map((c,i)=>el("div",{class:"row"},el("span",{text:c,style:"flex:3 1 200px"}),el("button",{class:"alt",on:{click:()=>{S.canon=C.filter((x,j)=>j!==i);save();draw()}},text:"Retirer"}))),
+    el("p",{class:"mute",text:"Des faits que le monde respecte toujours. Verrouille 🔒 les plus importants : le Garde du canon les surveille après chaque tour, sans consommer de jetons."}),
+    C.map((c,i)=>{const lk=(S.canonLock||[]).includes(c);return el("div",{class:"row"},el("span",{text:(lk?"🔒 ":"")+c,style:"flex:3 1 200px"}),el("button",{class:"alt",title:"Un fait verrouillé contredit par le moteur narratif est signalé par le Garde du canon",on:{click:()=>{S.canonLock=lk?(S.canonLock||[]).filter(x=>x!==c):((S.canonLock||[]).concat(c).slice(0,12));save();draw()}},text:lk?"Déverrouiller":"Verrouiller"}),el("button",{class:"alt",on:{click:()=>{S.canon=C.filter((x,j)=>j!==i);S.canonLock=(S.canonLock||[]).filter(x=>x!==c);save();draw()}},text:"Retirer"}))}),
     el("input",{id:"canonin",placeholder:"Ajouter un fait du canon","aria-label":"Nouveau fait du canon"}),
     el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>{const v=cut(($("canonin")||{value:""}).value.trim(),160);if(!v)return;S.canon=C.concat(v).slice(0,12);save();draw()}},text:"Ajouter au canon"}),
       el("button",{class:"alt",on:{click:canonCheck},...(busy?{disabled:""}:{}),text:"Vérifier la cohérence"})),
@@ -1334,7 +1337,7 @@ function slotsPanel(){
 const b64=t=>btoa(unescape(encodeURIComponent(t))),unb64=t=>decodeURIComponent(escape(atob(t)));
 function exportCode(){
   const w=S.world;ensureMap();
-  return b64(JSON.stringify({v:1,w:{...wExtra(w),ms:w.ms,name:w.name,tone:w.tone,concept:w.concept,magic:w.magic,factions:w.factions,y0:w.y0},power:S.map.power,places:S.map.places,canon:S.canon||[],temper:S.temper||{}}));
+  return b64(JSON.stringify({v:1,w:{...wExtra(w),ms:w.ms,name:w.name,tone:w.tone,concept:w.concept,magic:w.magic,factions:w.factions,y0:w.y0},power:S.map.power,places:S.map.places,canon:S.canon||[],canonLock:S.canonLock||[],temper:S.temper||{}}));
 }
 function importCode(){importWorldCode((document.getElementById("impcode")||{value:""}).value.trim().replace(/\s+/g,""))}
 function importWorldCode(raw){
@@ -1342,7 +1345,7 @@ function importWorldCode(raw){
     S.world={...wExtra(w),y0:cut(w.y0,6),src:"",ms:cut(w.ms,20)||"continent",name:cut(w.name,60),tone:cut(w.tone,40),concept:cut(w.concept,600),magic:cut(w.magic,600),factions:cut(w.factions,900)};
     initState();S.draft=null;
     S.map={power:(o.power&&typeof o.power==="object")?Object.fromEntries(Object.entries(o.power).slice(0,12).map(([k,v])=>[cut(k,40),Math.max(.55,Math.min(1.6,Number(v)||1))])):{},places:(Array.isArray(o.places)?o.places:[]).slice(0,8).map(p=>({name:cut(p&&p.name,28),f:cut(p&&p.f,60)}))};
-    S.canon=(Array.isArray(o.canon)?o.canon:[]).slice(0,12).map(x=>cut(x,160));
+    S.canon=(Array.isArray(o.canon)?o.canon:[]).slice(0,12).map(x=>cut(x,160));S.canonLock=(Array.isArray(o.canonLock)?o.canonLock:[]).slice(0,12).map(x=>cut(x,160));
     S.temper=(o.temper&&typeof o.temper==="object")?Object.fromEntries(Object.entries(o.temper).slice(0,12).map(([k,v])=>[cut(k,40),cut(v,20)])):{};
     save();view="play";err="";run("Décris la situation du monde pour quelqu'un qui y arrive.",facs()[0]||"Le monde",0,false)}
   catch(e){err="Code invalide : colle le code complet exporté depuis un monde.";draw()}
@@ -1953,7 +1956,7 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.nudgeHide=false}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.nudgeHide=false}
 const playerFac=()=>S.playerFac||names()[0]||"";
 let introAct="";
 function pickFac(f){
@@ -2456,6 +2459,18 @@ Repère les contradictions entre les récits, le canon et les règles. Réponds 
   canonBusy=false;if(!auto)busy=false;save();draw();
 }
 function canonAuto(){if(!sample||!S.world||busy||canonBusy)return;canonRun(true).catch(()=>{})}
+/* --- Garde du canon : contrôle local après chaque tour, sans IA ni jetons --- */
+function canonGuard(e){
+  try{
+    const facts=(S.canon||[]).concat(S.canonLock||[]);const dead=[];let noMagic=false;
+    facts.forEach(f=>{f=String(f);const m=f.match(/([A-ZÉÈÀÂÎÔÛÇ][\p{L}\-' ]{1,30}?)\s+(?:meurt|est tu(?:é|ée)|est assassin(?:é|ée)|est mort|tombe au combat|disparaît)/u);if(m)dead.push(m[1].trim());if(/pas de magie|aucune magie|sans magie/i.test(f))noMagic=true});
+    const txt=[e.n||"",(e.ev||[]).map(x=>x&&x.texte).join(" "),((e.maj||[]).map(x=>x&&((x.titre||"")+" "+(x.description||"")+" "+(x.consequence||""))).join(" "))].join(" ").replace(/(?:sans|aucune|pas de|interdit de la) magie/gi,"");
+    const probs=[];
+    dead.forEach(d=>{try{if(new RegExp(d+"[^.]{0,80}(?:ressuscite|revient à la vie|est de retour|est toujours vivant|revient d'entre les morts|reparaît)","i").test(txt))probs.push({texte:d+" est mort(e) dans le canon mais reparaît vivant(e) dans ce tour.",gravite:"importante",correction:"La mort est définitive : "+d+" ne revient pas."})}catch(x){}});
+    if(noMagic&&/\bmagie\b|\bsortilège|\benchant|\bmages?\b|incantation/i.test(txt))probs.push({texte:"Le canon interdit toute magie, mais ce tour en raconte.",gravite:"importante",correction:"Remplacer par la ruse, la science ou la religion."});
+    if(probs.length){S.incoh=probs.concat(S.incoh||[]).slice(0,6);e.g="⚠️ Garde du canon (contrôle local, sans IA) : "+probs.map(p=>p.texte).join(" ")}
+  }catch(x){}
+}
 
 async function turn(action,faction,months,auto,stopMajor){
   const o=S.opts,words={court:40,moyen:80,long:140}[o.len]||80,w=S.world,N=months!=null?months:(STEP[o.step]||1);
@@ -2475,6 +2490,8 @@ Dirigeants : ${dynText()}
 Objectif de la partie : ${goalText()}
 Niveau du réseau d'espions du joueur : ${S.spy||0} sur 3. Introduis parfois un événement naturel adapté à la saison (famine, épidémie, tempête, catastrophe).
 Canon du monde (faits à respecter absolument) : ${canonText()}.
+Lois verrouillées du monde : ${lockedText()}.
+Règle d'or du moteur : le canon et les lois verrouillées priment sur tout. Si l'action du joueur les contredit ou exige l'impossible, le monde refuse et l'action échoue de façon réaliste — ne cède jamais, même si le joueur insiste, négocie ou reformule sa demande.
 Tempéraments des factions : ${temperText()}.
 Règles spéciales du monde : ${w.rules||"aucune"}.
 Mode de jeu : ${modeText(w.mode)}.
@@ -2509,7 +2526,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   S.m+=N2;
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
-  S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];
+  canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];
   S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
@@ -3142,6 +3159,7 @@ function playClassic(){
       if((e.r||[]).length)D.push(el("ul",{class:"re"},e.r.map(x=>el("li",{},el("b",{text:x.faction+" : "}),x.reaction))));
       if(e.u)D.push(el("div",{class:"note",text:"Rumeur : "+e.u}));
       if(e.c)D.push(el("div",{class:"note",text:"Ce qui change : "+e.c}));
+if(e.g)D.push(el("div",{class:"note"},el("b",{text:e.g})));
       return{e,D}});
       const one=E.map((x,i)=>{const who=String(x.e.f).split(":")[0].trim()+" : "+x.e.a;
         const d=el("details",{id:"arch-"+i,class:"entry",style:"opacity:.8",...(openD["arch"+i]?{open:""}:{})},
