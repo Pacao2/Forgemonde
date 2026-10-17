@@ -351,6 +351,8 @@ html{font-size:calc(100%*var(--fsm,1))}body{font-size:1rem}
 </style>
 </head>
 <body>
+<div id="boot" style="color:#d2a24c;font:16px sans-serif;padding:20px;text-align:center">Chargement de Forgemonde...</div>
+<script>window._ferr=function(m,l){try{var d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Erreur: "+m+" (ligne "+l+")";document.body.appendChild(d)}catch(e){}};window.onerror=function(m,u,l){window._ferr(m,l);return false};</script>
 <main id="app"></main>
 <style>
 #aidlg{max-height:calc(100dvh - 24px);overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;max-width:520px;width:calc(100% - 24px);padding:18px 20px}
@@ -3187,11 +3189,11 @@ function draw(){
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
 }
 window.addEventListener("error",ev=>{try{const a=document.getElementById("app");if(a&&!a.children.length){const d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Le jeu n'a pas pu d\x65marrer : "+((ev.error&&ev.error.message)||ev.message||"?")+" — recharge la page.";document.body.appendChild(d)}}catch(e){}});
-try{draw()}catch(e){try{const d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Le jeu n'a pas pu d\x65marrer : "+((e&&e.message)||e)+" — recharge la page (ou vide les donn\x65es du site dans les r\x65glages du navigateur).";document.body.appendChild(d)}catch(e2){}}
+try{draw();var _b=document.getElementById("boot");if(_b)_b.remove()}catch(e){try{var _b0=document.getElementById("boot");if(_b0)_b0.remove();const d=document.createElement("div");d.setAttribute("style","margin:20px;padding:14px;border:1px solid #e07b73;border-radius:10px;color:#e07b73;background:#16151f;font:14px sans-serif;white-space:pre-wrap");d.textContent="Le jeu n'a pas pu d\x65marrer : "+((e&&e.message)||e)+" — recharge la page (ou vide les donn\x65es du site dans les r\x65glages du navigateur).";document.body.appendChild(d)}catch(e2){}}
 document.addEventListener("pointermove",ev=>{const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="rÃ©duit")return;const r=h.getBoundingClientRect();if(ev.clientY<r.top-120||ev.clientY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((ev.clientX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((ev.clientY-r.top)/r.height-.5).toFixed(3))},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
 try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
 </script>
 </body>
 </html>
-
+ 
