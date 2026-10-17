@@ -914,6 +914,9 @@ function chekhovFire(auto){
 }
 const CHANGELOG=[
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine, et tu choisis qui tu diriges",[
+"Chapitres fidèles au mode hybride : la mémoire longue alimente aussi le récit du mode hybride (règles + IA)",
+"Ambitions accomplies : à 100 % de progression, l'événement est gravé dans la chronique, un lieu apparaît sur la carte et un toast l'annonce (gratuit, sans IA)",
+"Chapitres remis à zéro à chaque nouveau monde : plus de mémoire héritée d'un monde précédent",
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1971,7 +1974,7 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[]}
 const playerFac=()=>S.playerFac||names()[0]||"";
 let introAct="";
 function pickFac(f){
@@ -2156,6 +2159,7 @@ async function hybridTurn(action,faction,N,auto,stopMajor,words){
     try{story=await ask(`Tu es le narrateur d'un jeu de monde fictif. Langue : ${o.lang}.
 Monde : ${w.name} (${w.tone}). Concept : ${cut(w.concept,300)}.
 Date : ${dateStr(S.m)}. Période écoulée : ${N} mois.
+Chapitres bouclés de l'histoire (mémoire longue, ne les contredis jamais) : ${chapterText()}
 ${auto?"Le joueur n'intervient pas.":"Le joueur incarne : "+faction+". Action du joueur : \""+action+"\"."}
 Voici ce qui s'est réellement passé. Raconte-le sans rien contredire et sans ajouter d'événement majeur :
 ${h.facts.map(f=>"- "+f.t).join("\n")}
@@ -2510,6 +2514,20 @@ function chapterText(){
   if(!C.length)return "(aucun chapitre boucle pour l’instant)";
   return C.slice(-4).map(c=>c.titre+" ("+c.from+" → "+c.to+") : "+cut(c.text,320)).join(" || ");
 }
+function ambitionEvents(){
+S.ambFait=S.ambFait||[];
+[S.hero,...(S.npcs||[])].filter(Boolean).forEach(c=>{
+(c.objectifs||[]).forEach(o=>{
+const k=c.nom+'|'+o.but;
+if((o.progression||0)>=100&&!S.ambFait.includes(k)){
+S.ambFait.push(k);if(S.ambFait.length>40)S.ambFait.shift();
+try{if(S.log&&S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:c.nom+" accomplit son ambition : "+o.but});}catch(x){}
+try{if(S.map&&S.map.places){const ln=cut("Ambition de "+c.nom,28);const fn=(names().find(x=>like(x,c.faction))||names()[0]).slice(-8);S.map.places.push({name:ln,f:fn});}}catch(x){}
+try{toast("🎭 "+c.nom+" accomplit son ambition : "+cut(o.but,60))}catch(x){}
+}
+});
+});
+}
 function chapterPanel(){
   const C=S.chapters||[];
   if(!C.length)return null;
@@ -2572,7 +2590,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
   canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter()}catch(x){}
-  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);applyDirector(r);
+  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
   if(sample&&!auto&&S.log.length-(S.lastCanon||0)>=5){S.lastCanon=S.log.length;setTimeout(canonAuto,1200)}
