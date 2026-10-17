@@ -93,9 +93,13 @@ details{background:var(--panel);border:1px solid var(--line);border-radius:6px;p
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px}.tabs button{flex:0 0 auto;border-radius:999px;padding:7px 14px;font-size:.92rem}
 .tabp[hidden]{display:none}
 .side details{margin:10px 0}
+.chronside{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:12px 14px;margin-bottom:12px}
+.chronside .entry{margin:8px 0}
+.chronside details.entry>summary{padding:7px 0}
+.chronside .row{justify-content:center}
 @media(min-width:960px){
  .pax{grid-template-columns:minmax(0,1.7fr) minmax(340px,1fr);grid-template-areas:"banner banner" "map side" "composer side";align-items:start}
- .pbanner{grid-area:banner}.pmap{grid-area:map}.composer{grid-area:composer;position:static;border-top:0;padding:0}
+ .pbanner{grid-area:banner}.pmap{grid-area:map}.composer{grid-area:composer;position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.25);z-index:6;padding:10px 0 6px}
  .side{grid-area:side;position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;padding-right:4px}
 }
 .live{font-style:italic;white-space:pre-wrap}
@@ -927,7 +931,8 @@ const CHANGELOG=[
 "Interface soignÃ©e : accueil avec grande carte du Â« monde du jour Â» en fond de hÃ©ros, fine barre de progression dorÃ©e pendant que le monde rÃ©agit, toasts discrets pour les messages, Ã©poque (Â« Hiver â an 3 Â») dans le bandeau de la carte, cartes de l'accueil en cascade, zoom Ã  la molette sur la carte, pastille d'Ã©poque Ã  la couleur or.",
 "Retours reliÃ©s au dÃ©pÃ´t : l'onglet Retours envoie maintenant le retour en issue GitHub prÃ©remplie (titre, description, label bug ou amÃ©lioration) via un bouton unique Â« Envoyer le retour Â» â plus besoin de passer par Discord ou Reddit ; le formulaire est allÃ©gÃ© (les questions sur le prix ont Ã©tÃ© retirÃ©es).",
 "Correctif Ã©cran de choix : les emblÃ¨mes de faction Ã©taient invisibles (le style des images de fond les Ã©crasait Ã  taille nulle) et les cartes n'avaient aucune illustration â chaque carte affiche maintenant un aperÃ§u de la carte du monde sous l'emblÃ¨me.",
-"Toutes les nouveautÃ©s respectent le rÃ©glage Animations rÃ©duit."]],
+"Toutes les nouveautÃ©s respectent le rÃ©glage Animations rÃ©duit.",
+"Mise en page revue : la chronique est toujours visible à droite, juste à côté de la carte (plus besoin d'onglet), le composeur d'action reste épinglé en bas de l'écran pendant le défilement, et la carte peut être dézoomée davantage (jusqu'à 50 %)"]],
 ["v16oct â 16 octobre 2026 : la mÃ©moire qui paie",[
 "Correctifs de partage : le lien du post copiable et l'aperÃ§u social (Open Graph) pointent vers le site principal â l'ancienne image renvoyait une erreur 404.",
 "PWA : le cache du service worker est renommÃ© Ã  chaque version pour que les mises Ã  jour arrivent immÃ©diatement chez les joueurs installÃ©s.",
@@ -2765,7 +2770,7 @@ function mapWidget(){
   c.setAttribute("role","img");c.setAttribute("aria-label","Carte du monde "+S.world.name+", couche "+mapLayer);
   c.style.cssText="width:"+mapZoom*100+"%;height:auto;display:block;cursor:pointer";
   c.addEventListener("click",ev=>mapClick(ev,c,base));
-  c.addEventListener("wheel",ev=>{if(!ev.ctrlKey&&!ev.metaKey){ev.preventDefault();mapZoom=Math.max(1,Math.min(4,mapZoom+(ev.deltaY<0?.5:-.5)));draw()}},{passive:false});
+  c.addEventListener("wheel",ev=>{if(!ev.ctrlKey&&!ev.metaKey){ev.preventDefault();mapZoom=Math.max(.5,Math.min(4,mapZoom+(ev.deltaY<0?.5:-.5)));draw()}},{passive:false});
   const tip=el("div",{class:"maptip"});
   c.addEventListener("pointermove",ev=>{
     const r=c.getBoundingClientRect(),x=Math.floor((ev.clientX-r.left)/r.width*MW),y=Math.floor((ev.clientY-r.top)/r.height*MH),ow=base._ow,P=base._P;
@@ -2781,7 +2786,7 @@ function mapWidget(){
   const wrap=el("div",{class:"mapwrap"},c,tip);
   return el("div",{},
     el("div",{class:"row"},el("select",{"aria-label":"Couche de la carte",style:"flex:2 1 140px",on:{change:e=>{mapLayer=e.target.value;draw()}}},LAYERS.map(l=>el("option",{value:l,...(mapLayer===l?{selected:""}:{}),text:"Couche : "+l}))),
-      el("button",{class:"alt",on:{click:()=>{mapZoom=Math.max(1,mapZoom-.5);draw()}},text:"Zoom -"}),el("button",{class:"alt",on:{click:()=>{mapZoom=Math.min(4,mapZoom+.5);draw()}},text:"Zoom +"})),
+      el("button",{class:"alt",on:{click:()=>{mapZoom=Math.max(.5,mapZoom-.5);draw()}},text:"Zoom -"}),el("button",{class:"alt",on:{click:()=>{mapZoom=Math.min(4,mapZoom+.5);draw()}},text:"Zoom +"})),
     wrap,
     el("p",{class:"mute",style:"font-size:.85rem",text:"Touche un territoire pour voir son histoire."}));
 }
@@ -3018,8 +3023,8 @@ function forge(){
     el("div",{class:"err",role:"status",text:err}),
     el("div",{class:"row"},el("button",{on:{click:start},...(busy?{disabled:""}:{}),text:busy?"Le monde s'Ã©veilleâ¦":"Commencer l'histoire"}),db&&me&&canW!==false?el("button",{class:"alt",on:{click:pubDraft},text:"Publier ce monde"}):null));
 }
-let ptab="chron";
-const TABS=[["chron","Chronique"],["dip","Diplomatie"],["chat","Chat"],["adv","Conseiller"],["monde","Monde"],["outils","Outils"]];
+let ptab="dip";
+const TABS=[["dip","Diplomatie"],["chat","Chat"],["adv","Conseiller"],["monde","Monde"],["outils","Outils"]];
 const TABMAP=[[/^Parler au Conteur/,"adv"],[/^Parler aux habitants|^Personnages/,"chat"],[/^Diplomatie|^Espions/,"dip"],[/^Encyclop|^Ressources|^Technologies|^Dynasties|^La bible/,"monde"]];
 const tabOf=t=>{for(const[re,k]of TABMAP)if(re.test(t))return k;return"outils"};
 function stageNode(hud,mapNode){
@@ -3061,7 +3066,7 @@ function play(){
     banners.length?el("div",{class:"pbanner"},banners):null,
     el("div",{class:"pmap"},stageNode(hud,mapNode),legend,time,el("div",{class:"regen"},el("div",{id:"live",class:"mute live"}),S.log.length&&!busy?el("div",{class:"chips",style:"margin-top:6px;gap:6px"},el("span",{class:"mute",style:"font-size:.8rem;flex:1 0 100%",text:"RÃ©Ã©crire le dernier rÃ©cit :"}),["plus dramatique","plus court","avec un traÃ®tre","plus d'humour"].map(n=>el("button",{class:"alt",style:"padding:4px 10px;font-size:.82rem",on:{click:()=>regenWith(n)},text:n}))):null)),
     el("div",{class:"composer"},paywall?paywallCard():null,freeChip(),action),
-    el("div",{class:"side"},tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
+    el("div",{class:"side"},el("div",{class:"chronside"},el("h2",{style:"margin:0 0 10px",text:"Chronique"}),P.chron),tabs,TABS.map(([k])=>el("section",{id:"tab-"+k,class:"tabp",...(ptab===k?{}:{hidden:""})},P[k]))));
 }
 function playClassic(){
   const w=S.world,F=facs(),ents=entities(),who=chatWho&&ents.some(x=>x.nom===chatWho)?chatWho:(ents[0]&&ents[0].nom)||"",dis=busy?{disabled:""}:{};
