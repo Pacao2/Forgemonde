@@ -917,6 +917,9 @@ const CHANGELOG=[
 "Chapitres fidèles au mode hybride : la mémoire longue alimente aussi le récit du mode hybride (règles + IA)",
 "Ambitions accomplies : à 100 % de progression, l'événement est gravé dans la chronique, un lieu apparaît sur la carte et un toast l'annonce (gratuit, sans IA)",
 "Chapitres remis à zéro à chaque nouveau monde : plus de mémoire héritée d'un monde précédent",
+"Echos de chapitres : quand un nouveau chapitre boucle, un chapitre ancien resurgit obligatoirement dans le tour suivant — la mémoire se répercute (gratuit, sans IA)",
+"Ambitions croisées : deux ambitions mûres à la fois déclenchent un dilemme à 3 choix gravé au canon — le monde tranche qui l'emporte (gratuit, sans IA)",
+"Épilogue des destins : le bilan de fin de partie liste les ambitions portées à terme et leurs auteurs",
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1189,6 +1192,7 @@ function epiloguePanel(){
   const bilan=S.world.name+" — épilogue après "+S.log.length+" tours ("+dateStr(S.m)+").\n"+
     "Trahisons et complots tissés : "+ntrait+". Alliances vivantes : "+nall+". Guerres en cours : "+nguerre+". Secrets percés : "+nsec+".\n"+
     "Dilemmes tranchés et objectifs accomplis : "+nobj+".\n"+
+    "Destins accomplis ("+(S.ambFait||[]).length+" ambitions portées à terme) : "+(((S.ambFait||[]).slice(-3).map(k=>k.replace("|"," — ")).join(" ; "))||"aucune")+".\n"+
     "Canon du monde ("+(S.canon||[]).length+" faits gravés) : "+(S.canon||[]).slice(-5).join(" | ")+"\n"+
     (S.seed?"Semence : "+S.seed+"\n":"")+
     "La bible du monde se souvient de vous.";
@@ -1974,7 +1978,7 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[]}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[];S.ambCroise=[];S.echoFait=[]}
 const playerFac=()=>S.playerFac||names()[0]||"";
 let introAct="";
 function pickFac(f){
@@ -2528,6 +2532,35 @@ try{toast("🎭 "+c.nom+" accomplit son ambition : "+cut(o.but,60))}catch(x){}
 });
 });
 }
+function chapterEcho(){
+  const C=S.chapters||[];
+  if(C.length<2)return;
+  S.echoFait=S.echoFait||[];
+  const prev=C.filter(c=>!S.echoFait.includes(c.titre));
+  if(!prev.length)return;
+  const e=prev[Math.floor(Math.random()*prev.length)];
+  S.echoFait.push(e.titre);if(S.echoFait.length>12)S.echoFait.shift();
+  S.pending.push(cut("ECHO DU PASSE, a tisser obligatoirement dans ce tour : le chapitre « "+e.titre+" » ("+e.from+" → "+e.to+") resurgit — "+e.text,280));
+  try{if(S.log&&S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Echo du passe : le chapitre « "+e.titre+" » frappe a la porte du present."})}catch(x){}
+  try{toast("📖 Echo d un chapitre passe : « "+e.titre+" »")}catch(x){}
+}
+function ambCroisees(){
+  S.ambCroise=S.ambCroise||[];
+  if(S.choice)return;
+  const ch=[S.hero,...(S.npcs||[])].filter(Boolean).flatMap(c=>(c.objectifs||[]).map(o=>({c,o}))).filter(x=>(x.o.progression||0)>=80&&(x.o.progression||0)<100);
+  if(ch.length<2)return;
+  const a=ch[0],b=ch.find((x,i)=>i>0&&x.c.nom!==a.c.nom);
+  if(!b||b.c.nom===a.c.nom)return;
+  const k=a.c.nom+"|"+b.c.nom;
+  if(S.ambCroise.includes(k))return;
+  S.ambCroise.push(k);if(S.ambCroise.length>20)S.ambCroise.shift();
+  S.choice={titre:"Deux ambitions murissent en meme temps : "+a.c.nom+" ("+a.o.but+") et "+b.c.nom+" ("+b.o.but+"). Laquelle favoriser ?",options:[
+    {label:"Favoriser "+a.c.nom,action:"Je veille a ce que l ambition de "+a.c.nom+" l emporte : "+a.o.but+".",canon:"L ambition de "+a.c.nom+" a pris le dessus sur celle de "+b.c.nom+"."},
+    {label:"Favoriser "+b.c.nom,action:"Je veille a ce que l ambition de "+b.c.nom+" l emporte : "+b.o.but+".",canon:"L ambition de "+b.c.nom+" a pris le dessus sur celle de "+a.c.nom+"."},
+    {label:"Les monter l un contre l autre",action:"Je monte subtilement "+a.c.nom+" et "+b.c.nom+" l un contre l autre : que leurs ambitions s affrontent.",canon:"Les ambitions de "+a.c.nom+" et "+b.c.nom+" se sont affrontees."}]};
+  try{if(S.log&&S.log[0]&&S.log[0].ev)S.log[0].ev.push({quand:dateStr(S.m),texte:"Ambitions croisees : "+a.c.nom+" et "+b.c.nom+" approchent chacun de leur but."})}catch(x){}
+  try{toast("⚔ Deux ambitions se croisent — le monde attend ta decision.")}catch(x){}
+}
 function chapterPanel(){
   const C=S.chapters||[];
   if(!C.length)return null;
@@ -2589,8 +2622,8 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   S.m+=N2;
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
-  canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter()}catch(x){}
-  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};applyDirector(r);
+  canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter();chapterEcho()}catch(x){}
+  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};try{ambCroisees()}catch(x){};applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
   if(sample&&!auto&&S.log.length-(S.lastCanon||0)>=5){S.lastCanon=S.log.length;setTimeout(canonAuto,1200)}
