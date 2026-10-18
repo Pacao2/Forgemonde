@@ -451,7 +451,7 @@ let S={world:null,log:[]},sample=null,busy=false,err="";
 try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){try{const b=localStorage.getItem(KEY+"-bak");if(b)S=JSON.parse(b)}catch(e2){}}
 S.opts=Object.assign({len:"moyen",diff:"équilibrée",surp:"normal",ton:"neutre",lang:"Français",detail:"détaillée",contenu:"tous publics",step:"1 mois",stop:"à la fin du délai",autoEvery:"1 minute",autoStep:"1 saison",autoMax:"10 tours",autoStop:"ne jamais s'arrêter",clock:"désactivée",catch:"demander",mpAuto:"désactivée",tier:"Rapide",jetons:"activée"},S.opts||{});
 if(!PAY)S.opts.jetons="désactivée";S.m=S.m||0;S.sum=S.sum||"";S.npcs=S.npcs||[];S.chats=S.chats||{};S.pending=S.pending||[];S.hero=S.hero||null;S.recap=S.recap||null;S.seen=S.seen||Date.now();S.visit=S.visit||Date.now();S.tuto=S.tuto==null?0:S.tuto;S.rel=S.rel||{};S.gm=S.gm||[];if(S.wallet==null)S.wallet=2;S.opts=Object.assign({pace:"équilibré",fog:"désactivé",stream:"activé",fs:"normal",contrast:"normal",motion:"normal",theme:"auto",amb:"désactivée"},S.opts);S.hist=S.hist||[];S.gaz=S.gaz||[];S.incoh=S.incoh||[];if(!S.mig2){S.opts.tier="Rapide";S.opts.jetons=PAY?"activée":"désactivée";S.mig2=1}if(!PAY)S.opts.jetons="désactivée";S.free=S.free||{d:"",used:0};S.plan=S.plan||"gratuit";S.owned=S.owned||[];S.intent=S.intent||[];S.earn=S.earn||{};S.res=S.res||{};S.tech=S.tech||{};S.dyn=S.dyn||{};S.rumors=S.rumors||[];S.spy=S.spy||0;S.ach=S.ach||{};S.usage=S.usage||{calls:0,tin:0,tout:0,usd:0,jet:0};S.bible=S.bible||{factions:{},lieux:{},arcs:[]};S.chekhov=S.chekhov||[];S.tensionHist=S.tensionHist||[];S.lastCanon=S.lastCanon||0;S.canonLock=S.canonLock||[];S.statuses=S.statuses||[];
-let svT=0;const saveNow=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};const save=()=>{clearTimeout(svT);svT=setTimeout(saveNow,350)};addEventListener("beforeunload",saveNow);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")saveNow()});
+let svT=0;const saveNow=()=>{try{savTrim(KEY)}catch(e){}};const save=()=>{clearTimeout(svT);svT=setTimeout(saveNow,350)};addEventListener("beforeunload",saveNow);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")saveNow()});
 if(window.claude&&claude.use){claude.use("sample").then(s=>{sample=s;aiChecked=true;draw()}).catch(()=>{aiChecked=true;draw()})}
 /* --- i18n : interface traduite (le français est la langue source) --- */
 const UIOPT=["auto","Français","English","Español","Deutsch","Italiano","Português"];
@@ -943,6 +943,11 @@ const CHANGELOG=[
 "Nouveauté : page du roman — la chronique en récit continu, copiable et téléchargeable",
 "Nouveauté : destins des personnages après l'histoire",
 "Nouveauté : trahisons motivées — les factions manœuvrent en sous-main pour leurs buts",
+"Optimisation : chronique allégée — 50 tours affichés d'emblée, bouton pour 100 plus anciens",
+"Optimisation : sauvegarde robuste — le jeu est tronqué intelligemment si la mémoire du navigateur sature",
+"Optimisation : lecture unique des buts des factions (moins de recalculs)",
+"Optimisation : redessins de carte évités quand aucune toile n'est affichée",
+
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1138,7 +1143,7 @@ function pushHist(){
     al[n]=Object.entries(S.rel||{}).filter(([k,v])=>k.split("|").includes(n)&&v.t==="alliance").length});
   S.hist=(S.hist||[]).concat({i:S.log.length,m:S.m,p,r:rv,a:al}).slice(-120);
 }
-function autoBackup(){try{localStorage.setItem(KEY+"-bak",JSON.stringify(S))}catch(e){}}
+function autoBackup(){try{savTrim(KEY+"-bak")}catch(e){}}
 function regenWith(note){const e=undo();if(e)run(e.a+" [Consigne de réécriture du récit : "+note+"]",e.f,e.N,e.auto)}
 const embDrawCache={};
 function emblemDraw(n,col){
@@ -3234,7 +3239,7 @@ async function start(){
   const gt=($("goaltype")||{}).value,gy=($("goalyears")||{}).value;if(f.diverge)f.concept=f.concept+" Point de divergence : "+f.diverge+".";selP="";S.world=f;initState();S.goal=newGoal(gt,gy);S.hero=S.heroDraft||null;S.heroDraft=null;S.draft=null;save();
   introAct="Décris la situation initiale du monde et les tensions entre les factions.";view="pick";draw();
 }
-function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,statuses:[],chapters:[],seen:Date.now()};save();err="";retry=null;focus="";chatWho="";view="hub";draw()}}
+function reset(){if(confirm("Effacer ce monde et sa chronique ?")){autoOn=false;clearTimeout(autoTimer);S={world:null,log:[],opts:S.opts,usage:S.usage,wallet:S.wallet,plan:S.plan,owned:S.owned,free:S.free,mig2:1,chalClaim:S.chalClaim,intent:S.intent,planAt:S.planAt,earn:S.earn,ach:S.ach,tuto:S.tuto,visit:Date.now(),...xDef(),hist:[],gaz:[],incoh:[],m:0,sum:"",npcs:[],chats:{},pending:[],hero:null,recap:null,rel:{},gm:[],bible:{factions:{},lieux:{},arcs:[]},chekhov:[],tensionHist:[],lastCanon:0,statuses:[],chapters:[],seen:Date.now()};save();err="";retry=null;focus="";chatWho="";chronLimit=50;view="hub";draw()}}
 function copyLog(){
   const w=S.world,t=`${w.name}\n\n`+S.log.slice().reverse().map(e=>`${e.f} : ${e.a}\n${e.n}\n`+e.r.map(x=>`- ${x.faction} : ${x.reaction}`).join("\n")+`\nRumeur : ${e.u}\nChangement : ${e.c}\n`).join("\n");
   navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{err="Chronique copiée.";draw()}).catch(()=>{})
@@ -3375,7 +3380,7 @@ function playClassic(){
     el("h2",{text:"Chronique"}),
     timeline(),
     el("input",{id:"chq",value:chq,placeholder:"Rechercher dans la chronique (puis Entrée)","aria-label":"Rechercher dans la chronique",on:{change:e=>{chq=e.target.value.trim();draw()}}}),
-    S.log.length?(()=>{const L=chronLog(),E=L.map((e,i)=>{
+    S.log.length?(()=>{const L=chronLog(),E=L.slice(0,chronLimit).map((e,i)=>{
       const D=[];
       if(e.ev&&e.ev.length)D.push(el("ul",{class:"re"},e.ev.map(x=>el("li",{},el("b",{text:cut(x.quand,30)+" : "}),cut(x.texte,200)))));
       if(e.maj&&e.maj.length)D.push(e.maj.map(x=>el("div",{class:"note"},el("b",{text:"Événement majeur : "+x.titre+". "}),x.description+" "+x.consequence)));
@@ -3397,9 +3402,9 @@ if(e.g)D.push(el("div",{class:"note"},el("b",{text:e.g})));
         (top.e.maj||[]).length?el("p",{class:"mute",style:"font-size:.9rem",text:"★ "+top.e.maj.map(x=>x.titre).join(" · ")}):null,
         top.D.length?det("ced"+(top.e.at||0),"Détails du tour ("+top.D.length+")",...top.D):null):null;
       const old=one.slice(1);
-      return el("div",{},recent,old.length?det("archives","Tours précédents ("+old.length+")",...(openD.archives?old:[])):null)})():el("p",{class:"wait",text:busy?"Le monde s'éveille…":"Rien n'est encore écrit."}),busy?el("div",{role:"status","aria-label":"Le monde s'éveille"},el("p",{class:"mute",style:"margin-bottom:2px",text:"Le monde s'éveille…"}),el("div",{class:"skel w3"}),el("div",{class:"skel"}),el("div",{class:"skel w2"})):null,
+      return el("div",{},recent,old.length?det("archives","Tours précédents ("+(L.length-1)+")",...(openD.archives?old:[])):null)})():el("p",{class:"wait",text:busy?"Le monde s'éveille…":"Rien n'est encore écrit."}),busy?el("div",{role:"status","aria-label":"Le monde s'éveille"},el("p",{class:"mute",style:"margin-bottom:2px",text:"Le monde s'éveille…"}),el("div",{class:"skel w3"}),el("div",{class:"skel"}),el("div",{class:"skel w2"})):null,
     el("div",{class:"row"},
-      S.log.length?el("button",{class:"alt",on:{click:undo},...dis,text:"Annuler le dernier tour"}):null,
+      S.log.length?el("button",{class:"alt",on:{click:undo},...dis,text:"Annuler le dernier tour"}):null,S.log.length>chronLimit?el("button",{class:"alt",on:{click:()=>{chronLimit+=100;draw()}},text:"Afficher 100 tours plus anciens"}):null,
       S.log.length?el("button",{class:"alt",on:{click:regen},...dis,text:"Régénérer"}):null,
       db&&me&&!myP()?el("button",{class:"alt",on:{click:()=>mpCreate($("fac").value)},text:"Passer en multijoueur"}):null,db&&me?el("button",{class:"alt",on:{click:cloudSave},text:"Sauvegarder en ligne"}):null,db&&me&&canW!==false?el("button",{class:"alt",on:{click:()=>publish(S.world,S.map,S.log[0]&&S.log[0].n,S.log.length)},text:"Publier mon monde"}):null,
       S.log.length>=3?el("button",{class:"alt",on:{click:rejouerMonde},text:"Rejouer ce monde"}):null,
@@ -3430,7 +3435,8 @@ function draw(){
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
 }
-let exFilter="Tout";
+let exFilter="Tout";let chronLimit=50;
+function savTrim(k){try{localStorage.setItem(k,JSON.stringify(S))}catch(e){try{localStorage.setItem(k,JSON.stringify(Object.assign({},S,{log:(S.log||[]).slice(-400),hist:(S.hist||[]).slice(-400),gaz:(S.gaz||[]).slice(-400),chapters:(S.chapters||[]).slice(-80)})))}catch(e2){}}}
 function slugN(){return String((S.world&&S.world.name)||"forgemonde").replace(/[^\w-]+/g,"-")}
 function dlText(fn,data){try{window.claude.use("downloads").save({filename:fn,data:data})}catch(e){}}
 function clipText(t,msg){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>{err=msg;draw()}).catch(()=>{err="Copie impossible ici.";draw()});else{err="Copie impossible ici.";draw()}}
@@ -3510,11 +3516,11 @@ function mjPanel(){
 }
 
 function facButs(){var out=[];String((S.world&&S.world.factions)||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)out.push([l.slice(0,i).trim(),l.slice(i+1).trim()])});return out}
-function facBut(f){var b=facButs();for(var i=0;i<b.length;i++){if(like(b[i][0],f))return b[i][1]}return ""}
+function facBut(f,B){var b=B||facButs();for(var i=0;i<b.length;i++){if(like(b[i][0],f))return b[i][1]}return ""}
 function facMind(f){var fm=S.facMind||(S.facMind={});if(!fm[f]){fm[f]={op:50,hum:"méfiante",ran:[]}}return fm[f]}
 function facMindPanel(){
-  var kids=[el("p",{class:"mute",text:"Humeur, opinion de toi, et rancunes de chaque puissance — la diplomatie devient une affaire de mémoire."})];
-  names().forEach(function(n){var m=facMind(n);kids.push(el("p",{},el("b",{text:n+" : "}),(facBut(n)||"but inconnu"),el("span",{class:"mute",text:" · humeur "+m.hum+" · opinion de toi "+m.op+"/100"}),m.ran.length?el("span",{class:"mute",text:" · rancunes : "+m.ran.slice(-3).join(" ; ")}):null))});
+  var B=facButs();var kids=[el("p",{class:"mute",text:"Humeur, opinion de toi, et rancunes de chaque puissance — la diplomatie devient une affaire de mémoire."})];
+  names().forEach(function(n){var m=facMind(n);kids.push(el("p",{},el("b",{text:n+" : "}),(facBut(n,B)||"but inconnu"),el("span",{class:"mute",text:" · humeur "+m.hum+" · opinion de toi "+m.op+"/100"}),m.ran.length?el("span",{class:"mute",text:" · rancunes : "+m.ran.slice(-3).join(" ; ")}):null))});
   return det("facmind","Ce que les puissances pensent",kids);
 }
 function negociPanel(){
@@ -3607,7 +3613,7 @@ function facDrift(){
   }
   save();
 }
-function worldTick(){try{mkRecap3()}catch(x){}try{mkLegend()}catch(x){}try{antiSnowball()}catch(x){}try{facDrift()}catch(x){}}
+function worldTick(){try{mkRecap3()}catch(x){}try{mkLegend()}catch(x){}try{antiSnowball()}catch(x){}try{facDrift()}catch(x){};try{if(S.pending&&S.pending.length>6)S.pending=S.pending.slice(-6)}catch(x){}}
 var DECRETS=[["Amnistie générale","J'accorde une amnistie générale : bannis et exilés peuvent rentrer au pays."],["Libre circulation","Je proclame la liberté de circulation et d'échange entre les territoires."],["Grande œuvre","Je finance une grande œuvre publique qui marquera la mémoire du monde."],["Concorde","Je convoque un concorde des puissances pour garantir la paix du monde."],["Fête du monde","J'institue une fête du monde, célébrée dans toutes les terres."]];
 function decretsPanel(){
   return det("decrets","Grands décrets (un clic)",
@@ -3648,7 +3654,7 @@ function destinsPanel(){
 }
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};if(document.querySelector("#app canvas"))draw()}).catch(()=>{});
 try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
 </script>
 </body>
