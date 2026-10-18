@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct — l'atlas s'illumine, choisis qui tu diriges";
+const BUILD="v17oct — l'atlas s'illumine, choisis qui tu diriges + Explorer, partage de mondes complets, fiche MJ";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -929,6 +929,11 @@ const CHANGELOG=[
 "Optimisation : les sauvegardes sont regroupées pour alléger les écritures disque.",
 "Optimisation : les tours anciens ne se construisent que si la chronique est ouverte.",
 "Optimisation : la parallaxe de la page d accueil est lissée par requestAnimationFrame.",
+"Nouveauté : vitrine « Explorer les mondes » — tout le catalogue filtrable par univers, un clic pour jouer.",
+"Nouveauté : partage du monde complet — code FMC à copier, télécharger ou importer (personnages, relations, canon).",
+"Nouveauté : fiche du maître du jeu — le monde et ses personnages en Markdown, pour animer une partie à table.",
+"Nouveauté : bouton « Proposer au catalogue » — ouvre une issue GitHub avec le monde complet.",
+"Nouveauté : mini-guide « Comment jouer en 30 secondes » sur l'accueil.",
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1807,6 +1812,8 @@ function hub(){
         el("button",{on:{click:()=>{view="forge";draw()}},text:"Créer un monde"}),
         el("button",{class:"alt",on:{click:()=>{const p=PRESETS[Math.floor(Math.random()*PRESETS.length)];err="";playPreset({ms:p.ms,name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions})}},...(busy?{disabled:""}:{}),text:"Découvrir en 30 secondes →"}),
         S.world?el("button",{class:"alt",on:{click:()=>{view="play";draw()}},text:"Reprendre : "+cut(S.world.name,28)}):null,db?el("button",{class:"alt",on:{click:()=>{const e=document.getElementById("mpsec");if(e)e.scrollIntoView({behavior:"smooth"})}},text:"Parties multijoueur"}):null)),
+    guidePanel(),
+    explorerPanel(),
     el("h2",{style:"margin-top:14px",text:"Trois mondes vedettes"}),
     el("p",{class:"mute",text:"Des drames prêts à vivre — un clic et l'histoire commence."}),
     el("div",{class:"carousel"},PRESETS.filter(p=>VEDETTES.includes(p.l)).map(p=>el("button",{class:"alt mini",...(busy?{disabled:""}:{}),on:{click:()=>{err="";playPreset({ms:p.ms,name:p.name,tone:p.tone,concept:p.concept,magic:p.magic,factions:p.factions})}}},el("div",{class:"mth"},thumb(p.name,p.tone,p.factions,p.ms)),el("span",{text:p.l}),el("div",{class:"mute",style:"font-size:.8rem",text:cut(p.concept,80)+"…"})))),
@@ -3276,7 +3283,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),epiloguePanel());
+  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
@@ -3414,6 +3421,85 @@ function draw(){
   for(const k in ks){const n=$(k);if(n)n.value=ks[k]}S.fresh=false;if(fac&&$("fac"))$("fac").value=fac;if(dur&&$("dur"))$("dur").value=dur;window.scrollTo(0,view!==lastView?0:sy);lastView=view;{const cb=$("chatbox");if(cb)cb.scrollTop=cb.scrollHeight}
   if(view==="play"&&S.world&&S.opts.catch==="automatique"&&!busy&&!autoOn&&!caught){caught=true;const m=catchMonths();if(m>=1)setTimeout(()=>simulate(m),60)}
 }
+let exFilter="Tout";
+function slugN(){return String((S.world&&S.world.name)||"forgemonde").replace(/[^\w-]+/g,"-")}
+function dlText(fn,data){try{window.claude.use("downloads").save({filename:fn,data:data})}catch(e){}}
+function clipText(t,msg){if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>{err=msg;draw()}).catch(()=>{err="Copie impossible ici.";draw()});else{err="Copie impossible ici.";draw()}}
+function exCard(p){
+  return el("article",{class:"card"},
+    el("div",{class:"th"},thumb(p.name,p.tone,p.factions,p.ms),el("span",{class:"tag",text:(p.g||"")+(p.tone?" · "+p.tone:"")})),
+    el("div",{class:"bd"},
+      el("h3",{text:p.name}),
+      el("p",{text:p.concept}),
+      el("div",{class:"row"},
+        el("button",{on:{click:()=>{playPreset(p)}},text:"Jouer",...(busy?{disabled:""}:{})}))));
+}
+function explorerPanel(){
+  return el("section",{},
+    el("h2",{style:"margin-top:26px",text:"Explorer les mondes"}),
+    el("p",{class:"mute",text:"Tous les mondes du catalogue, par univers. Un clic, et l'histoire commence."}),
+    el("div",{class:"chips",style:"margin:8px 0"},["Tout"].concat(GROUPS||[]).map(g=>el("button",{class:exFilter===g?"":"alt",on:{click:()=>{exFilter=g;draw()}},text:g}))),
+    el("div",{class:"grid"},PRESETS.filter(p=>exFilter==="Tout"||p.g===exFilter).map(exCard)));
+}
+function guidePanel(){
+  return el("details",{},el("summary",{text:"Comment jouer en 30 secondes"}),
+    el("p",{text:"1. Choisis un monde (ou crée le tien)."}),
+    el("p",{text:"2. Choisis qui tu diriges."}),
+    el("p",{text:"3. Décris ton action : le monde réagit, se souvient et se transforme."}),
+    el("p",{class:"mute",text:"Gratuit, sans inscription, IA optionnelle. Tout est sauvé dans ton navigateur."}));
+}
+function fullWorldCode(){
+  const o={w:S.world,m:S.m,sum:S.sum||"",npc:(S.npcs||[]).map(p=>[p.nom,p.faction,p.role,p.desir,p.trait,p.pouvoir,p.faiblesse]),rel:S.rel||{},canon:(S.canon||[]).slice(-40)};
+  return "FMC-"+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function importFullWorld(){
+  const t=(($("wimp")||{}).value||"").trim();
+  if(!t){err="Colle d'abord un code de monde complet (FMC-…).";return draw()}
+  let o;try{o=JSON.parse(decodeURIComponent(escape(atob(t.replace(/^FMC-/,"")))))}catch(e){o=null}
+  if(!o||!o.w||!o.w.name){err="Code illisible : ce n'est pas un monde complet.";return draw()}
+  if(!confirm("Importer le monde « "+o.w.name+" » ? Ta partie en cours sera remplacée."))return;
+  S.world=o.w;initState();
+  S.m=o.m||0;S.sum=o.sum||"";
+  S.npcs=(o.npc||[]).filter(x=>x&&x[0]).map(x=>ensureNpc({nom:cut(x[0],40),faction:cut(x[1]||"",40),role:cut(x[2]||"",60),desir:cut(x[3]||"",120),trait:cut(x[4]||"",120),pouvoir:cut(x[5]||"",160),faiblesse:cut(x[6]||"",120)}));
+  S.rel=o.rel||{};S.canon=o.canon||[];
+  S.hero=null;S.draft=null;err="";view="pick";save();draw();
+}
+function proposeWorld(){
+  const name=(S.world&&S.world.name)||"monde";
+  const b=encodeURIComponent("Proposition de monde pour le catalogue Forgemonde.\n\nNom : "+name+"\n\nCode complet (FMC) :\n\n"+fullWorldCode()+"\n\n(Importer via Outils, Partager le monde complet, coller le code.)");
+  window.open("https://github.com/Pacao2/Forgemonde/issues/new?title="+encodeURIComponent("Proposition de monde : "+name)+"&body="+b+"&labels=enhancement,world","_blank");
+}
+function completeSharePanel(){
+  return det("wshare","Partager le monde complet",
+    el("p",{class:"mute",text:"Le monde, les personnages, leurs relations et le canon récent dans un seul code — à copier, télécharger ou importer sur un autre appareil."}),
+    el("div",{class:"row"},
+      el("button",{class:"alt",on:{click:()=>{clipText(fullWorldCode(),"Code du monde copié.")}},text:"Copier le code"}),
+      el("button",{class:"alt",on:{click:()=>{dlText("monde-"+slugN()+".txt",fullWorldCode())}},text:"Télécharger"}),
+      el("button",{class:"alt",on:{click:proposeWorld},text:"Proposer au catalogue"})),
+    el("textarea",{id:"wimp",placeholder:"Colle ici un code FMC-… pour importer un monde complet"}),
+    el("div",{class:"row"},el("button",{class:"alt",on:{click:importFullWorld},text:"Importer ce monde"})));
+}
+function mjSheetText(){
+  const w=S.world||{},L=[];
+  L.push("# "+(w.name||"Monde")+" — fiche du maître du jeu");
+  if(w.tone)L.push("Ton : "+w.tone);
+  if(w.concept)L.push("\n## Concept\n"+w.concept);
+  if(w.magic)L.push("\n## Surnaturel\n"+w.magic);
+  if(w.factions)L.push("\n## Factions\n"+w.factions);
+  if((S.npcs||[]).length){L.push("\n## Personnages");S.npcs.forEach(p=>{L.push("- **"+p.nom+"** — "+(p.role||"")+", "+(p.faction||"")+" ; désir : "+(p.desir||"")+" ; trait : "+(p.trait||"")+" ; pouvoir : "+(p.pouvoir||"")+" ; faiblesse : "+(p.faiblesse||""))})}
+  const rels=Object.keys(S.rel||{});if(rels.length){L.push("\n## Relations");rels.slice(0,30).forEach(k=>{const r=S.rel[k];L.push("- "+k+" : "+(r&&r.t?r.t:JSON.stringify(r)))})}
+  if((S.canon||[]).length){L.push("\n## Canon (faits gravés)");S.canon.slice(-40).forEach(c=>L.push("- "+String(c)))}
+  if((S.log||[]).length){L.push("\n## Chronologie (50 derniers tours)");S.log.slice(-50).reverse().forEach(e=>{L.push("- "+(e.d||"")+" — "+String(e.f||"").split(":")[0]+" : "+(e.a||""))})}
+  return L.join("\n");
+}
+function mjPanel(){
+  return det("mjsheet","Fiche du maître du jeu (table)",
+    el("p",{class:"mute",text:"Le monde, les personnages (désirs, traits, pouvoirs, faiblesses), les relations et la chronologie : de quoi animer une partie autour d'une table."}),
+    el("div",{class:"row"},
+      el("button",{class:"alt",on:{click:()=>{clipText(mjSheetText(),"Fiche copiée.")}},text:"Copier la fiche"}),
+      el("button",{class:"alt",on:{click:()=>{dlText("fiche-"+slugN()+".md",mjSheetText())}},text:"Télécharger (Markdown)"})));
+}
+
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
