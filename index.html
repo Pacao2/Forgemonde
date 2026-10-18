@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct — l'atlas s'illumine, choisis qui tu diriges + Explorer, partage de mondes complets, fiche MJ";
+const BUILD="v17oct — l'atlas s'illumine, choisis qui tu diriges + Explorer, partage de mondes complets, fiche MJ + écoute des joueurs de grande stratégie";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -934,6 +934,15 @@ const CHANGELOG=[
 "Nouveauté : fiche du maître du jeu — le monde et ses personnages en Markdown, pour animer une partie à table.",
 "Nouveauté : bouton « Proposer au catalogue » — ouvre une issue GitHub avec le monde complet.",
 "Nouveauté : mini-guide « Comment jouer en 30 secondes » sur l'accueil.",
+"Nouveauté : mémoire des puissances — humeur, opinion et rancunes de chaque faction (onglet Diplomatie)",
+"Nouveauté : paix à clauses — négocier la fin d'une guerre, refus expliqués et rancunes durables",
+"Nouveauté : ligue défensive contre toute faction qui écrase le monde, disgrâce pour les trop puissants",
+"Nouveauté : vue du monde en trois lignes, mise à jour à chaque tour",
+"Nouveauté : légendes émergentes — les événements majeurs deviennent des légendes",
+"Nouveauté : grands décrets en un clic et avancer d'une année en un seul tour",
+"Nouveauté : page du roman — la chronique en récit continu, copiable et téléchargeable",
+"Nouveauté : destins des personnages après l'histoire",
+"Nouveauté : trahisons motivées — les factions manœuvrent en sous-main pour leurs buts",
 "Chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement (gratuit, sans IA) — sa mémoire longue alimente le moteur narratif et se relit dans l'onglet Monde",
 "Ambitions autonomes : les personnages évoluent à chaque tour, même absents du récit, et reviennent d'eux-mêmes dans l'histoire quand leur ambition mûrit",
 "Choisis qui tu diriges au lancement : chaque faction s'affiche en carte avec son emblème et son but — ou joue « Le monde entier », ou crée « Ma propre entité » (faction ou personnage), ou incarne une nation déjà présente dans le scénario.",
@@ -1994,7 +2003,7 @@ const dateStr=m=>{const k=m%12,y0=S.world&&Number(S.world.y0);return MONTHS[k]+(
 const DUR={"Un mois":1,"Une saison":3,"Six mois":6,"Un an":12,"Cinq ans":60};
 const STEP={"1 mois":1,"1 saison":3,"1 an":12};
 let focus="",chatWho="",chatBusy=false,sim="",stop=false,retry=null;const openD={};
-function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[];S.ambCroise=[];S.echoFait=[];S.rumeurs=[];S.catas=[];S.relPerso=[];S.convFait=[]}
+function initState(){S.visit=Date.now();loadX(null);S.hist=[];S.gaz=[];S.incoh=[];S.rel={};S.gm=[];S.seen=Date.now();S.hero=null;S.playerFac=null;S.recap=null;S.log=[];S.m=0;S.sum="";S.npcs=[];S.chats={};S.pending=[];S.map={power:{},places:[]};S.bible={factions:{},lieux:{},arcs:[]};S.chekhov=[];S.tensionHist=[];S.lastCanon=0;S.canonLock=[];S.statuses=[];S.nudgeHide=false;S.chapters=[];S.ambFait=[];S.ambCroise=[];S.echoFait=[];S.rumeurs=[];S.catas=[];S.relPerso=[];S.convFait=[];S.facMind={};S.legendes=[];S.treaties=[];S.recapHist=[];S.traitR=0}
 const playerFac=()=>S.playerFac||names()[0]||"";
 let introAct="";
 function pickFac(f){
@@ -2742,7 +2751,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
   const maj=(Array.isArray(r.majeurs)?r.majeurs:[]).slice(0,3).map(x=>({quand:cut(x&&x.quand,30),titre:cut(x&&x.titre,80),description:cut(x&&x.description,200),consequence:cut(x&&x.consequence,200)}));
   S.log.unshift({a:action,f:faction,d:dateStr(S.m),N:N2,auto:!!auto,maj,at:Date.now(),n:cut(r.narration||"",1200),r:Array.isArray(r.reactions)?r.reactions.slice(0,6):[],u:cut(r.rumeur,200),c:cut(r.changement,200),ev:Array.isArray(r.evenements)?r.evenements.slice(0,6):[],nat:cut(r.evenement_naturel,160),pre});
   canonGuard(S.log[0]);if(S.log[0]&&S.log[0].g)toast("⚠️ Garde du canon : contradiction repérée — détails dans le canon du monde.");S.log=S.log.slice(0,60);S.lastTurnAt=Date.now();S.testTurns=(S.testTurns||0)+1;S.sum=cut(r.resume||S.sum,900);S.pending=[];try{mkChapter();chapterEcho()}catch(x){}
-  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};try{ambCroisees()}catch(x){};try{rumeurMonde()}catch(x){};try{catastrophe()}catch(x){};try{statutHorloge()}catch(x){};try{relationEvents()}catch(x){};try{chapterConvergence()}catch(x){};applyDirector(r);
+  S.seen=Date.now();if(!auto)S.visit=Date.now();applyNpcDelta(r);try{ambitionEvents()}catch(x){};try{ambCroisees()}catch(x){};try{rumeurMonde()}catch(x){};try{catastrophe()}catch(x){};try{statutHorloge()}catch(x){};try{relationEvents()}catch(x){};try{chapterConvergence()}catch(x){};try{worldTick()}catch(x){};applyDirector(r);
   applyMap(r);applyRel(r);applyX(r);applyFaith(r);applyMemoire(r);pushHist();if(S.log.length%5===0)autoBackup();checkAch();save();
   if(!r.narration){const fb=fallbackNarration();S.log[0].n=fb;save()}
   if(sample&&!auto&&S.log.length-(S.lastCanon||0)>=5){S.lastCanon=S.log.length;setTimeout(canonAuto,1200)}
@@ -3283,7 +3292,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),epiloguePanel());
+  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel(),worldRecapPanel(),legendPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),decretsPanel(),yearPanel(),readerPanel(),destinsPanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
@@ -3339,7 +3348,7 @@ function playClassic(){
       busy&&sim?el("button",{class:"alt",on:{click:()=>{stop=true}},text:"Arrêter"}):null),
     recapCard(),
     encyclo(),
-    det("dip","Diplomatie",relTable(S.rel||{},names()),
+    det("dip","Diplomatie",relTable(S.rel||{},names()),facMindPanel(),negociPanel(),
       el("label",{for:"tto",text:"Proposer à une autre faction"}),
       el("div",{class:"row"},el("select",{id:"tto"},names().map(n=>el("option",{value:n,text:n}))),
         el("select",{id:"ttype"},["proposer une alliance","proposer la paix","proposer un pacte de non-agression","proposer un accord commercial","déclarer la guerre","exiger le remboursement d'une dette","rompre toute relation"].map(t=>el("option",{value:t,text:t})))),
@@ -3500,6 +3509,143 @@ function mjPanel(){
       el("button",{class:"alt",on:{click:()=>{dlText("fiche-"+slugN()+".md",mjSheetText())}},text:"Télécharger (Markdown)"})));
 }
 
+function facButs(){var out=[];String((S.world&&S.world.factions)||"").split("\n").forEach(function(l){var i=l.indexOf(":");if(i>0)out.push([l.slice(0,i).trim(),l.slice(i+1).trim()])});return out}
+function facBut(f){var b=facButs();for(var i=0;i<b.length;i++){if(like(b[i][0],f))return b[i][1]}return ""}
+function facMind(f){var fm=S.facMind||(S.facMind={});if(!fm[f]){fm[f]={op:50,hum:"méfiante",ran:[]}}return fm[f]}
+function facMindPanel(){
+  var kids=[el("p",{class:"mute",text:"Humeur, opinion de toi, et rancunes de chaque puissance — la diplomatie devient une affaire de mémoire."})];
+  names().forEach(function(n){var m=facMind(n);kids.push(el("p",{},el("b",{text:n+" : "}),(facBut(n)||"but inconnu"),el("span",{class:"mute",text:" · humeur "+m.hum+" · opinion de toi "+m.op+"/100"}),m.ran.length?el("span",{class:"mute",text:" · rancunes : "+m.ran.slice(-3).join(" ; ")}):null))});
+  return det("facmind","Ce que les puissances pensent",kids);
+}
+function negociPanel(){
+  return det("negoc","Négocier la paix",
+    el("p",{class:"mute",text:"Finir une guerre par des clauses. La rancune, elle, ne s'efface pas d'un trait de plume."}),
+    el("select",{id:"negf"},names().map(function(n){return el("option",{value:n,text:n})})),
+    ["une frontière actée","un tribut de guerre","un échange de prisonniers","un mariage scellant la paix"].map(function(c,i){return el("label",{style:"display:flex;gap:8px;align-items:center;margin:6px 0"},el("input",{id:"negc"+(i+1),type:"checkbox",style:"width:auto"})," "+c)}),
+    el("div",{class:"row"},el("button",{on:{click:negotiatePeace},...(busy?{disabled:""}:{}),text:"Proposer la paix"})));
+}
+function negotiatePeace(){
+  var f=(($("negf")||{}).value)||"";
+  var opts=["une frontière actée","un tribut de guerre","un échange de prisonniers","un mariage scellant la paix"];
+  var cl=[];
+  ["negc1","negc2","negc3","negc4"].forEach(function(id,i){var n=$(id);if(n&&n.checked)cl.push(opts[i])});
+  if(!f){err="Choisis la faction avec qui négocier.";return draw()}
+  var m=facMind(f);
+  var score=(m.op-50)/10-cl.length-(m.ran.length*2);
+  if(score<-6){
+    m.ran.push("a refusé une paix honteuse ("+dateStr(S.m)+")");m.ran=m.ran.slice(-5);
+    err=f+" refuse la paix : "+(m.ran.length>1?"les rancunes sont trop profondes.":"les clauses ne servent pas ses intérêts.");
+    toast(f+" refuse de négocier");save();draw();return;
+  }
+  S.treaties=(S.treaties||[]).concat([{a:f,cl:cl,d:dateStr(S.m)}]).slice(-20);
+  Object.keys(S.rel||{}).forEach(function(k){var r=S.rel[k];if(r&&r.t==="guerre"&&String(k).indexOf(f)>=0){r.t="trêve"}});
+  m.op=Math.min(100,m.op+8);
+  run("Je propose à "+f+" une paix aux clauses : "+(cl.length?cl.join(", "):"retour au statut quo")+".", (($("fac")||{}).value)||f, 0, false);
+}
+function antiSnowball(){
+  var R=S.res||{},N=names(),tot=0,max=-1,big=null;
+  N.forEach(function(n){var v=(R[n]&&R[n].influence)||0;tot+=v;if(v>max){max=v;big=n}});
+  if(!big||tot<=0||max<tot*0.6)return;
+  if(S.ligue&&S.ligue.contre===big&&(S.log.length-S.ligue.tour)<6)return;
+  S.ligue={contre:big,tour:S.log.length};
+  if(S.playerFac&&like(big,S.playerFac)){
+    var st=S.statuses||[];
+    if(!st.some(function(s){return s.who===big&&String(s.s).indexOf("disgr")>=0})){S.statuses=st.concat([{who:big,s:"en disgrâce",n:0}]).slice(-12);toast("Le monde s'inquiète de ta puissance : en disgrâce")}
+  }else{
+    S.pending.push("LIGUE DÉFENSIVE : les puissances inquiètes de "+big+" se rapprochent en secret pour contrebalancer son influence.");
+    toast("Une ligue défensive se forme contre "+big);
+  }
+  if(S.log[0]){S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:"Une ligue défensive s'organise face à "+big+"."}])}
+  save();
+}
+function mkRecap3(){
+  var wars=0,alls=0;
+  Object.values(S.rel||{}).forEach(function(r){if(!r)return;if(r.t==="guerre")wars++;if(r.t==="alliance")alls++});
+  var N=names().length;
+  var l1=N+" puissances · "+wars+(wars>1?" guerres":" guerre")+" · "+alls+(alls>1?" alliances":" alliance");
+  var last=S.log[0];
+  var l2=last&&last.n?("Dernier souffle : "+String(last.n).replace(/\s+/g," ").slice(0,140)):"Rien n'est encore écrit.";
+  var nm=(S.npcs||[]).length;
+  var l3=nm?nm+" personnages rôdent, chacun avec ses désirs.":"Aucun personnage notable encore.";
+  S.recapHist=(S.recapHist||[]).concat([{d:dateStr(S.m),t:S.log.length,l:[l1,l2,l3]}]).slice(-30);
+}
+function worldRecapPanel(){
+  var h=S.recapHist||[],r=h[h.length-1];
+  return det("wrecap","Vue du monde en trois lignes",
+    r?r.l.map(function(x){return el("p",{class:"mute",text:x})}):el("p",{class:"mute",text:"Joue un tour : la vue du monde apparaîtra."}));
+}
+function mkLegend(){
+  var maj=[];(S.log||[]).forEach(function(e){(e.maj||[]).forEach(function(x){if(x&&x.titre)maj.push(x.titre)})});
+  if(!maj.length)return;
+  var L=S.legendes||[];
+  if(L.length>=12)return;
+  var t=maj[Math.floor(Math.random()*maj.length)];
+  if(L.some(function(x){return x.t===t}))return;
+  S.legendes=L.concat([{t:t,d:dateStr(S.m),q:"Le peuple raconte encore « "+t+" », et comment cela changea le monde."}]);
+  toast("Une légende naît : "+t);
+  if(S.log[0]){S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:"Une légende naît autour de "+t+"."}])}
+}
+function legendPanel(){
+  var L=S.legendes||[];
+  return det("legende","Légendes du monde",
+    L.length?L.slice().reverse().map(function(x){return el("p",{},el("b",{text:x.t+" — "}),x.q)}):el("p",{class:"mute",text:"Les événements majeurs deviendront des légendes que le peuple raconte."}));
+}
+function facDrift(){
+  S.traitR=(S.traitR||0)+1;
+  if(S.traitR%6!==0)return;
+  var N=names();if(!N.length)return;
+  var f=N[Math.floor(Math.random()*N.length)];
+  var m=facMind(f);
+  var H=["méfiante","dynamique","revancharde","conciliante","inquiète","ambitieuse"];
+  m.hum=H[Math.floor(Math.random()*H.length)];
+  m.op=Math.max(0,Math.min(100,m.op+(Math.random()<.5?-8:6)));
+  if(m.ran.length&&Math.random()<.6){
+    S.pending.push("TRAHISON MOTIVÉE : "+f+" agit en sous-main pour son propre but ("+(facBut(f)||"ses intérêts")+") sans le proclamer.");
+    if(S.log[0]){S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:f+" manœuvre en silence pour son propre but."}])}
+  }else{
+    if(S.log[0]){S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:f+" : humeur "+m.hum+", opinion de l'extérieur "+m.op+"/100."}])}
+  }
+  save();
+}
+function worldTick(){try{mkRecap3()}catch(x){}try{mkLegend()}catch(x){}try{antiSnowball()}catch(x){}try{facDrift()}catch(x){}}
+var DECRETS=[["Amnistie générale","J'accorde une amnistie générale : bannis et exilés peuvent rentrer au pays."],["Libre circulation","Je proclame la liberté de circulation et d'échange entre les territoires."],["Grande œuvre","Je finance une grande œuvre publique qui marquera la mémoire du monde."],["Concorde","Je convoque un concorde des puissances pour garantir la paix du monde."],["Fête du monde","J'institue une fête du monde, célébrée dans toutes les terres."]];
+function decretsPanel(){
+  return det("decrets","Grands décrets (un clic)",
+    el("p",{class:"mute",text:"Des décisions historiques prêtes à décréter."}),
+    el("div",{class:"chips"},DECRETS.map(function(d){return el("button",{class:"alt",on:{click:function(){run(d[1],($("fac")||{}).value||"Le monde",0,false)}},...(busy?{disabled:""}:{}),text:d[0]})})));
+}
+function yearPanel(){
+  return det("year","Une année d'un coup",
+    el("p",{class:"mute",text:"Faire passer une année entière en un seul tour, quand l'histoire patiente."}),
+    el("div",{class:"row"},el("button",{on:{click:function(){simulate(12)}},...(busy?{disabled:""}:{}),text:"Avancer d'un an"})));
+}
+function readerText(){
+  var L=["# "+((S.world&&S.world.name)||"Monde")+" — le roman",""];
+  (S.log||[]).slice().reverse().forEach(function(e){
+    L.push((e.d||"")+" — "+String(e.f||"").split(":")[0]+" : "+(e.a||""));
+    if(e.n)L.push(String(e.n).replace(/\s+/g," "));
+    if(e.c)L.push("Ce qui change : "+e.c);
+    L.push("");
+  });
+  return L.join("\n");
+}
+function readerPanel(){
+  return det("reader","La page du roman",
+    el("p",{class:"mute",text:"Toute la chronique en un récit continu, à copier dans ton carnet."}),
+    el("textarea",{id:"rdrtxt",style:"min-height:220px",text:readerText()}),
+    el("div",{class:"row"},el("button",{class:"alt",on:{click:function(){clipText(readerText(),"Roman copié.")}},text:"Copier le roman"}),el("button",{class:"alt",on:{click:function(){dlText("roman-"+slugN()+".txt",readerText())}},text:"Télécharger"})));
+}
+function destinsPanel(){
+  var kids=[];var done=S.ambFait||[];
+  (S.npcs||[]).forEach(function(p){
+    var fini=done.some(function(k){return String(k).indexOf(p.nom)>=0});
+    var d=fini?"✦ destin accompli : son ambition est entrée dans l'histoire.":"poursuit encore : "+((p.objectifs&&p.objectifs[0]&&p.objectifs[0].but)||p.desir||"un dessein obscur")+".";
+    kids.push(el("p",{},el("b",{text:p.nom+" — "}),(p.role||""),el("span",{class:"mute",text:" "+d})));
+  });
+  if(S.hero)kids.push(el("p",{},el("b",{text:(S.hero.nom||"Ton héros")+" — "}),el("span",{class:"mute",text:" celui que tu incarnais. Ce qu'il devient appartient désormais au canon."})));
+  if(!kids.length)kids.push(el("p",{class:"mute",text:"Crée des personnages pour suivre leurs destins après l'histoire."}));
+  return det("destins","Destins après l'histoire",kids);
+}
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};draw()}).catch(()=>{});
