@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v17oct-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v20oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -91,6 +91,8 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - **Page du roman** : toute la chronique en récit continu, copiable ou téléchargeable
 - **Destins après l'histoire** : ce que chaque personnage est devenu
 - **Trahisons motivées** : les factions manœuvrent pour leurs buts derrière ton dos
+- **Éditeur de scénario** — retouchez le monde en cours de partie : nom, ton, concept, surnaturel, factions et personnages (onglet Outils)
+- **Éditeur de carte** — influence de chaque puissance au curseur, lieux renommés, réassortis ou ajoutés, aperçu en direct
 - **Chronique allégée** : 50 tours rendus d'emblée, bouton « Afficher 100 tours plus anciens »
 - **Sauvegarde robuste** : si la mémoire du navigateur sature, le jeu est tronqué intelligemment au lieu de perdre la partie
 - **Vendettas héritées** : les dilemmes d ambitions croisées gravent des rancunes (ou des alliances) durables entre personnages, réinjectées dans les récits.
@@ -138,6 +140,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 ## 📜 Journal des versions
 
 Une version par jour, du plus récent au plus ancien.
+
+### Mardi 20 octobre 2026
+- **v20oct — éditeur de scénarios et de carte** : retouchez le monde en cours de partie (nom, ton, concept, surnaturel, factions, personnages) dans l'onglet Outils ; l'éditeur de carte règle l'influence de chaque puissance au curseur, renomme, réassocie ou ajoute des lieux, avec aperçu en direct.
 
 ### Vendredi 17 octobre 2026
 - **v17oct — l'atlas s'illumine, et tu choisis qui tu diriges** : écran « Qui dirigeras-tu ? » (factions du scénario en cartes avec emblème et but, « Ma propre entité » — faction ou personnage intégrée au monde, ou incarnation d'une nation déjà présente dans le scénario — ou « Le monde entier »), choix mémorisé partout et modifiable à tout moment ; les nations ne s'inventent plus : elles se choisissent parmi celles du scénario ; onglet Retours relié aux issues du dépôt : une issue GitHub s'ouvre préremplie (titre, description, label bug ou amélioration), plus besoin de passer par Discord ou Reddit ; polish visuel : éclat doré et pulsation de récompense, lettrine enluminée, transition « page tournée », lueurs de relief animées et infobulle de territoire sur la carte, palette saisonnière, jauges circulaires, badge d'alerte, squelettes de chargement, parallaxe de l'accueil, bouton lune/soleil, option « ambiance livre ancien » — le tout désactivé si les animations sont réglées sur réduit ; garde du canon : contrôle de cohérence local et gratuit après chaque tour (un mort qui reparaît, de la magie dans un monde sans magie — signalé sans IA) ; lois verrouillées 🔒 imposées au moteur narratif, qui refuse de les contredire même si le joueur insiste ; statuts durables (blessure, exil, dette, disgrâce) qui contraignent le récit jusqu'à ce qu'un événement les lève ; chapitres de l'histoire : tous les 10 tours, un chapitre est bouclé automatiquement et sa mémoire longue alimente le moteur narratif (onglet Monde) ; ambitions autonomes : chaque personnage évolue à chaque tour, même absent du récit, et revient dans l'histoire quand son ambition mûrit ; correctifs du soir : chapitres fidèles au mode hybride, ambitions accomplies gravées dans la chronique et sur la carte, chapitres remis à zéro entre mondes ; suite du soir : échos de chapitres anciens dans le tour suivant, dilemme des ambitions croisées à 3 choix, épilogue des destins accomplis Ajout du soir : chronique vue par le peuple, catastrophes mémorées, rejouer ce monde. Nouvelle vague : vendettas héritées, statuts qui évoluent, convergences de chapitres. — optimisations (sauvegardes groupées, chronique allégée, animations fluidifiées) Ajout v17oct-jj : vitrine « Explorer les mondes », partage du monde complet (code + import), fiche du maître du jeu, proposition de mondes au catalogue, mini-guide d'accueil. Ajout du soir : les puissances ont une mémoire (humeur, opinion, rancunes), paix à clauses, ligue défensive contre les trop puissants, vue du monde et légendes, grands décrets, année d'un coup, page du roman, destins, trahisons motivées. + vague d'optimisations : chronique virtualisée (50 tours rendus d'emblée), sauvegarde robuste anti-débordement, lectures de factions réduites

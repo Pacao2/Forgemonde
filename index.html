@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v17oct — l'atlas s'illumine, choisis qui tu diriges + Explorer, partage de mondes complets, fiche MJ + écoute des joueurs de grande stratégie";
+const BUILD="v20oct — éditeur de scénarios et de carte (retouche du monde en cours)";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -913,6 +913,9 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v20oct — 20 octobre 2026 : éditeur de scénarios et de carte",[
+"Éditeur de scénario : retouche en cours de partie le nom, le ton, le concept, le surnaturel, les factions et les personnages du monde (onglet Outils), sans réécrire l histoire — le Garde du canon veille",
+"Éditeur de carte : influence de chaque puissance au curseur, lieux renommés, réassortis ou ajoutés, aperçu de la carte en direct — les tours suivants respectent ces réglages"]],
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine, et tu choisis qui tu diriges",[
 "Chapitres fidèles au mode hybride : la mémoire longue alimente aussi le récit du mode hybride (règles + IA)",
 "Ambitions accomplies : à 100 % de progression, l'événement est gravé dans la chronique, un lieu apparaît sur la carte et un toast l'annonce (gratuit, sans IA)",
@@ -3297,7 +3300,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel(),worldRecapPanel(),legendPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),decretsPanel(),yearPanel(),readerPanel(),destinsPanel(),epiloguePanel());
+  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel(),worldRecapPanel(),legendPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),scenarioPanel(),mapEditorPanel(),decretsPanel(),yearPanel(),readerPanel(),destinsPanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
@@ -3651,6 +3654,72 @@ function destinsPanel(){
   if(S.hero)kids.push(el("p",{},el("b",{text:(S.hero.nom||"Ton héros")+" — "}),el("span",{class:"mute",text:" celui que tu incarnais. Ce qu'il devient appartient désormais au canon."})));
   if(!kids.length)kids.push(el("p",{class:"mute",text:"Crée des personnages pour suivre leurs destins après l'histoire."}));
   return det("destins","Destins après l'histoire",kids);
+}
+function edPnjText(){return (S.npcs||[]).map(function(p){return [p.nom,p.faction,p.role,p.desir].map(function(x){return cut(x||"",120)||""}).join(" | ")}).join("\n")}
+function scenApply(){
+  if(!S.world)return;
+  const nm=cut(($("edname")||{value:""}).value.trim(),60);if(nm)S.world.name=nm;
+  S.world.tone=cut(($("edtone")||{value:""}).value.trim(),40);
+  S.world.concept=cut(($("edconcept")||{value:""}).value,600);
+  S.world.magic=cut(($("edmagic")||{value:""}).value,600);
+  const F=(($("edfacs")||{value:""}).value||"").split("\n").map(function(s){return s.trim()}).filter(Boolean).slice(0,12);
+  if(F.length>=2){
+    S.world.factions=F.map(function(s){const i=s.indexOf(":");return i>0?cut(s.slice(0,i),60)+" : "+cut(s.slice(i+1),160):cut(s,160)}).join("\n");
+    ensureMap();
+    const keep={};names().forEach(function(n){keep[n]=S.map.power[n]??1});
+    S.map.power=keep;
+  }
+  const old={};(S.npcs||[]).forEach(function(p){old[String(p.nom||"").trim()]=p});
+  const N=[];
+  ((($("edpnjs")||{value:""}).value)||"").split("\n").map(function(s){return s.trim()}).filter(Boolean).slice(0,14).forEach(function(s){
+    const t=s.split("|").map(function(x){return x.trim()});
+    if(!t[0])return;
+    const base=old[t[0]]||{trait:"",pouvoir:"",faiblesse:""};
+    N.push(Object.assign({},base,{nom:cut(t[0],40),faction:cut(t[1]||names()[0]||"",40),role:cut(t[2]||"",60),desir:cut(t[3]||"",100)}));
+  });
+  if(N.length)S.npcs=N;
+  if(S.log[0])S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:"Le Maître du jeu a retouché le scénario du monde."}]);
+  mapCache={k:"",c:null};save();draw();toast("Scénario mis à jour");
+}
+function scenarioPanel(){
+  if(!S.world)return null;
+  return det("scenar","Éditeur de scénario",
+    el("p",{class:"mute",text:"Retouche le monde en cours : nom, ton, concept, surnaturel, factions et personnages. L'histoire déjà écrite est conservée — le Garde du canon veille sur la cohérence."}),
+    el("label",{text:"Nom du monde"}),el("input",{id:"edname",value:S.world.name||""}),
+    el("label",{text:"Ton"}),el("input",{id:"edtone",value:S.world.tone||""}),
+    el("label",{text:"Concept du monde"}),el("textarea",{id:"edconcept",text:S.world.concept||""}),
+    el("label",{text:"Règles du surnaturel"}),el("textarea",{id:"edmagic",text:S.world.magic||""}),
+    el("label",{text:"Factions (une par ligne : Nom : but)"}),el("textarea",{id:"edfacs",style:"min-height:110px",text:S.world.factions||""}),
+    el("label",{text:"Personnages (un par ligne : Nom | faction | rôle | désir)"}),el("textarea",{id:"edpnjs",style:"min-height:90px",text:edPnjText()}),
+    el("div",{class:"row"},el("button",{on:{click:scenApply},text:"Appliquer au monde"}),el("button",{class:"alt",on:{click:function(){draw()}},text:"Annuler"})));
+}
+function edMapPreview(){
+  const c=$("edmapcv");if(!c||!S.world)return;
+  try{paintMap(c,names(),S.opts.detail,{W:460,H:288,thumb:1,style:S.world.ms||"continent",name:S.world.name||"",map:S.map})}catch(x){}
+}
+function mapEditorPanel(){
+  if(!S.world)return null;
+  ensureMap();
+  const N=names();if(!N.length)return null;
+  const rows=N.map(function(n,i){
+    return el("div",{class:"row"},
+      el("span",{style:"flex:2 1 130px",text:n}),
+      el("input",{type:"range",min:"55",max:"160",value:Math.round((S.map.power[n]??1)*100),style:"flex:3 1 150px","aria-label":"Influence de "+n,on:{input:function(e){S.map.power[n]=Math.max(.55,Math.min(1.6,Number(e.target.value)/100||1));const l=$("edpw"+i);if(l)l.textContent=Math.round(S.map.power[n]/1.6*100)+" %";edMapPreview()}}}),
+      el("span",{class:"mute",id:"edpw"+i,style:"flex:0 0 46px",text:Math.round((S.map.power[n]??1)/1.6*100)+" %"}));
+  });
+  const pr=(S.map.places||[]).map(function(pl,pi){
+    return el("div",{class:"row"},
+      el("input",{value:pl.name,placeholder:"Lieu",style:"flex:2 1 130px","aria-label":"Nom du lieu",on:{change:function(e){const v=cut(e.target.value.trim(),28);if(v)pl.name=v;save();edMapPreview()}}}),
+      el("select",{style:"flex:2 1 130px","aria-label":"Faction du lieu",on:{change:function(e){pl.f=e.target.value;save();edMapPreview()}}},N.map(function(n){return el("option",{value:n,...(n===pl.f?{selected:""}:{}),text:n})})),
+      el("button",{class:"alt",style:"flex:0 0 auto",on:{click:function(){S.map.places.splice(pi,1);mapCache={k:"",c:null};save();draw()}},text:"✕"}));
+  });
+  setTimeout(edMapPreview,0);
+  return det("mapedit","Éditeur de carte",
+    el("p",{class:"mute",text:"Règle l'influence de chaque puissance et les lieux visibles. L'aperçu se met à jour en direct ; les tours suivants respectent ces réglages."}),
+    el("canvas",{id:"edmapcv",width:"460",height:"288",style:"width:100%;max-width:460px;border:1px solid var(--line);border-radius:8px;background:var(--sea)"}),
+    el("b",{style:"display:block;margin:12px 0 4px",text:"Influence des puissances"}),rows,
+    el("b",{style:"display:block;margin:12px 0 4px",text:"Lieux sur la carte"}),(pr.length?pr:el("p",{class:"mute",text:"Aucun lieu marqué."})),
+    el("div",{class:"row"},el("input",{id:"edplname",placeholder:"Nom du nouveau lieu",style:"flex:2 1 150px"}),el("button",{class:"alt",on:{click:function(){const v=cut(($("edplname")||{value:""}).value.trim(),28);if(!v)return;S.map.places=(S.map.places||[]).filter(function(x){return x.name!==v}).concat([{name:v,f:N[0]||""}]).slice(-8);mapCache={k:"",c:null};save();draw()}},text:"Ajouter le lieu"})));
 }
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
