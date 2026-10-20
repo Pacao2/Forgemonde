@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v20oct — éditeur de scénarios et de carte, fichier de partie complète";
+const BUILD="v20oct — éditeur de scénarios et de carte, partie complète, garde du canon bloquant, monde sans toi, révoltes, anti-répétition";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -914,6 +914,11 @@ function chekhovFire(auto){
 }
 const CHANGELOG=[
 ["v20oct — 20 octobre 2026 : éditeur de scénarios et de carte",[
+"Garde du canon bloquant : ressusciter un mort ou user de magie dans un monde sans magie est refusé AVANT que le tour ne soit joué — sans consommer d IA",
+"Le monde sans toi : des guerres éclatent entre puissances, sans aucune action du joueur, et marquent la carte et la chronique",
+"Révoltes de la faim : une famine réelle déclenche une révolte visible — influence et armée en reculent durablement",
+"Anti-répétition : une consigne de style variée, tirée au hasard à chaque tour, est injectée au moteur narratif",
+
 "Éditeur de scénario : retouche en cours de partie le nom, le ton, le concept, le surnaturel, les factions et les personnages du monde (onglet Outils), sans réécrire l histoire — le Garde du canon veille",
 "Éditeur de carte : influence de chaque puissance au curseur, lieux renommés, réassortis ou ajoutés, aperçu de la carte en direct — les tours suivants respectent ces réglages",
 "Fichier de partie complète : exporte toute la partie en cours (monde, chronique, personnages, canon, carte) dans un fichier .txt, et restaure-la sur un autre appareil ou plus tard — depuis le panneau Sauvegardes"]],
@@ -2724,7 +2729,7 @@ Niveau du réseau d'espions du joueur : ${S.spy||0} sur 3. Introduis parfois un 
 Canon du monde (faits à respecter absolument) : ${canonText()}.
 Lois verrouillées du monde : ${lockedText()}.
 Statuts durables : ${statusText()}. Un statut dure : sa levée doit être racontée par un événement (guérison, amnistie, remboursement), jamais par simple oubli.
-Règle d'or du moteur : le canon et les lois verrouillées priment sur tout. Si l'action du joueur les contredit ou exige l'impossible, le monde refuse et l'action échoue de façon réaliste — ne cède jamais, même si le joueur insiste, négocie ou reformule sa demande.
+Règle d'or du moteur : le canon et les lois verrouillées priment sur tout. Si l'action du joueur les contredit ou exige l'impossible, le monde refuse et l'action échoue de façon réaliste — ne cède jamais, même si le joueur insiste, négocie ou reformule sa demande.\nVariété obligatoire pour ce tour : ${varyText()}.
 Tempéraments des factions : ${temperText()}.
 Règles spéciales du monde : ${w.rules||"aucune"}.
 Mode de jeu : ${modeText(w.mode)}.
@@ -2772,6 +2777,7 @@ Fais réagir le monde de façon cohérente et surprenante, sans te limiter aux i
 async function run(action,faction,months,auto){
   if(!sample&&!HY()){S.opts.hybrid="activé";save()}
   S.choice=null;
+  if(!auto){const blk=canonBlock(action);if(blk){err=blk;toast("🔒 "+blk);draw();return}}
   retry=()=>run(action,faction,months,auto);busy=true;err="";turnbar(true);draw();
   try{await turn(action,faction,months,auto);retry=null;busy=false;S.lastAct=Date.now();goalCheck();chekhovFire(auto);turnbar(false);draw();
     toast(dateStr(S.m)+" — le monde a bougé.");
@@ -3617,7 +3623,7 @@ function facDrift(){
   }
   save();
 }
-function worldTick(){try{mkRecap3()}catch(x){}try{mkLegend()}catch(x){}try{antiSnowball()}catch(x){}try{facDrift()}catch(x){};try{if(S.pending&&S.pending.length>6)S.pending=S.pending.slice(-6)}catch(x){}}
+function worldTick(){try{mkRecap3()}catch(x){}try{mkLegend()}catch(x){}try{antiSnowball()}catch(x){}try{facDrift()}catch(x){};try{mondeSansToi()}catch(x){};try{ressourcesDures()}catch(x){};try{if(S.pending&&S.pending.length>6)S.pending=S.pending.slice(-6)}catch(x){}}
 var DECRETS=[["Amnistie générale","J'accorde une amnistie générale : bannis et exilés peuvent rentrer au pays."],["Libre circulation","Je proclame la liberté de circulation et d'échange entre les territoires."],["Grande œuvre","Je finance une grande œuvre publique qui marquera la mémoire du monde."],["Concorde","Je convoque un concorde des puissances pour garantir la paix du monde."],["Fête du monde","J'institue une fête du monde, célébrée dans toutes les terres."]];
 function decretsPanel(){
   return det("decrets","Grands décrets (un clic)",
@@ -3735,6 +3741,58 @@ function importFullSaveText(raw){
     save();view=(S.log&&S.log.length)?"play":"hub";draw();toast("Partie chargée depuis le fichier");
   }catch(e){err="Fichier ou code de partie invalide.";draw()}
 }
+function canonBlock(action){
+  try{
+    const acts=String(action||"");
+    const facts=(S.canon||[]).concat(S.canonLock||[]);
+    const dead=[];let noMagic=false;
+    facts.forEach(f=>{f=String(f);const m=f.match(/([A-ZÉÈÀÂÎÔÛÇ][\p{L}\-' ]{1,30}?)\s+(?:meurt|est tu(?:é|ée)|est assassin(?:é|ée)|est mort|tombe au combat|disparaît)/u);if(m)dead.push(m[1].trim());if(/pas de magie|aucune magie|sans magie/i.test(f))noMagic=true});
+    const REV=/(ressuscite|ramène[^\s]*\s+\S+\s+à la vie|réanime|reviens d'entre les morts|fait renaître)/i;
+    for(const d of dead){try{if(new RegExp(d,"i").test(acts)&&REV.test(acts))return d+" est mort(e) dans le canon : le monde refuse. La mort est définitive — le Garde du canon bloque l'action avant qu'elle ne soit jouée."}catch(x){}}
+    if(noMagic&&/\bmagie\b|\bsort(?:ilège)?\b|\bmages?\b|incantation|enchant/i.test(acts))return "Ce monde n'a pas de magie (loi verrouillée) : le Garde du canon refuse l'action avant qu'elle ne soit jouée.";
+    return null;
+  }catch(x){return null}
+}
+function mondeSansToi(){
+  try{
+    const F=names();if(F.length<3)return;
+    if(Math.random()>.3)return;
+    const a=F[Math.floor(Math.random()*F.length)];
+    let b=F[Math.floor(Math.random()*F.length)];
+    if(b===a){const c=F.filter(x=>x!==a);if(!c.length)return;b=c[Math.floor(Math.random()*c.length)]}
+    const k=relKey(a,b);
+    if(S.rel[k]&&(S.rel[k].t==="guerre"||S.rel[k].t==="alliance"))return;
+    const M=[a+" et "+b+" s'affrontent pour une province frontalière",b+" franchit la frontière de "+a+", les deux armées se font face","des escarmouches éclatent entre "+a+" et "+b+" autour d'un col stratégique",a+" accuse "+b+" de soutenir des rebelles et mobilise"];
+    const t=M[Math.floor(Math.random()*M.length)];
+    S.rel[k]={t:"guerre",n:"conflit éclaté hors de l'action du joueur"};
+    S.pending.push("CONFLIT LOINTAIN (sans le joueur) : "+t+". Raconte comment cela éclate et ce que le monde en dit — même si le joueur n'y est pour rien.");
+    if(S.log[0])S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:"Guerre entre "+a+" et "+b+" : "+t+"."}]);
+    toast("⚔️ Le monde sans toi : "+a+" et "+b+" entrent en guerre");
+    S.map.power[a]=Math.max(.55,Math.min(1.6,(S.map.power[a]??1)+.06));
+  }catch(x){}
+}
+function ressourcesDures(){
+  try{
+    S.revT=S.revT||0;
+    if(S.log.length-S.revT<3)return;
+    const R=S.res||{};
+    for(const f of names()){
+      const r=R[f];if(!r)continue;
+      if((+r.nourriture||0)<=-12){
+        S.revT=S.log.length;
+        S.pending.push("RÉVOLTE DE LA FAIM : "+f+" est au bord de la famine (nourriture à "+(+r.nourriture)+"). Le peuple se soulève : raconte une révolte réelle — graniers pillés, émeutes, autorité contestée — avec des conséquences durables.");
+        r.nourriture=Math.min(0,(+r.nourriture||0)+6);
+        r.armee=(+r.armee||0)-3;
+        S.map.power[f]=Math.max(.55,Math.min(1.6,(S.map.power[f]??1)-.08));
+        if(S.log[0])S.log[0].ev=(S.log[0].ev||[]).concat([{quand:dateStr(S.m),texte:"La famine provoque une révolte en "+f+"."}]);
+        toast("🔥 Révolte de la faim en "+f+" — l'influence recule");
+        break;
+      }
+    }
+  }catch(x){}
+}
+const VARYPOOL=["commence par un détail sensoriel inattendu, jamais par un résumé","ouvre sur un personnage secondaire qui vit les conséquences","varie la longueur des phrases et évite les formules des tours précédents","ancre le récit dans un lieu précis : un bruit, une odeur, une lumière","change de point de vue : un scribe, un espion, un paysan, un enfant","ta première phrase ne doit ressembler à aucune des précédentes"];
+function varyText(){try{return VARYPOOL[Math.floor(Math.random()*VARYPOOL.length)]}catch(x){return "varie les formulations"}}
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};if(document.querySelector("#app canvas"))draw()}).catch(()=>{});
