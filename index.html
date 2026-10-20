@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v20oct — éditeur de scénarios et de carte (retouche du monde en cours)";
+const BUILD="v20oct — éditeur de scénarios et de carte, fichier de partie complète";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -915,7 +915,8 @@ function chekhovFire(auto){
 const CHANGELOG=[
 ["v20oct — 20 octobre 2026 : éditeur de scénarios et de carte",[
 "Éditeur de scénario : retouche en cours de partie le nom, le ton, le concept, le surnaturel, les factions et les personnages du monde (onglet Outils), sans réécrire l histoire — le Garde du canon veille",
-"Éditeur de carte : influence de chaque puissance au curseur, lieux renommés, réassortis ou ajoutés, aperçu de la carte en direct — les tours suivants respectent ces réglages"]],
+"Éditeur de carte : influence de chaque puissance au curseur, lieux renommés, réassortis ou ajoutés, aperçu de la carte en direct — les tours suivants respectent ces réglages",
+"Fichier de partie complète : exporte toute la partie en cours (monde, chronique, personnages, canon, carte) dans un fichier .txt, et restaure-la sur un autre appareil ou plus tard — depuis le panneau Sauvegardes"]],
 ["v17oct — 17 octobre 2026 : l'atlas s'illumine, et tu choisis qui tu diriges",[
 "Chapitres fidèles au mode hybride : la mémoire longue alimente aussi le récit du mode hybride (règles + IA)",
 "Ambitions accomplies : à 100 % de progression, l'événement est gravé dans la chronique, un lieu apparaît sur la carte et un toast l'annonce (gratuit, sans IA)",
@@ -1385,7 +1386,7 @@ function slotsPanel(){
     S.world?[el("input",{id:"slotname",placeholder:"Nom de la sauvegarde (facultatif)","aria-label":"Nom de la sauvegarde"}),el("div",{class:"row"},el("button",{class:"alt",on:{click:slotSave},text:"Sauvegarder cette partie"}))]:null,
     L.length?L.map(([id,x])=>el("div",{class:"entry"},el("b",{text:x.name}),el("div",{class:"act",text:x.w+", "+dateStr(x.m)+", "+new Date(x.t).toLocaleDateString("fr-FR")}),
       el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>slotLoad(id)},text:"Charger"}),el("button",{class:"alt",on:{click:()=>slotDel(id)},text:"Supprimer"})))):el("p",{class:"mute",text:"Aucune sauvegarde manuelle. Une sauvegarde automatique de secours est faite tous les 5 tours."}),
-    bak?el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>slotLoad(null,true)},text:"Restaurer la sauvegarde automatique"})):null);
+    bak?el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>slotLoad(null,true)},text:"Restaurer la sauvegarde automatique"})):null),el("details",{},el("summary",{text:"Fichier de partie complète"}),el("p",{class:"mute",text:"Exporte toute la partie en cours (monde, chronique, personnages, canon, carte) dans un fichier .txt, et restaure-la sur un autre appareil ou plus tard."}),el("div",{class:"row"},el("button",{class:"alt",on:{click:function(){if(S.world)dlText(slugN()+"-partie.txt",fullSaveText())}},text:"Exporter cette partie"}),el("input",{type:"file",accept:".txt",style:"flex:1 1 160px","aria-label":"Charger un fichier de partie",on:{change:function(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(){importFullSaveText(String(r.result||""))};r.readAsText(f)}}})),el("p",{class:"mute",text:"Ou colle un code de partie :"}),el("textarea",{id:"fullimp",placeholder:"Colle ici le contenu d'un fichier de partie",style:"min-height:76px"}),el("div",{class:"row"},el("button",{class:"alt",on:{click:function(){importFullSaveText(($("fullimp")||{value:""}).value)}},text:"Charger la partie collée"})));;
 }
 const b64=t=>btoa(unescape(encodeURIComponent(t))),unb64=t=>decodeURIComponent(escape(atob(t)));
 function exportCode(){
@@ -3720,6 +3721,19 @@ function mapEditorPanel(){
     el("b",{style:"display:block;margin:12px 0 4px",text:"Influence des puissances"}),rows,
     el("b",{style:"display:block;margin:12px 0 4px",text:"Lieux sur la carte"}),(pr.length?pr:el("p",{class:"mute",text:"Aucun lieu marqué."})),
     el("div",{class:"row"},el("input",{id:"edplname",placeholder:"Nom du nouveau lieu",style:"flex:2 1 150px"}),el("button",{class:"alt",on:{click:function(){const v=cut(($("edplname")||{value:""}).value.trim(),28);if(!v)return;S.map.places=(S.map.places||[]).filter(function(x){return x.name!==v}).concat([{name:v,f:N[0]||""}]).slice(-8);mapCache={k:"",c:null};save();draw()}},text:"Ajouter le lieu"})));
+}
+function fullSaveText(){return b64(JSON.stringify({v:1,full:1,s:S}))}
+function importFullSaveText(raw){
+  try{
+    raw=String(raw||"").trim().replace(/\s+/g,"");
+    const o=JSON.parse(unb64(raw));
+    if(!o||o.v!==1||!o.full||!o.s||!o.s.world)throw 0;
+    const keep={};KEEPG.forEach(function(k){keep[k]=S[k]});
+    Object.assign(S,o.s);
+    KEEPG.forEach(function(k){if(keep[k]!=null)S[k]=keep[k]});
+    mapCache={k:"",c:null};S.draft=null;err="";
+    save();view=(S.log&&S.log.length)?"play":"hub";draw();toast("Partie chargée depuis le fichier");
+  }catch(e){err="Fichier ou code de partie invalide.";draw()}
 }
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
