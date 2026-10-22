@@ -882,7 +882,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v20oct — éditeur de scénarios et de carte, partie complète, garde du canon bloquant, monde sans toi, révoltes, anti-répétition";
+const BUILD="v22oct — premier tour guidé, chat avec la mémoire du monde, carte de fin de règne";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -913,6 +913,10 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
+["v22oct — 22 octobre 2026 : premier tour guidé, chat avec mémoire du monde, carte de fin de règne",[
+"Premier tour guidé : au premier tour d'une partie, des actions en un clic (se présenter, envoyer un émissaire, chercher les tensions)",
+"Parler aux habitants : les conversations s'appuient désormais sur le canon, les lois verrouillées, les relations personnelles et les chapitres vécus",
+"Carte de fin de règne : image PNG de partage (factions, influence, chapitres, destins) + résumé copiable, dans l'onglet Outils"]],
 ["v20oct — 20 octobre 2026 : éditeur de scénarios et de carte",[
 "Garde du canon bloquant : ressusciter un mort ou user de magie dans un monde sans magie est refusé AVANT que le tour ne soit joué — sans consommer d IA",
 "Le monde sans toi : des guerres éclatent entre puissances, sans aucune action du joueur, et marquent la carte et la chronique",
@@ -3233,7 +3237,11 @@ async function talk(){
   try{const o=S.opts,w=S.world;
     const r=await ask(`Tu joues ${who} dans un monde fictif, en ${o.lang}, et tu réponds au joueur sans jamais sortir du rôle.
 Monde : ${w.name} (${w.tone}). Concept : ${w.concept}. Surnaturel : ${w.magic}.
-Ton rôle : ${ent.info}. Résumé de l'histoire : ${S.sum||"(début)"}. Date : ${dateStr(S.m)}.${hp?"\nTon état actuel : humeur « "+hp.humeur+" », opinion du joueur "+hp.opinion+" sur 100."+(hp.objectifs&&hp.objectifs.length?" Tu poursuis : "+hp.objectifs.map(x=>x.but).join(", ")+".":"")+(hp.secret&&hp.secret.connu?" Ton secret est désormais connu du joueur.":hp.secret&&hp.secret.indices>=3?" Le joueur a gagné assez de ta confiance : tu peux révéler ton secret avec pudeur si la conversation s'y prête.":" Garde ton secret pour toi tant que la confiance n'est pas établie."):""}${h.memo?"\nCe que ce personnage retient des échanges passés : "+h.memo:""}
+Ton rôle : ${ent.info}. Résumé de l'histoire : ${S.sum||"(début)"}.
+Canon du monde (à respecter absolument dans tes réponses) : ${canonText()}.
+Lois verrouillées : ${lockedText()}.
+Relations et rancunes personnelles : ${relPersoText()}.
+Chapitres vécus par le monde (mémoire longue) : ${chapterText()}. Date : ${dateStr(S.m)}.${hp?"\nTon état actuel : humeur « "+hp.humeur+" », opinion du joueur "+hp.opinion+" sur 100."+(hp.objectifs&&hp.objectifs.length?" Tu poursuis : "+hp.objectifs.map(x=>x.but).join(", ")+".":"")+(hp.secret&&hp.secret.connu?" Ton secret est désormais connu du joueur.":hp.secret&&hp.secret.indices>=3?" Le joueur a gagné assez de ta confiance : tu peux révéler ton secret avec pudeur si la conversation s'y prête.":" Garde ton secret pour toi tant que la confiance n'est pas établie."):""}${h.memo?"\nCe que ce personnage retient des échanges passés : "+h.memo:""}
 Conversation :
 ${h.slice(-8).map(x=>(x.r==="u"?"Joueur":who)+" : "+x.t).join("\n")}
 Réponds UNIQUEMENT en JSON : {"reponse":"2 à 4 phrases, avec la personnalité et les intérêts de ${who}","humeur":"un mot","effet":"conséquence éventuelle de cet échange sur le monde, ou chaîne vide","memo":"1 phrase : ce que ${who} retient de cet échange pour la suite","secretRevele":true seulement si tu viens de révéler ton secret dans cette réponse, sinon false}`);
@@ -3307,7 +3315,7 @@ function play(){
   }
   if(!mapNode||!action.length)return root;
   if(sim.length)P.outils.unshift(el("div",{class:"simbox"},el("b",{text:"Simulation du temps"}),...sim));
-  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel(),worldRecapPanel(),legendPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),scenarioPanel(),mapEditorPanel(),decretsPanel(),yearPanel(),readerPanel(),destinsPanel(),epiloguePanel());
+  P.monde.push(chapterPanel(),canonPanel(),temperPanel(),faithPanel(),gazettePanel(),statsPanel(),explorePanel(),placesPanel(),worldRecapPanel(),legendPanel());P.outils.push(modePanel(),colorsPanel(),a11yPanel(),slotsPanel(),exportPanel(),ghostPanel(),sharePanel(),completeSharePanel(),mjPanel(),scenarioPanel(),mapEditorPanel(),decretsPanel(),yearPanel(),readerPanel(),destinsPanel(),endCardPanel(),epiloguePanel());
   const show=k=>{ptab=k;for(const[t]of TABS){const e=$("tab-"+t);if(e)e.hidden=t!==k;const b=$("tb-"+t);if(b)b.className=t===k?"":"alt"}};
   const tabs=el("div",{class:"tabs",role:"tablist"},TABS.map(([k,l])=>el("button",{id:"tb-"+k,class:ptab===k?"":"alt",role:"tab",on:{click:()=>show(k)},text:l})));
   let cfgAI=null;try{cfgAI=JSON.parse(localStorage.getItem("forge-ai-cfg")||"null")}catch(e){}
@@ -3336,6 +3344,11 @@ function playClassic(){
         el("button",{on:{click:()=>run("J'envoie un émissaire proposer une alliance audacieuse à la faction la plus inattendue.",facs()[0])},text:"Une alliance audacieuse"}),
         el("button",{class:"alt",on:{click:()=>run("Mes espions cherchent le secret le mieux gardé de mon rival.",facs()[0])},text:"Espionner mon rival"}),
         el("button",{class:"alt",on:{click:()=>run("J'organise une fête grandiose pour graver mon nom dans la mémoire du monde.",facs()[0])},text:"Marquer l'histoire"}))):null,
+    (!S.log.length&&!busy)?el("div",{class:"strip"},el("p",{},el("b",{text:"Premier tour — "}),"le monde attend ton premier geste. Une action en un clic, ou écris la tienne :"),
+      el("div",{class:"row",style:"margin-top:8px"},
+        el("button",{on:{click:()=>run("Je me présente aux autres puissances et j'expose ma vision du monde.",facs()[0])},text:"Me présenter"}),
+        el("button",{class:"alt",on:{click:()=>run("J'envoie un émissaire à la puissance qui m'intrigue le plus.",facs()[0])},text:"Envoyer un émissaire"}),
+        el("button",{class:"alt",on:{click:()=>run("J'envoie discrètement des observateurs fouiller les tensions de ce monde.",facs()[0])},text:"Chercher les tensions"}))):null,
     choicePanel(),
     surveyPanel(),
     det("bible","La bible du monde",el("p",{text:w.concept}),el("p",{text:w.magic}),el("p",{style:"white-space:pre-line",text:w.factions})),
@@ -3793,6 +3806,64 @@ function ressourcesDures(){
 }
 const VARYPOOL=["commence par un détail sensoriel inattendu, jamais par un résumé","ouvre sur un personnage secondaire qui vit les conséquences","varie la longueur des phrases et évite les formules des tours précédents","ancre le récit dans un lieu précis : un bruit, une odeur, une lumière","change de point de vue : un scribe, un espion, un paysan, un enfant","ta première phrase ne doit ressembler à aucune des précédentes"];
 function varyText(){try{return VARYPOOL[Math.floor(Math.random()*VARYPOOL.length)]}catch(x){return "varie les formulations"}}
+function endCardPaint(cv){
+  const w=S.world;const W=1080,H=1350;cv.width=W;cv.height=H;
+  const x=cv.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#141221");g.addColorStop(1,"#0d0c14");
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.strokeStyle="#d2a24c";x.lineWidth=3;x.strokeRect(24,24,W-48,H-48);
+  x.textAlign="center";
+  x.fillStyle="#d2a24c";x.font="700 34px Manrope, sans-serif";x.fillText("FORGEMONDE",W/2,110);
+  x.fillStyle="#ecebe6";x.font="700 52px Cinzel, serif";x.fillText(cut(w.name,30),W/2,180);
+  x.fillStyle="#9593a3";x.font="24px Manrope, sans-serif";x.fillText((w.tone||"")+" — "+dateStr(S.m)+" — "+S.log.length+" tours",W/2,222);
+  x.textAlign="left";
+  x.fillStyle="#ecebe6";x.font="600 28px Manrope, sans-serif";x.fillText("Les puissances",70,300);
+  let y=345;const pw=(S.map&&S.map.power)||{};
+  names().slice(0,7).forEach(n=>{
+    x.fillStyle="#ecebe6";x.font="26px Manrope, sans-serif";x.fillText(cut(n,26),70,y);
+    const pct=Math.round((Math.max(.55,Math.min(1.6,(pw[n]||1)))-.55)/1.05*100);
+    x.fillStyle="#16151f";x.fillRect(430,y-20,480,26);
+    x.fillStyle="#d2a24c";x.fillRect(430,y-20,Math.max(8,Math.round(4.8*pct)),26);
+    x.fillStyle="#9593a3";x.font="22px Manrope, sans-serif";x.fillText(pct+"%",930,y);y+=52;
+  });
+  y+=15;
+  const ch=(S.chapters||[]).slice(-3);
+  if(ch.length){x.fillStyle="#ecebe6";x.font="600 28px Manrope, sans-serif";x.fillText("Chapitres",70,y);y+=42;
+    ch.forEach(c=>{x.fillStyle="#c9c7d4";x.font="italic 24px Manrope, serif";x.fillText("— "+cut(c.titre,44),70,y);y+=38});y+=15}
+  const amb=(S.ambFait||[]);
+  if(amb.length){x.fillStyle="#ecebe6";x.font="600 28px Manrope, sans-serif";x.fillText("Destins accomplis ("+amb.length+")",70,y);y+=42;
+    amb.slice(-3).forEach(k=>{x.fillStyle="#c9c7d4";x.font="24px Manrope, sans-serif";x.fillText("— "+cut(String(k).split("|").join(" — "),44),70,y);y+=36});y+=15}
+  const cn=(S.canon||[]).slice(-3);
+  if(cn.length){x.fillStyle="#ecebe6";x.font="600 28px Manrope, sans-serif";x.fillText("Gravé dans le canon",70,y);y+=40;
+    cn.forEach(t=>{x.fillStyle="#9593a3";x.font="22px Manrope, sans-serif";x.fillText(cut(t,64),70,y);y+=32})}
+  x.textAlign="center";x.fillStyle="#d2a24c";x.font="26px Manrope, sans-serif";
+  x.fillText((S.seed?"Semence "+S.seed+" — ":"")+"pacao2.github.io/Forgemonde",W/2,H-60);
+}
+function endCardText(){
+  const w=S.world,pw=(S.map&&S.map.power)||{};
+  return w.name+" — fin de règne après "+S.log.length+" tours ("+dateStr(S.m)+").\n"+
+  "Puissances : "+names().map(n=>{const pct=Math.round((Math.max(.55,Math.min(1.6,(pw[n]||1)))-.55)/1.05*100);return n+" ("+pct+"%)"}).join(", ")+".\n"+
+  "Chapitres : "+((S.chapters||[]).slice(-3).map(c=>cut(c.titre,60)).join(" ; ")||"aucun")+".\n"+
+  "Destins accomplis ("+(S.ambFait||[]).length+") : "+(((S.ambFait||[]).slice(-3).join(" ; "))||"aucun")+".\n"+
+  "Canon : "+((S.canon||[]).slice(-3).join(" | ")||"aucun fait gravé")+".\n"+
+  (S.seed?"Semence : "+S.seed+"\n":"")+"Joué sur Forgemonde — pacao2.github.io/Forgemonde";
+}
+function endCardSave(){
+  try{
+    const cv=document.createElement("canvas");endCardPaint(cv);
+    const a=document.createElement("a");a.download=slugN()+"-fin-de-regne.png";a.href=cv.toDataURL("image/png");a.click();
+    toast("🖼 Carte de fin de règne téléchargée");
+  }catch(e){toast("Impossible de générer l'image")}
+}
+function endCardPanel(){
+  if(!S.world||!S.log.length)return null;
+  return det("endcard","🖼 Carte de fin de règne (partage)",
+    el("p",{class:"mute",text:"Une image PNG qui récapitule ton règne — factions, influence, chapitres, destins — prête à partager sur Reddit ou Discord."}),
+    el("div",{class:"row"},
+      el("button",{on:{click:endCardSave},text:"Télécharger l'image PNG"}),
+      el("button",{class:"alt",on:{click:()=>{try{navigator.clipboard.writeText(endCardText());toast("Résumé du règne copié")}catch(e){toast("Copie impossible sur cet appareil")}}},text:"Copier le résumé"})),
+    el("p",{class:"mute",style:"white-space:pre-line;font-size:.85rem",text:endCardText()}));
+}
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};if(document.querySelector("#app canvas"))draw()}).catch(()=>{});

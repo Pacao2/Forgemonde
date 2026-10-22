@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v20oct-c-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v22oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -98,6 +98,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - **Le monde sans toi** — des guerres éclatent entre puissances sans aucune action du joueur
 - **Révoltes de la faim** — la famine déclenche des révoltes réelles : influence et armée en reculent
 - **Anti-répétition** — une consigne de style variée, tirée au hasard, guide chaque tour
+- **Premier tour guidé** — des actions en un clic pour bien lancer une partie
+- **Chat avec la mémoire du monde** — les conversations respectent le canon, les lois verrouillées et les chapitres vécus
+- **Carte de fin de règne** — une image PNG de partage qui récapitule ton règne
 - **Chronique allégée** : 50 tours rendus d'emblée, bouton « Afficher 100 tours plus anciens »
 - **Sauvegarde robuste** : si la mémoire du navigateur sature, le jeu est tronqué intelligemment au lieu de perdre la partie
 - **Vendettas héritées** : les dilemmes d ambitions croisées gravent des rancunes (ou des alliances) durables entre personnages, réinjectées dans les récits.
@@ -145,6 +148,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 ## 📜 Journal des versions
 
 Une version par jour, du plus récent au plus ancien.
+
+### Jeudi 22 octobre 2026
+- **v22oct — premier tour guidé, chat avec la mémoire du monde, carte de fin de règne** : le premier tour d'une partie propose des actions en un clic (se présenter, envoyer un émissaire, chercher les tensions) ; les conversations du panneau « Parler aux habitants » s'appuient désormais sur le canon, les lois verrouillées, les relations personnelles et les chapitres vécus ; l'onglet Outils génère une carte de fin de règne en PNG (factions, influence, chapitres, destins) prête à partager, avec résumé copiable.
 
 ### Mardi 20 octobre 2026
 - **v20oct — éditeur de scénarios et de carte** : retouchez le monde en cours de partie (nom, ton, concept, surnaturel, factions, personnages) dans l'onglet Outils ; l'éditeur de carte règle l'influence de chaque puissance au curseur, renomme, réassocie ou ajoute des lieux, avec aperçu en direct. + fichier de partie complète : exportez ou restaurez toute une partie (monde, chronique, canon) dans un fichier .txt. + garde du canon bloquant (refus avant le tour, sans IA), guerres du monde sans toi, révoltes de la faim visibles, consigne de variété anti-répétition.
