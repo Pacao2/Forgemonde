@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v22oct-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v23oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -113,6 +113,15 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - **Ambitions croisées** — deux ambitions mûres à la fois déclenchent un dilemme à 3 choix gravé au canon : qui l'emporte ?
 - **Épilogue des destins** — le bilan de fin de partie liste les ambitions portées à terme et leurs auteurs
 - **Chapitres remis à zéro** — chaque nouveau monde repart d'une histoire vierge : plus de mémoire héritée du monde précédent
+- **Bord du monde** — influence, stabilité, population et trésor calculés pour chaque puissance, affichés dans l'onglet Monde et lus par le moteur narratif
+- **Mémoire curée** — les événements majeurs deviennent des souvenirs que le moteur réutilise quand les mêmes acteurs reviennent
+- **Règle de causalité** — chaque événement découle d'une action du joueur ou d'un acteur nommé : plus d'événement gratuit
+- **Journal du dirigeant** — une page écrite à chaque chapitre bouclé, à relire et exporter (onglet Outils)
+- **Dilemme de fin de chapitre** — refermer un chapitre et l'assumer, ou réécrire sa mémoire officielle (canon gravé)
+- **Héritages** — les mondes que vous avez quittés restent gravés dans l'Atlas (accueil)
+- **Fiches de personnage illustrées** — blason, couleur de faction et statut durable en un coup d'œil
+- **Astuces contextuelles** — le jeu explique la guerre, les statuts, les chapitres et les révoltes au moment où c'est utile
+- **Installation PWA au bon moment** — l'invite d'installation arrive après quelques tours, pas à l'arrivée
 
 ### 🗺️ Le monde
 - **Carte vivante** — saisons, front de guerre animé, routes commerciales, zooms cinématiques, lueurs de relief et infobulle au survol
@@ -148,6 +157,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 ## 📜 Journal des versions
 
 Une version par jour, du plus récent au plus ancien.
+
+### Vendredi 23 octobre 2026
+- **v23oct — bord du monde chiffré, mémoire curée, journal du dirigeant, héritages, fiches illustrées, dilemmes de chapitre** : l'onglet Monde affiche des chiffres calculés (influence, stabilité, population, trésor) que le moteur narratif lit à chaque tour pour fonder les conséquences ; les événements majeurs deviennent des souvenirs curés, réutilisés quand les mêmes acteurs reviennent ; chaque événement doit désormais découler d'une cause visible (action du joueur ou acteur nommé) — plus d'événement gratuit ; à chaque chapitre bouclé, ton dirigeant écrit une page de son journal (onglet Outils, copiable et exportable) et un dilemme referme le chapitre : l'assumer ou réécrire sa mémoire officielle ; les mondes achevés restent gravés dans l'Atlas d'une partie à l'autre (accueil) ; les fiches de personnage affichent blason, couleur de faction et statut durable ; astuces contextuelles au moment où elles servent (guerre, disgrâce, chapitre, révolte) ; l'invite d'installation PWA arrive après quelques tours, pas à l'arrivée.
 
 ### Jeudi 22 octobre 2026
 - **v22oct — premier tour guidé, chat avec la mémoire du monde, carte de fin de règne** : le premier tour d'une partie propose des actions en un clic (se présenter, envoyer un émissaire, chercher les tensions) ; les conversations du panneau « Parler aux habitants » s'appuient désormais sur le canon, les lois verrouillées, les relations personnelles et les chapitres vécus ; l'onglet Outils génère une carte de fin de règne en PNG (factions, influence, chapitres, destins) prête à partager, avec résumé copiable.
