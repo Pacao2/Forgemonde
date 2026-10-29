@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v23oct-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v29oct-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -122,6 +122,11 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 - **Fiches de personnage illustrées** — blason, couleur de faction et statut durable en un coup d'œil
 - **Astuces contextuelles** — le jeu explique la guerre, les statuts, les chapitres et les révoltes au moment où c'est utile
 - **Installation PWA au bon moment** — l'invite d'installation arrive après quelques tours, pas à l'arrivée
+- **Urgences à horloge** — une crise qui n'attend pas : au tour suivant sans décision, le monde tranche sans vous
+- **Double rôle** — dirigez deux factions rivales dans la même partie, le Garde du canon garde les deux camps cohérents
+- **Dynastie** — transmettez le règne à un héritier nommé, chaque succession gravée au canon
+- **Livre de l'histoire** — couverture, chapitres, dynastie, journal et chronique exportées en un seul Markdown à partager
+- **Legs entre les mondes** — chaque monde achevé confère un petit bonus d'influence de départ au suivant
 
 ### 🗺️ Le monde
 - **Carte vivante** — saisons, front de guerre animé, routes commerciales, zooms cinématiques, lueurs de relief et infobulle au survol
@@ -157,6 +162,9 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 ## 📜 Journal des versions
 
 Une version par jour, du plus récent au plus ancien.
+
+### Jeudi 29 octobre 2026
+- **v29oct — urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes** : parfois une crise n'attend pas — si le joueur ne tranche pas avant le tour suivant, le monde décide sans lui (armée et influence en reculent) ; le mode double rôle dirige deux factions rivales dans la même partie, le récit alternant les points de vue sous l'œil du Garde du canon ; la dynastie transmet le règne à un héritier nommé, chaque succession gravée au canon ; le livre de l'histoire exporte couverture, chapitres, dynastie, journal et chronique complète en un Markdown prêt à partager ; les mondes achevés confèrent un petit bonus d'influence de départ au suivant (legs, max +0.05).
 
 ### Vendredi 23 octobre 2026
 - **v23oct — bord du monde chiffré, mémoire curée, journal du dirigeant, héritages, fiches illustrées, dilemmes de chapitre** : l'onglet Monde affiche des chiffres calculés (influence, stabilité, population, trésor) que le moteur narratif lit à chaque tour pour fonder les conséquences ; les événements majeurs deviennent des souvenirs curés, réutilisés quand les mêmes acteurs reviennent ; chaque événement doit désormais découler d'une cause visible (action du joueur ou acteur nommé) — plus d'événement gratuit ; à chaque chapitre bouclé, ton dirigeant écrit une page de son journal (onglet Outils, copiable et exportable) et un dilemme referme le chapitre : l'assumer ou réécrire sa mémoire officielle ; les mondes achevés restent gravés dans l'Atlas d'une partie à l'autre (accueil) ; les fiches de personnage affichent blason, couleur de faction et statut durable ; astuces contextuelles au moment où elles servent (guerre, disgrâce, chapitre, révolte) ; l'invite d'installation PWA arrive après quelques tours, pas à l'arrivée.
