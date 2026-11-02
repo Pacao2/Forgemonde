@@ -44,6 +44,7 @@ button:disabled{opacity:.5;cursor:default}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1 1 auto}
 .idea{display:flex;gap:8px;margin:14px 0 4px}.idea input{flex:1}.idea button{flex:0 0 auto}
 .entry{border-left:3px solid var(--gold);padding:2px 0 2px 14px;margin:20px 0}
+.entry{content-visibility:auto;contain-intrinsic-size:auto 170px}
 .entry.new{animation:turnIn .45s ease both}
 @keyframes turnIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.entry.new{animation:none}}
@@ -883,7 +884,7 @@ function mp(){
     (chronAll&&log.length>8)?el("div",{class:"row",style:"justify-content:center"},el("button",{class:"alt",on:{click:()=>{chronAll=false;draw()}},text:"Réduire aux 8 derniers tours"})):null,
     el("div",{class:"row"},host?el("button",{class:"alt",on:{click:()=>{if(confirm("Terminer la partie pour tous les joueurs ?"))mpEnd()}},text:"Terminer la partie"}):el("button",{class:"alt",on:{click:mpLeave},text:"Quitter la partie"})));
 }
-const BUILD="v29oct — urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes, icône de l'app";
+const BUILD="v29oct — urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes, icône de l'app, fluidité et cohérence";
 const SEEDJOB=[
 ["alliance","Conclure une alliance",s=>Object.values(s.rel||{}).some(r=>r&&r.t==="alliance"),1],
 ["guerre","Gagner une bataille",s=>(s.log||[]).some(l=>l&&(l.f||"")===(s.playFac||"")&&/l'emporte|remporte|victoire/.test(String(l.txt||"")+String(l.titre||""))),2],
@@ -914,7 +915,7 @@ function chekhovFire(auto){
   save();
 }
 const CHANGELOG=[
-["v29oct — 29 octobre 2026 : urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes",["Nouveau : Urgences à horloge — parfois une crise n'attend pas : si tu ne tranches pas avant le tour suivant, le monde décide sans toi (armée −2, influence en recul).","Nouveau : Double rôle — dirige deux factions rivales dans la même partie : le récit alterne les points de vue et le Garde du canon garde les deux camps cohérents.","Nouveau : Dynastie — transmets le règne à un héritier nommé : chaque succession est gravée au canon et les rancunes des anciens dirigeants restent vivantes.","Nouveau : Livre de l'histoire — couverture, chapitres, dynastie, journal et chronique complète exportés en un seul Markdown à partager.","Nouveau : Legs entre les mondes — chaque monde achevé confère un petit bonus d'influence de départ dans le suivant (jusqu'à +0.05).","Nouveau : Icône de l'application — le jeu génère lui-même ses PNG (icône 180, icône 512, aperçu social 1200×630) depuis Outils ; le manifest et l'apple-touch-icon pointent dessus."]],
+["v29oct — 29 octobre 2026 : urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes",["Nouveau : Urgences à horloge — parfois une crise n'attend pas : si tu ne tranches pas avant le tour suivant, le monde décide sans toi (armée −2, influence en recul).","Nouveau : Double rôle — dirige deux factions rivales dans la même partie : le récit alterne les points de vue et le Garde du canon garde les deux camps cohérents.","Nouveau : Dynastie — transmets le règne à un héritier nommé : chaque succession est gravée au canon et les rancunes des anciens dirigeants restent vivantes.","Nouveau : Livre de l'histoire — couverture, chapitres, dynastie, journal et chronique complète exportés en un seul Markdown à partager.","Nouveau : Legs entre les mondes — chaque monde achevé confère un petit bonus d'influence de départ dans le suivant (jusqu'à +0.05).","Nouveau : Icône de l'application — le jeu génère lui-même ses PNG (icône 180, icône 512, aperçu social 1200×630) depuis Outils ; le manifest et l'apple-touch-icon pointent dessus.","Nouveau : Fluidité et cohérence — rendu allégé des longues chroniques, carte repeinte proprement au redimensionnement, consigne de cohérence stricte sur les puissances et personnages, garde bloquante étendue aux statuts durables et aux puissances inexistantes."]],
 ["v23oct — 23 octobre 2026 : bord du monde chiffré, mémoire curée, journal du dirigeant, héritages, fiches illustrées, dilemmes de chapitre, astuces contextuelles, installation PWA",[
 "Nouveau : Bord du monde — influence, stabilité, population et trésor calculés pour chaque puissance, affichés dans l'onglet Monde et lus par le moteur narratif pour fonder les conséquences.",
 "Nouveau : Mémoire curée — les événements majeurs deviennent des souvenirs ; quand les mêmes acteurs reviennent, le moteur les réutilise au lieu de repartir de zéro.",
@@ -2753,7 +2754,7 @@ Canon du monde (faits à respecter absolument) : ${canonText()}.
 Lois verrouillées du monde : ${lockedText()}.
 Statuts durables : ${statusText()}. Un statut dure : sa levée doit être racontée par un événement (guérison, amnistie, remboursement), jamais par simple oubli.
 Règle d'or du moteur : le canon et les lois verrouillées priment sur tout. Si l'action du joueur les contredit ou exige l'impossible, le monde refuse et l'action échoue de façon réaliste — ne cède jamais, même si le joueur insiste, négocie ou reformule sa demande.\nVariété obligatoire pour ce tour : ${varyText()}.${dualText()}
-Tempéraments des factions : ${temperText()}.
+Tempéraments des factions : ${temperText()}.${coherText()}
 Règles spéciales du monde : ${w.rules||"aucune"}.
 Mode de jeu : ${modeText(w.mode)}.
 Croyances actuelles : ${faithText()}.
@@ -3783,6 +3784,12 @@ function canonBlock(action){
     const REV=/(ressuscite|ramène[^\s]*\s+\S+\s+à la vie|réanime|reviens d'entre les morts|fait renaître)/i;
     for(const d of dead){try{if(new RegExp(d,"i").test(acts)&&REV.test(acts))return d+" est mort(e) dans le canon : le monde refuse. La mort est définitive — le Garde du canon bloque l'action avant qu'elle ne soit jouée."}catch(x){}}
     if(noMagic&&/\bmagie\b|\bsort(?:ilège)?\b|\bmages?\b|incantation|enchant/i.test(acts))return "Ce monde n'a pas de magie (loi verrouillée) : le Garde du canon refuse l'action avant qu'elle ne soit jouée.";
+    for(const st of (S.statuses||[])){try{const who=st&&st.qui;if(!who)continue;const k=String(st.s||"");
+      if(/bless/.test(k)&&new RegExp(who,"i").test(acts)&&/(m[èe]ne|commande|conduit|t[êe]te).{0,50}(arm[ée]e|troupes|l[ée]gion|bataille)/i.test(acts))return who+" est blessé(e) (statut durable) : impossible de mener des troupes tant qu'un événement ne l'a pas guéri(e) — le Garde du canon bloque l'action.";
+      if(/exil/.test(k)&&new RegExp(who,"i").test(acts)&&/(au grand jour|ouvertement|à la cour|revient au palais|pr[ée]side|repr[ée]sente)/i.test(acts))return who+" est en exil (statut durable) : un retour public doit d'abord être raconté par un événement — le Garde du canon bloque l'action.";
+    }catch(x){}}
+    const mF=acts.match(/(?:faction|puissance)\s+([A-ZÉÈÀÂÎÔÛÇ][\p{L}\-' ]{1,30})/u);
+    if(mF){const cand=mF[1].trim();const low=cand.toLowerCase();const F=names();const known=F.some(n=>String(n).toLowerCase().indexOf(low.slice(0,6))>=0)||((S.npcs||[]).some(p=>p&&p.nom&&String(p.nom).toLowerCase().indexOf(low.slice(0,6))>=0));if(!known&&cand.length>2)return "« "+cand+" » n'existe pas dans ce monde. Puissances existantes : "+F.join(", ")+" — le Garde du canon bloque l'action pour éviter une incohérence."}
     return null;
   }catch(x){return null}
 }
@@ -4030,6 +4037,8 @@ function iconPaint(cv,sz){cv.width=sz;cv.height=sz;const x=cv.getContext("2d");c
 function ogPaint(cv){const W=1200,H=630;cv.width=W;cv.height=H;const x=cv.getContext("2d");const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#141221");g.addColorStop(1,"#0d0c14");x.fillStyle=g;x.fillRect(0,0,W,H);x.strokeStyle="#d2a24c";x.lineWidth=3;x.strokeRect(24,24,W-48,H-48);emblem(x,290,320,.55);x.textAlign="left";x.fillStyle="#e8c877";x.font="700 84px Cinzel, serif";x.fillText("Forgemonde",560,320);x.fillStyle="#ecebe6";x.font="400 40px Manrope, sans-serif";x.fillText("Un monde qui se souvient",560,382);x.fillStyle="#9593a3";x.font="28px Manrope, sans-serif";x.fillText("Dirigez une faction — gratuit, sans inscription, dans votre navigateur",560,440)}
 function dlPng(name,sz,fn){try{const cv=document.createElement("canvas");fn(cv,sz);const a=document.createElement("a");a.download=name;a.href=cv.toDataURL("image/png");document.body.appendChild(a);a.click();a.remove();toast("Téléchargé : "+name)}catch(e){toast("Téléchargement impossible")}}
 function iconPanel(){return det("icon","Icône de l'application",el("p",{class:"mute",text:"L'icône de Forgemonde : enclume et monde sur fond nuit. Génère les PNG à déposer à la racine du dépôt GitHub (glisser-déposer sur la page du dépôt) pour l'écran d'accueil mobile et l'aperçu des liens partagés."}),el("canvas",{id:"iconprev",width:112,height:112,style:"border-radius:14px;display:block;margin:6px auto"}),el("div",{class:"row"},el("button",{class:"alt",on:{click:()=>{dlPng("icon-180.png",180,iconPaint)}},text:"Icône 180 (iOS)"}),el("button",{class:"alt",on:{click:()=>{dlPng("icon-512.png",512,iconPaint)}},text:"Icône 512 (Android)"}),el("button",{class:"alt",on:{click:()=>{dlPng("og-image.png",0,ogPaint)}},text:"Aperçu social 1200×630"})),setTimeout(()=>{const c=$("iconprev");if(c)iconPaint(c,112)},0))}
+function coherText(){try{if(!S.world)return"";const F=names().slice(0,12).join(", ");const P=(S.npcs||[]).map(p=>p&&p.nom).filter(Boolean).slice(0,16).join(", ");return"\nCohérence stricte du monde : les seules puissances existantes sont "+F+". Personnages nommés connus : "+P+". N'invente jamais une autre puissance, nation ni personnage majeur ; tout nouvel acteur doit être mineur et cohérent avec le canon."}catch(x){return""}}
+let rszT=null;addEventListener("resize",()=>{clearTimeout(rszT);rszT=setTimeout(()=>{try{mapCache={k:"",c:null};draw()}catch(x){}},160)},{passive:true});
 draw();
 let pxQ=false,pxX=0,pxY=0;document.addEventListener("pointermove",ev=>{pxX=ev.clientX;pxY=ev.clientY;if(!pxQ){pxQ=true;requestAnimationFrame(()=>{pxQ=false;const h=document.querySelector&&document.querySelector(".hero");if(!h||S.opts.motion==="réduit")return;const r=h.getBoundingClientRect();if(pxY<r.top-120||pxY>r.bottom+120)return;h.setAttribute("data-px","1");h.style.setProperty("--hx",((pxX-r.left)/r.width-.5).toFixed(3));h.style.setProperty("--hy",((pxY-r.top)/r.height-.5).toFixed(3))})}},{passive:true});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{mapCache={k:"",c:null};if(document.querySelector("#app canvas"))draw()}).catch(()=>{});
