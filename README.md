@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-v2nov-a-d2a24c">
+  <img alt="Version" src="https://img.shields.io/badge/version-v2nov-b-d2a24c">
   <img alt="Sans inscription" src="https://img.shields.io/badge/sans%20inscription-oui-4c9a6a">
   <img alt="100% local" src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-4c7a9a">
   <img alt="PWA" src="https://img.shields.io/badge/installable-PWA-8d6fb3">
@@ -166,7 +166,7 @@ La clé IA (si vous en branchez une) est stockée **uniquement dans votre naviga
 Une version par jour, du plus récent au plus ancien.
 
 ### Lundi 2 novembre 2026
-- **v2nov-a — correctif emblèmes** : le choix d'une faction ne figeait plus l'écran de jeu — la légende de la carte et le panneau des couleurs appelaient une fonction emblème écrasée par le peintre d'icônes. Les deux fonctions sont désormais séparées et l'écran de jeu s'affiche normalement.
+- **v2nov-a — correctif emblèmes** : le choix d'une faction ne figeait plus l'écran de jeu — la légende de la carte et le panneau des couleurs appelaient une fonction emblème écrasée par le peintre d'icônes. Les deux fonctions sont désormais séparées et l'écran de jeu s'affiche normalement. **Ajouts v2nov-b** : conseil des proches (tous les 7 tours, trois personnages proposent trois voies), crises en cascade (famine → révolte → fuite vers un voisin, sans IA), ton du dirigeant (menace, flatterie ou calcul modifie les réactions du monde), soupçons sur le double rôle (fuites, démenti ou sacrifice).
 
 ### Jeudi 29 octobre 2026
 - **v29oct — urgences à horloge, double rôle, dynastie, livre de l'histoire, legs entre les mondes** : parfois une crise n'attend pas — si le joueur ne tranche pas avant le tour suivant, le monde décide sans lui (armée et influence en reculent) ; le mode double rôle dirige deux factions rivales dans la même partie, le récit alternant les points de vue sous l'œil du Garde du canon ; la dynastie transmet le règne à un héritier nommé, chaque succession gravée au canon ; le livre de l'histoire exporte couverture, chapitres, dynastie, journal et chronique complète en un Markdown prêt à partager ; les mondes achevés confèrent un petit bonus d'influence de départ au suivant (legs, max +0.05). Générateur d'icône : les PNG de l'app (180, 512) et l'aperçu social 1200×630 sont générés depuis le jeu (onglet Outils) puis déposés à la racine du dépôt. Fluidité et cohérence : longues chroniques rendues sans à-coups (content-visibility), carte repeinte proprement au redimensionnement, consigne stricte des puissances au moteur narratif, garde bloquante étendue aux statuts durables et aux puissances inexistantes.
